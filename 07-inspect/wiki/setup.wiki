@@ -1,0 +1,44 @@
+===== Înainte de laborator =====
+
+^ Comandă  ^ Descriere scurtă       ^
+| **''lscpu''**     | afișează informații despre CPU |
+| **''free''**       | afișează informații despre memoria sistemului       |
+| **''lshw''**       | afișează informații despre toate componentele hardware |
+| **''dd''**   | copiază conținutul fișierelor și oferă control asupra acestui proces |
+| **''lsmod''**   | afișează starea unui modul în cadrul kernelului Linux |
+| **''modinfo''**      | afișează informații despre un modul |
+| **''systemctl''**   | controlează sistemul systemd | 
+| **''crontab''**  | gestionează fișierele crontab |
+
+==== Obiective ==== 
+  * Prezentarea specificațiilor componentelor hardware
+  * Familiarizarea cu dispozitivele fizice și virtuale
+  * Familiarizarea cu driverele disponibile în sistem
+  * Ințelegerea conceptelor legate de serviciile ce rulează în cadrul unui sistem
+  * Obținerea de abilități de lucru cu servicii
+
+==== Folosire Git pentru laborator ====
+
+Pe parcursul laboratoarelor, pentru descărcarea fișierelor necesare laboratorului, vom folosi Git. Git este un sistem de controlul versiunii și e folosit pentru versionarea codului în proiectele software mari. Celor interesați să aprofundeze conceptele din spatele comenzii ''git'', precum și utilizări avansate, le recomandăm cursul practic online de pe [[http://gitimmersion.com/|gitimmersion]].
+
+Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso|acest repository Git]].
+
+În laboratorul curent, pe sistemele din laborator (și pe [[https://ocw.cs.pub.ro/courses/uso/resurse/mv|mașina virtuală]]) aveți deja clonat repository-ul Git în directorul ''~/uso.git/''. Vom preciza acest lucru pe parcursul laboratorului.
+
+<note important>
+Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal deschis în mașina virtuală. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați. Recomandăm să **nu** folosiți //copy-paste// ca să vă acomodați cu linia de comandă:
+<code>
+student@uso:~$ cd uso.git/
+student@uso:~/uso.git$ git reset --hard
+student@uso:~/uso.git$ git clean -f -d
+student@uso:~/uso.git$ git fetch origin
+student@uso:~/uso.git$ git checkout -b lab-03-user
+student@uso:~/uso.git$ git rebase origin/lab-03-user
+</code>
+
+Dacă la a cincea comandă rulată (''git checkout -b lab-03-user'') primiți o eroare de forma ''fatal: A branch named 'lab-03-user' already exists.'', nu vă îngrijorați, nu e nici o problemă.
+
+Dacă la un moment dat în lucrul în repository ați șters sau modificat ceva și doriți să reveniți la starea inițială, rulați din nou comenzile de mai sus.
+</note>
+
+Cam atât cu pregătirea laboratorului. Acum haideți să ne apucăm de treabă! :-)

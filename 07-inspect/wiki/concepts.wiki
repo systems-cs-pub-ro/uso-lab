@@ -1,0 +1,56 @@
+===== Concepte =====
+
+==== Informații despre hardware ====
+
+Termenul ''hardware'' în contextul calculatoarelor se referă la părțile fizice ale unui calculator și la componentele care interacționează cu acesta. Prin dispozitive hardware interne ne referim la procesor/CPU, dispozitive de stocare masivă a datelor HDD/SSD, memorie, placă de bază, procesor grafic/GPU, etc.
+Dispozitivele hardware externe includ monitoarele, tastaturile, imprimantele, etc.
+
+Hardware-ul, în general, cuprinde acele componente fizice (care pot fi atinse) ale unui calculator.
+
+Cunoașterea elementelor hardware este esențială întrucât programele software interacționează în mod direct sau indirect (biblioteci, alte porcese, etc.) cu acestea.
+
+Din punctul de vedere al utilizatorului, cunoașterea elementelor hardware este utilă în multiple situații: achiziționărea unui sistem nou, instalărea unui sistem de operare, alegerea driverelor compatibile, optimizarea diferitelor aplicații sau în cazul depanării în situația în care apar probleme.
+
+==== Dispozitive ====
+
+În cadrul calculatoarelor ce rulează un sistem de operare bazat pe nucleul Linux, interacțiunea cu dispozitivele se poate face folosind fișierele care se află la în calea absolută ''/dev/''. Fiind vorba de fișiere, utilizatorul poate să facă aceleași operații ca în cazul oricăror fișiere. La calea ''/dev/'' identificăm două tipuri de dispozitive:
+    * ''Fizice'' - au un corespondent hardware
+    * ''Virtuale'' - nu au un corespondent hardware și sunte create de sistemul de operare.
+
+Un exemplu de dispozitiv fizic este discul. Acesta începe cu litere sd sau hd în funcție de inferfața de conectare. Vom lista toate discurile prezente pe o mașină dată:
+<code bash>
+$ ls -l /dev/sd*
+brw-rw---- 1 root disk 8,  0 Jul  9 02:23 /dev/sda
+brw-rw---- 1 root disk 8,  1 Jul  9 02:23 /dev/sda1
+brw-rw---- 1 root disk 8,  2 Jul  9 02:23 /dev/sda2
+brw-rw---- 1 root disk 8,  3 Jul  9 02:23 /dev/sda3
+brw-rw---- 1 root disk 8, 16 Jul  9 02:23 /dev/sdb
+brw-rw---- 1 root disk 8, 17 Jul  9 02:23 /dev/sdb1
+</code>
+
+Pe lângă dispozitivele fizice, în cadrul sistemului Linux, avem și dispozitive virtuale cum ar fi:
+    * /dev/zero - la citire generează zero-uri
+    * /dev/random - la citire generaza numere aleatorii
+    * /dev/null - la scriere, preia toate caracterele și le șterge (un coș de gunoi)
+
+==== Servicii ====
+
+După ce nucleul și driverele sunt încărcate și sistemul de opeare este inițializat, trebuie pornite primele procese. Primul proces pornit este ''init'', care apoi pornește la rândul său alte procese. Astefl, ''init'' este în vârful ierarhiei proceselor având rolul de a crea primele procese în cadrul sistemului de operare și adoptarea proceselor orfane.
+
+Implementarea procesului ''init'' cea mai răspândită, la acest moment este ''systemd'', cu executabilul aflat în ''/lib/systemd/systemd/'':
+
+<code bash>
+student@uso:~$ ls -l /sbin/init
+lrwxrwxrwx 1 root root 20 Aug  6 17:34 /sbin/init -> /lib/systemd/systemd
+</code>
+
+Serviciile sunt procese dedicate, de obicei procese daemon, care oferă funcționalități suplimentare sistemului sau care gestionează buna funcționare a acestuia. Serviciile sunt în general pornite și gestionate de ''systemd''.
+
+În systemd, serviciile, împreună cu alte componente, sunt numite units. Pentru a vizualiza toate unitățile systemd, folosimd comanda:
+
+<code bash>
+systemctl   list-unit-files --type=service
+</code>
+
+Dacă dorim adăugarea de servicii în sistem putem să le adăugăm în configurarea ''systemd''. Acest proces va fi detaliat ulterior în secțiunea Nice to know.
+

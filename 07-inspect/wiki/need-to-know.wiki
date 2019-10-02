@@ -1,0 +1,64 @@
+===== Need to know =====
+
+==== Informații despre toate componentele hardware (lshw) ====
+**Exerciții**
+  - Afișați următoarele atribute ale interfeței de rețea: ''product'', ''vendor'', ''capacity'' folosind comanda ''lshw''.
+  - Scrieți un script Bash care culege următoarele informații despre hardware-ul curent:
+     * informații despre procesor (model, frecvență) 
+     * versiunea de sistem de operare/distribuție (hint: ''uname'')
+     * versiune de kernel (hint: ''uname'')
+     * pachete instalate  (hint: ''dpkg-query'')
+
+==== Generarea de fișiere de dimensiune fixă folosind dispoztivie virtuale (dd) ====
+
+**Exerciții**
+  - Să se genereze un fișier de dimensiune fixă (42 MB) care să conțină octeți aleatori. Dimensiunea unui block în cadrul comenzii ''dd'' trebuie să fie de 512 KB.
+  - Să se genereze un fișier de dimensiune fixă (54 MB) care să conțină octeți aleatori. Numărul de block-uri în cadrul comenzii ''dd'' trebuie să fie egal cu 270.
+
+==== Generarea de șiruri aleatoare folosind dispozitive virtuale  ====
+
+Am văzut, în cadrul exercițiilor anterioare, că putem genera octeți aleatori prin simpla citire a fișierului ''/dev/random''. Pentru a filtra caracterele nedorite am folosit comanda ''tr''(translate) alături de ''-dc'' (d - delete, c - complement). Comanda ''echo'' de la final are rolul de a afișa caracterul ''newline - \n''.
+
+**Exerciții**
+  - Generați o parolă formată doar din cifre cu lungimea de 14 caractere folosind dispoozitivele virtuale.
+
+==== Identificare driverelor ====
+
+**Exerciții**
+  - Identificați un modul ce implementează o interfață de rețea și afișați detalii despre acesta. (hint: ''e1000'').
+
+==== Identificarea serviciilor ce rulează într-un sistem ====
+
+<code bash>
+student@uso:~$ systemctl list-unit-files --type=service
+UNIT FILE                                  STATE
+accounts-daemon.service                    enabled
+acpid.service                              disabled
+alsa-restore.service                       static
+alsa-state.service                         static
+alsa-utils.service                         masked
+anacron.service                            enabled
+apache-htcacheclean.service                disabled
+apache-htcacheclean@.service               disabled
+apache2.service                            enabled
+[...]
+</code>
+
+Pentru a afla statusul unui serviciu putem folosi:
+
+<code bash>
+student@uso:~$ systemctl status dbus.service
+● dbus.service - D-Bus System Message Bus
+   Loaded: loaded (/lib/systemd/system/dbus.service; static; vendor preset: enabled)
+   Active: active (running) since Mon 2018-10-15 16:10:25 EEST; 6 days ago
+     Docs: man:dbus-daemon(1)
+ Main PID: 555 (dbus-daemon)
+    Tasks: 1 (limit: 2321)
+   CGroup: /system.slice/dbus.service
+           └─555 /usr/bin/dbus-daemon --system --address=systemd: --nofork --nopidfile --systemd-activation --syslog-only
+
+</code>
+
+**Exerciții**
+  - Afișați statusul serviciului ''network.service''
+  - Afișați toate procesele care se află în starea ''enabled'' folosind doar comanda systemctl (hint: "--state")

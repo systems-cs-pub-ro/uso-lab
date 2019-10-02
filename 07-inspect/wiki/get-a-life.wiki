@@ -1,0 +1,41 @@
+===== Get a life =====
+
+** 1. Instalare shell nou **
+
+Să se instaleze un shell-ul ''zsh'' alături de ''Oh My Zsh'' în sistem. Faceți modificările necesare pentru a configura ''zsh'' ca shell prestabilit.
+
+Găsiți [[https://github.com/robbyrussell/oh-my-zsh| aici]] repository-ul de Git pentru ''Oh My Zsh''.
+
+Hint: ''chsh''.
+
+** 2. Masină virtuală ARM **
+
+Masina virtuală este disponibilă [[https://repository.grid.pub.ro/cs/cns/vm/cns_vm_arm.tar.bz2|aici]]. Folosiți scriptul ''start_machine.sh'' pentru a porni mașina virtuală.
+
+Pentru login folosiți următoarele credențiale:
+    *   utilizator: ''root''
+    *   parolă: ''123456''
+
+După ce ați pornit mașina virtuală, vă puteți conecta la aceasta folosind următoarea comandă:
+
+<code bash>
+ssh -p 2222 root@localhost
+</code>
+
+<note>
+    Asigurați-vă că aveți următoarele pachete instalate:
+
+    <code bash>
+        sudo apt-get install qemu qemu-kvm qemu-system-arm
+    </code>
+</note>
+
+** 2. Stick bootabil UDPCast **
+Creați un stick bootabil cu UDPCast urmărind acest [[http://www.udpcast.linux.lu/usb.html|link]].
+
+
+** 3. Stick bootabil cu distrbuție de Linux **
+Folosiți următoarele utilitare:
+    * ''dd'' - pentru ștergerea tabelei de partiții
+    * ''gparted'' - pentru crearea partițiilor noi
+    * ''UNetbootin'' - pentru crearea Live USB drive

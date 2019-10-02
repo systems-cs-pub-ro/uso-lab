@@ -1,0 +1,105 @@
+===== Nice to know =====
+Înainte de a începe această secțiune trebuie să vă asigurați că sunteți în directorul potrivit. Rulați comanda
+cd ~/uso.git/labs/06-hw-boot/support/nice-to-know.
+
+==== Adăugarea unui serviciu nou în sistem ====
+În secțiunea anterioară am învățat cum să afișăm serviciile disponibile în sistem și să aflăm statusul curent al unui serviciu.
+
+Ne propunem să adugăm un serviciu nou în cadrul sistemului. Vom folosi un fișier de configurare deja existent.
+
+<code bash>
+student@uso:~/.../06-hw-boot/support/nice-to-know$ cat example.service
+[Unit]
+Description=example
+
+[Service]
+ExecStart=/usr/bin/python3 -m http.server 8000
+Type=simple
+User=student
+Group=student
+WorkingDirectory=/home/student
+
+[Install]
+WantedBy=multi-user.target
+</code>
+Fișierul de configurare de mai sus este organizat în secțiuni:
+[Unit], [Service], [Install].
+
+  * ''Description'' - Descrierea componentei
+  * ''ExecStart'' - Comanda Bash care pornește serviciul
+  * ''Type'' - tipul serviciului, mai multe detalii [[https://wiki.archlinux.org/index.php/systemd#Service_types|aici]]
+  * ''User'' - utilizatorul asociat cu procesul serviciului
+  * ''Group'' - grupul asociat cu procesul serviciului
+  * ''WorkingDirectory'' - directorul asociat cu procesul serviciului
+  * ''WantedBy'' - este folosit pentru a specifica dacă serviciul este sau nu activat.
+
+Mai multe informații se pot găsi [[https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files | aici]].
+
+Copiem fișierul de configurare în directorul ''/etc/systemd/system/'' și adăugăm permisiunea de execuție.
+<code bash>
+student@uso:~/.../06-hw-boot/support/nice-to-know$ sudo cp example.service /etc/systemd/system/
+student@uso:~/.../06-hw-boot/support/nice-to-know$ chmod +x /etc/systemd/system/example.service
+</code>
+
+Activăm și pornim serviciul:
+<code bash>
+student@uso:~/.../06-hw-boot/support/nice-to-know$ sudo systemctl enable example
+student@uso:~/.../06-hw-boot/support/nice-to-know$ sudo systemctl start example
+</code>
+
+Pentru a funcționalitatea serviciului, deschidem un browser și navigăm la URL-ul ''http://localhost:8000''. Observăm că am pornit un server web care afișează conținutul directorului ''/home/student''.
+
+<note>
+Pentru a pune în aplicare orice modificare adusă fișierului de configurare trebuie rulată următoarea comandă.
+
+<code bash>
+    student@uso:~$ sudo sudo systemctl daemon-reload
+</code>
+</note>
+
+**Exerciții**
+  - Scrieți un script Bash care construiește o arhivă ''.zip'' cu conținutul directorului ''/home/student/''.
+  - Adăugați în sistem utilizatorul ''backupuso''. Asigurați-vă că acest utilizator nu are un director home asociat.
+  - Construiți un serviciu care face backup directorului ''/home/student'' la fiecare două minute. Serviciul trebuie să aiba asociat utilizatorul creat la punctul precedent.
+
+==== Planificarea execuției unui program (cron) ====
+Ne dorim să realizăm diferite acțiuni în cadrul sistemului la anumite momente de timp. Pentru a rezolva această problemă putem să folosim daemonul ''cron''.
+
+<code bash>
+student@uso:~$ ps -f $(pidof cron)
+UID        PID  PPID  C STIME TTY      STAT   TIME CMD
+root       563     1  0 07:47 ?        Ss     0:00 /usr/sbin/cron -f
+</code>
+
+Daemonul ''cron'' poate executa, la anumite momente de timp, programe sau script-uri configurate de un utilizator. Pentru configurarea listelor folosite de daemonul ''cron'' vom folosi utilitarul ''crontab''.
+
+Sintaxa folosită pentru a configura daemon-ul ''cron'' urmărește următoarea sintaxă:
+
+**TODO** Cron image here
+
+Pentru a configura un program să se execute la un anumit interval de timp folosim comanda:
+
+<code bash>
+student@uso:~$ crontab -e
+</code>
+
+Dacă vrem să adăugăm data curentă la sfârșitul fișierului ''date_logs.log'' din directorul ''/var/log/'' la fiecare 5 minute, introducem următoarea linie:
+
+<code bash>
+5   *   *   *   *   date >> /var/log/date_logs.log
+</code>
+
+**Exerciții**
+  - Adăugați un job ''cron'' care să înregistreze la fiecare două minute numărul de procese executate de utilizatorul ''student''. Fiecare execuție, va adăuga un număr la sfârșitul fișierului ''n_processes.log'' din directorul ''/var/log/''.
+  - Adăugați un job ''cron'' care să  ...
+  - Construți un script care identifică toate job-urile ''cron'' rulate de toți utilizatorii din sistem. Pentru fiecare job se vor afișa: numele utilizatorului și comanda rulată.
+
+
+==== Personalizare shell-ului ====
+De fiecare dată când se deschide un nou shell ''bash'' se execută script-ul ''.bashrc'' din directorul ''home'' al utilizatorului curent.
+
+**Exerciții**
+  - Aduceți modificările necesare fișierului ''.bashrc'' pentru a afișa la deschiderea unui nou shell următorul mesaj:
+  <code bash>
+   "Salut, '<user>'. Data curenta este: '<data_curenta>'"
+  </code>

@@ -1,0 +1,15 @@
+===== Need to know =====
+
+În cadrul laboratorului curent vom folosi o serie de comenzi care au scopul
+de a afișa diferite informații despre sistemul curent. De cele mai multe ori,
+vom dori să extragem doar o parte din aceste infromații. Pentru a îndeplini această
+sarcină, va fi nevoie să apelăm la conceptele învațate în cadrul laboratoarelor
+anterioare.
+
+**Exerciții**
+  - Afișați liniile 4:6 ale fișierelului ''/etc/passwd''.
+  - Salvați conținutul directoarelor în mod recursiv, pornind de la directorul
+  ''home'' al utilizatorului ''student'' într-un fișier denumit ''dump'' la calea
+  ''/tmp/''.
+  - Identificați liniile din fișierul ''/etc/shadow'' care conțin șirul de caractere
+  ''student''.

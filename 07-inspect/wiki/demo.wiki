@@ -1,0 +1,209 @@
+===== Demo =====
+
+==== Informații despre procesor și arhitectură (lscpu, arch) ====
+
+Cunoașterea informațiilor despre arhitectura unui procesor ne poate ajuta să scriem programe mai eficiente.
+De exemplu, pentru a afișa informații despre procesor putem să folosim comanda ''lscpu''.
+
+<code bash>
+student@uso:~$ lscpu
+Architecture:        x86_64
+CPU op-mode(s):      32-bit, 64-bit
+Byte Order:          Little Endian
+CPU(s):              1
+On-line CPU(s) list: 0
+Thread(s) per core:  1
+Core(s) per socket:  1
+Socket(s):           1
+NUMA node(s):        1
+Vendor ID:           GenuineIntel
+CPU family:          6
+Model:               158
+Model name:          Intel(R) Core(TM) i9-8950HK CPU @ 2.90GHz
+Stepping:            10
+CPU MHz:             2903.998
+BogoMIPS:            5807.99
+Hypervisor vendor:   KVM
+Virtualization type: full
+L1d cache:           32K
+L1i cache:           32K
+L2 cache:            256K
+L3 cache:            12288K
+NUMA node0 CPU(s):   0
+Flags:               fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 syscall nx rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid pni pclmulqdq monitor ssse3 cx16 pcid sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx rdrand hypervisor lahf_lm abm 3dnowprefetch invpcid_single pti fsgsbase avx2 invpcid rdseed clflushopt flush_l1d
+</code>
+
+Dacă dorim să aflăm informații ce țin doar de arhitectura sistemului curent, putem să folosim comanda ''arch'':
+
+<code bash>
+student@uso:~$ arch
+x86_64
+</code>
+
+Alternativ, putem afla detalii despre procesor folosind sistemul de fișiere ''procfs''. Pentru mai multe detalii puteți accesa pagina de [[https://en.wikipedia.org/wiki/Passwd|Wikipedia]].
+
+<code bash>
+student@uso:~$ cat /proc/cpuinfo 
+processor	: 0
+vendor_id	: GenuineIntel
+cpu family	: 6
+model		: 158
+model name	: Intel(R) Core(TM) i9-8950HK CPU @ 2.90GHz
+stepping	: 10
+cpu MHz		: 2903.998
+cache size	: 12288 KB
+[...]
+</code>
+
+==== Listare dispozitive disponibile în sistem ====
+
+''/dev'' reprezintă locația unde se află fișiere ce aparțin unor dispozitive. Navigând prin această ierarhie putem observa infomații despre dispozitive de stocare externe (''/dev/sdX''), dispozitive de tip joystick ''/dev/jsN'' , dar și despre dispozitive virtuale ''/dev/zero'', ''/dev/random'', ''/dev/urandom''.
+
+Această ierarhie variază de la un sistem la altul și reflectă starea curentă a acestuia.
+
+<code bash>
+student@uso:~$ ls -l /dev/
+total 0
+crw-rw-rw- 1 root root 1, 3 oct 15 16:10 /dev/null
+[...]
+brw-rw---- 1 root disk 8, 0 oct 15 16:10 /dev/sda
+brw-rw---- 1 root disk 8, 1 oct 15 16:10 /dev/sda1
+[...]
+crw-rw-rw- 1 root root 1, 8 oct 15 16:10 /dev/random
+[...]
+crw-rw-rw- 1 root root 1, 9 oct 15 16:10 /dev/urandom
+[...]
+crw-rw-rw- 1 root root 1, 5 oct 15 16:10 /dev/zero
+</code>
+
+
+==== Informații despre toate componentele hardware (lshw) ====
+În secțiunea link [[https://ocw.cs.pub.ro/courses/uso/laboratoare/new/06-hw-boot/basics | basics]] am învațat că putem afla informații despre componenta hardware a sistemului folosind
+''lscpu'' (informații despre procesor), ''free'' (informații despre memoria sistemului) sau inspectând fișierele din cadrul ''procfs''.
+
+Alternativ, pentru a afla informații despre componenta hardware a sistemului putem folosi comanda ''lshw''.
+
+<code bash>
+student@uso:~$ sudo lshw
+[sudo] password for student:
+uso
+    description: Computer
+    product: VirtualBox
+    vendor: innotek GmbH
+    version: 1.2
+    serial: 0
+    width: 64 bits
+    capabilities: smbios-2.5 dmi-2.5 vsyscall32
+    configuration: family=Virtual Machine uuid=9FDEC515-C96C-47D8-AC70-C6BB8619EF02
+  *-core
+       description: Motherboard
+       product: VirtualBox
+       vendor: Oracle Corporation
+       physical id: 0
+       version: 1.2
+       serial: 0
+     *-firmware
+          description: BIOS
+          vendor: innotek GmbH
+          physical id: 0
+          version: VirtualBox
+          date: 12/01/2006
+          size: 128KiB
+          capabilities: isa pci cdboot bootselect int9keyboard int10video acpi
+     *-memory
+          description: System memory
+          physical id: 1
+          size: 1993MiB
+[...]
+</code>
+
+==== Generarea de fișiere de dimensiune fixă folosind dispoztivie virtuale (dd) ====
+
+Generarea unor fișiere de dimensiune fixă consituie primul pas în construirea unui fișier de tip imagine (''.iso/.img''). De asemenea putem șterge urme de informație rămasă pe suportul secund de stocare (HDD/SSD) prin umplerea zonelor libere cu zero-uri sau cu informație cu caracter aleator.
+
+În Linux putem folosi dispozitivele virtuale (ex. ''/dev/urandom'', ''/dev/random'', ''/dev/zero'') pentru a genera conținutul unui fișer nou.
+
+<code bash>
+student@uso:~$ cat /dev/urandom > dump
+^C          # am oprit procesul corespunzător comenzii de mai sus trimițând semnalul SIGINT (Ctrl + c)
+student@uso:~$ ls -lh dump
+-rw-r--r-- 1 student student 281M oct 21 13:48 here
+</code>
+
+Comenzile de mai sus au avut ca efect generarea unui fișier cu conținut aleator (vezi ''/dev/urandom''), însă nu am putut controla dimensiunea noului fișier generat. Dimensiune fișierului generat variază în funcție de mai mulți parametri (ex. timp, viteză de scriere hdd/ssd, etc.).
+
+Pentru a combate acest neajuns putem să folosim comanda ''dd''.
+ ''dd'' poate primi un fișier de intrare (''in=<FILE>'') și un fișier de ieșire (''of=<FILE>''). De asemenea putem să controlăm dimensiunea fișierului pe care vrem să îl gemerăm cu ajutorum parametrilor ''bs=<BYTES>'' și ''count=<BLOCKS>''.
+  * ''if'' - input file; dacă nu este specificat, se va folosi ''stdin'';
+  * ''of'' - output file; dacă nu este specificat, se va folosi ''stdout'';
+  * ''count'' - numărul de blocuri din fișierul input ce vor fi copiate;
+  * ''bs'' - numărul de octeți dintr-un bloc.
+
+Următorul apel al comenzii ''dd'' va umple fișierul **dump** cu 100MB (1024M * 100) de informație, conținând numai octeți cu valoarea zero.
+
+<code bash>
+student@uso:~$ dd if=/dev/zero of=dump bs=1M count=100
+100+0 records in
+100+0 records out
+104857600 bytes (105 MB, 100 MiB) copied, 0,0832762 s, 1,3 GB/s
+student@uso:~$ ls -lh dump 
+-rw-r--r-- 1 student student 100M oct 21 14:07 dump
+</code>
+
+Generarea unui fișier de 32MB cu date aleatoare:
+
+<code bash>
+student@uso:~$ dd if=/dev/zero of=~/myfile.bin bs=4M count=8
+</code>
+
+Comanda ''dd'' mai poate fi folosită și pentru a obține backup-uri ale sistemului sau pentru a formata un sistem de fișiere virtual.
+
+==== Generarea de șiruri aleatoare folosind dispozitive virtuale  ====
+
+Dispozitivele virtuale pot fi folosite pentru a genera parole aleatoare de dimensiune fixă.
+
+<code bash>
+student@uso:~$ head /dev/urandom | tr -dc A-Za-z0-9 | head -c 13 ; echo ''
+P2wVwebdFFfcd
+</code>
+
+==== Identificare driverelor ====
+
+În lumea Linux, implementarea unui driver (device driver) se face sub forma unei entități cu denumire de ''modul''. Un ''modul'' oferă posibilitatea de a adăuga diferite funcționalități peste kernelul unui OS (ex. folosirea unui dispozitiv specializat pentru calcul grafic - GPU). Astfel, un driver rulează în cadrul unui kernel, având acces la modul privilegiat și putând fi încărcat la cerere.
+
+Pentru a identifica toate modulele din cadrul unui kernel Linux putem să folosim comanda ''lsmod''.
+
+<code bash>
+student@uso:~$ lsmod
+Module                  Size  Used by
+btrfs                1126400  0
+zstd_compress         163840  1 btrfs
+xor                    24576  1 btrfs
+raid6_pq              114688  1 btrfs
+ufs                    77824  0
+qnx4                   16384  0
+hfsplus               106496  0
+hfs                    57344  0
+minix                  32768  0
+[...]
+</code>
+
+Pentru a afla mai multe informații de spre un modul putem folosi comanda ''modinfo''
+
+<code bash>
+student@uso:~$ modinfo ip_tables
+filename:       /lib/modules/4.15.0-34-generic/kernel/net/ipv4/netfilter/ip_tables.ko
+description:    IPv4 packet filter
+author:         Netfilter Core Team <coreteam@netfilter.org>
+license:        GPL
+srcversion:     E73E003BA6D5C96B0DD463D
+depends:        x_tables
+retpoline:      Y
+intree:         Y
+name:           ip_tables
+vermagic:       4.15.0-34-generic SMP mod_unload 
+signat:         PKCS#7
+signer:         
+sig_key:        
+sig_hashalgo:   md4
+</code>
