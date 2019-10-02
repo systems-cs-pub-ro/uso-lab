@@ -1,0 +1,94 @@
+===== Basics =====
+Deschidem un terminal folosind combinația de taste ''CTRL + ALT + T''. Primul lucru pe care îl vedem 
+când deschidem un nou terminal este **promptul** care, în cazul nostru, este 'student@uso:~$'.
+    - ''student'' este numele utilizatorului curent
+    - ''uso'' se numește **hostname**
+    - ''~'' este directorul în care ne aflăm, în cazul nostru este directorul home al utilizatorului student
+    - ''$'' simbolul promptului
+
+Ne amintim că pentru a afișa directorul în care ne aflăm folosim comanda ''pwd''.
+
+<code bash>
+student@uso:~$ pwd
+/home/student
+</code>
+
+  - Logați-vă ca utilizatorul **root**. Observați că promptul arată diferit, dispare simbolul ''$'' și apare simbolul ''#'' care ne atenționează că suntem logați ca utilizator privilegiat al sistemului.
+  - Deconectați-vă de pe acest cont și asigurați-vă că sunteți din nou logați ca utilizatorul cu care erați logați anterior, și anume''student''.
+
+Prin deschiderea unui nou terminal, se creează de fapt un nou proces în sistem. Știm că orice proces 
+din sistem are un identificator unic numit ''PID'' (process ID). Pentru a afișa id-ul procesului asociat 
+terminalul nou deschis, putem inspecta valoarea variabilei ''$''.
+
+<code bash>
+student@uso:~$ echo $$
+22346
+</code>
+
+<note>
+Valoarea ''22346'' este unică sistemului pe care a fost făcut acest tutorial. Pe o altă stație, această 
+valoare poate varia.
+</note>
+
+Folosind comanda ''ps'', afișați procesele pornite din terminalul curent. Observați că primul proces 
+care vă apare este procesul ''bash'' cu valoarea PID-ului egală cu valoarea variabilei ''$''.
+
+<code bash>
+student@uso:~$ ps
+  PID TTY          TIME CMD
+22346 pts/2    00:00:00 bash
+13266 pts/2    00:00:00 ps
+</code>
+
+1. Logați-vă ca utilizatorul ''root'' și porniți un proces cu comanda ''sleep 100 &''. Deconectați-vă 
+și apoi afișați procesele pornite doar din terminalul curent. Ce observați?
+
+Comanda ''ps - e'' ne afișează 4 atribute despre toate procesele din sistem: PID, TTY, TIME și CMD.
+
+<code bash>
+student@uso:~$ ps -e
+  PID TTY          TIME CMD
+    1 ?        00:00:04 systemd
+    2 ?        00:00:00 kthreadd
+    4 ?        00:00:00 kworker/0:0H
+(...)
+</code>
+
+Ne interesează pentru moment coloana a doua și anume ''TTY''. TTY face referire la terminalul din care 
+a fost pornit un anumit proces. Observăm pe a doua coloană intrări de tipul ''?''.
+Semnul întrebării apare în momentul în care procesul este unul de tip **daemon**, mai exact atunci când 
+procesul nu e atașat de niciun terminal.
+
+După parcurgerea acestui tutorial am dat destule comenzi și dacă am vrea să ne amintim cu exactitate o 
+comandă pe care am dat-o avem mai multe posibilități. Una ar fi să folosim comanda ''history'' pentru 
+a vedea istoricul comenzilor pe care le-am dat.
+
+<code bash>
+student@uso:~$ history
+(...)
+ 1189  ls
+ 1190  git status
+ 1191  ps
+ 1192  ps -e
+ 1193  history
+</code>
+
+O altă variantă ar fi să folosim tasta săgeată sus pentru a naviga printre ultimele comenzi pe care 
+le-am dat, însă această variantă vine cu dezavantajul că o căutare poate dura destul de mult în cazul 
+în care am dat multe comenzi între timp. 
+
+Dacă ne amintim o parte din comandă, putem folosi **reversed 
+search** pentru a găsi o comandă dată anterior. Folosiți combinația de taste ''CTRL + R'' pentru a porni 
+căutarea, scrieți o parte din comandă. Folosiți în continuare aceeași combinație pentru a găsi comanda 
+exactă.
+
+<code bash>
+(reverse-i-search)`': ps
+</code>
+
+În final, dacă vrem să "curățam" terminalul pentru a nu ne încurca, folosim comanda ''clear'' sau 
+combinația de taste ''CTRL + L''.
+
+<code bash>
+student@uso:~$ clear
+</code>

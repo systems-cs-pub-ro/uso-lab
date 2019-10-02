@@ -1,0 +1,136 @@
+===== Concepte =====
+
+==== Fluxuri standard ====
+În lumea calculatoarelor, programele funcționează pe același principiu 
+indiferent de scop, limbaj sau sistem de operare, și anume primesc un
+set de date de intrare pe care îl prelucrează și se obține un set de 
+date de ieșire. Bineînțeles, erorile fac parte din viața noastră, 
+așadar nu le putem ignora nici în cazul programelor.
+
+Pentru a ne obișnui cu aceste concepte, introducem 3 termeni noi:
+    - stdin (fluxul standard de intrare/standard input) - 0
+    - stdout (fluxul standard de ieșire/standard output) - 1
+    - stderr (fluxul standard de eroare/standard error) - 2
+De cele mai multe ori, stdin este reprezentat de tastatură, iar stdout 
+și stderr de terminal.
+
+<note>
+Numerele ''0'', ''1'' și ''2'' reprezintă ''descriptorii de fișier'' pentru 
+fluxurile standard prezentate.
+</note>
+
+==== Redirectări ====
+De multe ori avem de a face cu un set de date foarte mare și dinamic 
+și este pur și simplu inconvenabil să introducem datele manual de la 
+tastatură, așadar, pentru a ne face viața mai ușoară, avem posibilitatea 
+de a redirecta inputul unui program. Asta înseamnă că modificăm fluxul 
+standard de intrare cu ce vrem noi, un fișier, un 
+[[https://alvinalexander.com/blog/post/linux-unix/linux-unix-command-mashups|pipe]], 
+un device etc. Pentru a redirecta inputul folosim operatorul ''<''.
+
+Să presupunem că un program primește ceva date de intrare, dar produce un 
+set foarte mare de date de ieșire pe care vrem să le salvăm pentru o analiză 
+ulterioară. Este util în acest caz să redirectăm fluxul de ieșire către un fișier.
+Pentru a redirecta output-ul unui program vom folosi operatorul ''>''.
+
+În ceea ce privește redirectarea erorilor, lucrurile stau similar cu ceea ce 
+am văzut la fluxul de ieșire. Pentru a redirecta erorile produse de un program 
+folosim operatorul ''2>''. Atunci când vrem să ignorăm erorile apărute le putem 
+redirecta în fișierul ''/dev/null''.
+
+<note>
+La o singură rulare a unui program ne putem juca cu redirectările oricum vrem, adică 
+putem redirecta chiar și toate fluxurile deodată. Pentru a produce acest efect doar 
+trebuie să înlănțuim redirectările.
+</note>
+
+==== Înlănțuirea comenzilor ====
+În Linux avem posibilitatea de a executa mai multe comenezi, una după cealaltă, 
+indiferent de rezultatul obținut de la fiecare folosind ''înlănțuirea comenzilor''.
+Pentru a înlănțui cel puțin două comenzi, folosim operatorul '';''.
+
+==== Procese ====
+În termeni largi, un ''proces'' este o instanță a execuției unui program. Este important 
+să înțelegem care este legătura dintre shell, rularea unui program și procesul din spatele 
+acestuia. La rularea oricărui binar (să zicem ''ls''), shell-ul execută ''fork()'' care 
+crează o clonă a procesului curent (adică cel al shell-ului), după care execută ''exec()'' 
+care încarcă binarul cerut în memoria noului proces creat. Astfel, la rularea comenzii 
+''ls'' vor exista în sistem, pe lângă multe altele, două procese - shell-ul curent și 
+cel aferent comenzii ''ls''. 
+
+Aveți [[https://medium.com/@jhuang1012bn/what-happens-when-you-type-ls-l-in-the-shell-8cf0c182baa8|aici]] 
+o reprezentare vizuală a ceea ce se întâmplă atunci când un shell lansează un proces.
+
+==== Comunicarea între procese ====
+O situație foarte des întâlnită în lumea calulatoarelor este comunicarea dintre două 
+sau mai multe procese. Există situații în care vrem ca outputul unui program (sau a 
+une comezni în cazul terminalului) să fie considerat drept inputul altuia. Pentru a 
+realiza acest lucru în linia de comandă, folosim operatorul ''|'' numit ''pipe''.
+
+==== Variabile ====
+O **variabilă** în shell-ul Linux este asemănătoare cu o variabilă pe care o declarăm 
+într-un limbaj de programare cum ar fi ''C''. Ea are un ''nume'' prin care o identificăm 
+și o ''valoare'' asociată.
+
+Putem folosi utilitarul ''echo <nume variabilă>'' pentru afișarea valorii unei variabile din terminal.
+
+=== Variabile speciale în terminalul Bash ===
+Terminalul Bash dispune de câteva variabile speciale pe care le putem găsi în tabelul de mai jos.
+^ Variabila     ^ Semnificație                                 ^
+| **''$$''**    | PID-ul procesului curent                     |
+| **''$!''**    | PID-ul ultimului proces lansat in background |
+| **''$?''**    | Valoarea de exit a ultimei comenzi           |
+| **''$_''**    | Ultimul argument al ultimei comenzi          |
+
+=== Variabile de mediu ===
+Variabilele de mediu sunt un set de variabile care afectează modul în care un program rulează. 
+În general, un proces moștenește variabilele de mediu ale procesului părinte. 
+Astfel, pentru procesul asociat rulării unei comenzi, sunt moștenite variabilele shell-ului.
+De obicei, variabilele de mediu au nume scris cu majuscule. Cele mai uzuale exemple de varibile 
+de mediu sunt:
+
+  * ''PATH'' - o listă de directoare folosite de shell pentru a găsi executabilul asociat comenzii. Directoarele sunt separate prin '':''.
+  * ''HOME'' - directorul ''home'' al utilizatorului curent.
+  * ''USER'' - utilizatorul curent
+  * ''OLDPWD'' - calea directorului anterior
+  * ''EDITOR'' - editorul implicit.
+
+=== Variabile în shell ===
+Pe lângă variabilele predefinite de care am vorbit până acum, avem posibilitatea să ne declarăm 
+propriile variabile pentru a le folosi în orice scop am avea nevoie. Vom vedea la secțiunea ''Demo'' 
+cum exact putem face acest lucru. 
+
+==== Avantaje și dezavantaje CLI vs. GUI ====
+Fie că vorbim de ''CLI (Command Line Interface)'', fie de ''GUI (Graphic User Interface)'', există 
+o serie de avantaje și dezavantaje pentru fiecare, și, în funcție de ce rezultat vrem să obținem în final, 
+alegem una dintre cele 2 interfețe.
+
+Avantajul principal al liniei de comandă este faptul că putem automatiza task-uri care, dacă ar fi realizate 
+manual din interfață grafică, ar dura foarte mult. Să zicem că vrem să creăm 10 de fișiere cu numele ''my_fileX'', 
+unde ''X'' ia valori între ''1'' și ''10''. Dacă alegem să facem asta din linia de comandă, am face în felul următor:
+
+<code bash>
+student@uso:/uso.git/$ cd labs/
+student@uso:/uso.git/labs/$ touch my_file{1..10}
+student@uso:/uso.git/$ ls
+00-intro    03-user    06-hw-boot  09-vm   my_file1   my_file3  my_file6  my_file9
+01-fs       04-appdev  07-storage  10-sec  my_file10  my_file4  my_file7
+02-process  05-cli     08-net      11-ctf  my_file2   my_file5  my_file8
+</code>
+
+În general, utilizatorii, în special cei nontehnici, preferă GUI în defavoarea CLI deoarece este mai intuitiv și 
+mai ușor de folosit în momentul în care nu se cunosc comenzile specificie interfeței în linia de comandă.
+
+
+==== Și în final.. ce înseamnă automatizare? ====
+Am vorbit mai devreme de automatizare, însă nu am punctat exact ce înseamnă ''a automatiza'' un task. 
+Automatizarea presupune gruparea comenzilor necesare pentru a realiza o anumită acțiune într-un ''script'' 
+care va putea fi rulat de fiecare dată când va fi nevoie. Spre exemplu, putem să avem un script care să 
+scaleze un set de imagini dintr-un director. Dacă știm că e posibil să avem nevoie de mai multe ori să 
+facem asta, atunci cu siguranță merită să investim puțin timp pentru a realiza un script care să facă asta 
+pentru noi. Îl creăm, îl testăm și îl rulăm de fiecare dată când avem nevoie. 
+
+Totodată, shell-ul are propriile scripturi de configurare. Un exemplu ar fi ''~/.bashrc'' care conține o serie 
+de comenzi, ce sunt rulate atunci când deschidem interactiv un nou terminal, și sunt utile la inițializarea 
+shell-ului. Vom vedea mai încolo că și noi ca utilizatori obișnuiți putem modifica acest script pentru a ne 
+personaliza shell-ul.

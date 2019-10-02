@@ -1,0 +1,156 @@
+===== Nice to know =====
+
+==== Aliasuri ====
+
+În shell, un **alias** este un șir de caractere ce poate ține locul oricărei comenzi. Putem vedea ce 
+aliasuri sunt deja create în sistem dacă inspectăm fișierul ''~/.bashrc''. De regulă, ele se află la 
+sfârșitul fișierului sau sunt definite separat în fișierul ''~/.bash_aliases''. Inspectați ambele 
+fișiere.
+
+<code bash>
+student@uso:~$ cat ~/.bashrc
+(...)
+# some more ls aliases
+alias ll='ls -alF'
+alias la='ls -A'
+alias l='ls -CF'
+
+# Add an "alert" alias for long running commands.  Use like so:
+#   sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+</code>
+
+<code bash>
+student@uso:~/uso.git/$ cat ~/.bash_aliases
+alias go='gnome-open'
+alias grep='grep --color=auto'
+alias grpe='grep'
+alias gpre='grep'
+alias gti='git'
+alias gigt='git'
+alias cal='ncal -M'
+alias ncal='ncal -M'
+alias boot-cli='systemctl set-default multi-user.target'
+alias boot-gui='systemctl set-default graphical.target'
+</code>
+
+    - Creați-vă propriul alias și verificați că funcționează așa cum vă așteptați. După ce faceți modificări asupra fișierului, consultați [[https://stackoverflow.com/questions/2518127/how-do-i-reload-bashrc-without-logging-out-and-back-in|această]] pagină.
+
+==== Personalizarea shell-ului ====
+Prin personalizarea shell-ului înțelegem modificarea unor fișiere de configurație, schimbarea culorilor, 
+să modificăm ''username-ul'', ''hostname-ul'', ''home directory'' și/sau ''prompt-ul'', creearea unor 
+aliasuri etc. La această secțiune vrem să modificăm ''prompt-ul''.
+
+  - La acest exercițiu ne propunem să personalizăm culorile pentru ''username'' și ''hostname''. Intrați [[http://ezprompt.net|aici]] pentru a vă selecta culorile, după care faceți modificările în fișierul ''~/.bashrc''. După ce salvați fișierul rulați comanda ''. ~/.bashrc''.
+
+==== Editarea comenzilor ====
+
+De foarte multe ori ni se poate întâmpla să scriem o comandă și să ne dăm seama că e 
+parțial incorectă sau că am scris un cuvânt greșit. Tendința este să abuzăm de tasele
+săgeată-stânga și săgeată-dreapta pentru a corecta. Urmăriți tutorialul de mai jos pentru 
+a vedea cum putem opera cu terminalul mai rapid și eficient folosind câteva combinații de 
+taste.
+
+Mutați-vă la calea ''~/uso.git/labs/05-cli/support/nice-to-know/editare-comenzi'' înainte de a începe acest 
+tutorial. Încercați să scrieți voi comenzile fără a copia din laborator fiecare comandă.
+
+<code bash>
+student@uso:~/.../support/nice-to-know/editare-comenzi$  ls
+main.c  sum.c  sum.h
+student@uso:~/.../support/nice-to-know/editare-comenzi$  gcv -g main.c summ.c -o main 
+
+Command 'gcv' not found, but can be installed with:
+
+sudo apt install scotch
+
+student@uso:~/.../support/nice-to-know/editare-comenzi$  # săgeată sus pentru a avea ultima comandă dată
+</code>
+
+Cursorul se află în acest moment după ultimul caracter din comanda dată. Observăm că am scris greșit 
+''gcc''. Pentru a ne muta la începutul comenzii folosim combinația de taste ''CTRL + A''. Faceți această 
+modificare a comenzii. Pentru a muta cursorul din nou la sfârșitul liniei, folosim combinația de taste 
+''CTRL + E''.
+
+<code>
+student@uso:~/.../support/nice-to-know/editare-comenzi$  gcc -g main.c summ.c -o main
+gcc: error: summ.c: No such file or directory
+</code>
+
+Observăm faptul că tot avem o problemă cu această comandă. De data asta am scris greșit numele 
+fișierului ''sum.c'' pe care vrem să-l compilăm. Mutați-vă cu cursorul deasupra literei greșite și folosiți 
+combinația ''CTRL + D'' pentru a o șterge. Dacă vrem să stergem tot la dreapta (până ajungem la primul spațiu) 
+folosim combinația ''Alt + D''. 
+
+Modificați comanda fără a o scrie din nou până când nu vor mai apărea erori și fișierele vor fi compilate cu succes.
+
+<note>
+În tutorialul de mai sus au fost prezentate doar o parte din prescurtările pe care le putem folosi în terminal.
+Pentru mai multe exemple de acest gen puteți consula website-ul de 
+[[https://www.howtogeek.com/howto/ubuntu/keyboard-shortcuts-for-bash-command-shell-for-ubuntu-debian-suse-redhat-linux-etc/|aici]].
+</note>
+
+==== Variabile de mediu ====
+Pentru a afișa variabilele de mediu din sistem, folosiți comanda ''env''.
+
+<code>
+student@uso:~/uso.git/$ env
+(...)
+LESSOPEN=| /usr/bin/lesspipe %s
+LC_TIME=ro_RO.UTF-8
+_=/usr/bin/env
+OLDPWD=/home/student/uso/labs/05-cli/support/nice-to-know/editare-comenzi
+</code>
+
+Ultima variabilă de mediu afișată mai sus este variabila ''OLDPWD'' care este, de fapt, directorul în 
+care ne-am aflat înainte să ne mutăm în cel care suntem în acest moment. Un exemplu de comandă care 
+folosește această variabilă este ''cd -'' care ne mută chiar în directorul anterior.
+
+<code bash>
+student@uso:~/uso.git/$ pwd 
+/home/student/uso.git
+student@uso:~/uso.git/$ cd labs/
+student@uso:~/uso.git/labs/$ pwd 
+/home/student/uso.git/labs
+student@uso:~/uso.git/labs/$ echo $OLDPWD
+/home/student/uso.git
+</code>
+
+    - Completați fișierul ''~/uso.git/labs/05-cli/support/nice-to-know/env/print_env.c'' pentru a afișa variabilele de mediu. Folosiți al treilea argument al funcției ''main''. (Hint: urmăriți explicațiile de [[https://www.sanfoundry.com/c-program-environment-variable/|aici]])
+
+==== Variabila de mediu PATH ====
+
+Variabila de mediu ''PATH'' conține diverse căi din sistem în care se caută binarele rulate de noi în terminal.
+Folosim comanda ''echo $PATH'' pentru a afișa ce conține ea.
+
+<code bash>
+student@uso:~/.../support/nice-to-know/env$ cd ~
+student@uso:~$ echo $PATH
+/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+</code>
+
+Concret, se pune problema: de unde știe sistemul să ruleze binarul ''/usr/bin/ls'' atunci când dăm comanda 
+''ls'' dacă nu avem un **alias** pentru el? El va căuta în căile reținute de variabila ''PATH'' executabilul  
+numit ''ls''.
+
+    - Creați un program C numit ''sum.c'' care să calculeze suma a două numere citite de la tastatură. Compilați-l și obțineți executabilul ''mysum''. Rulați programul pentru a vă asigura că totul este în regulă.
+    - Modificați variabila ''PATH'' astfel încât programul vostru să poată fi rulat de oriunde din sistem prin comanda ''mysum''. (Atenție! Vrem ca atât executabilele vechi cât și binarul ''mysum'' să poată fi rulate de oriunde.)

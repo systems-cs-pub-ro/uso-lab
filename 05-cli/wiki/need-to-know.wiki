@@ -1,0 +1,332 @@
+===== Need to know =====
+
+Pentru a afișa toate partițiile unui sistem folosim comanda ''fdisk -l''. La rularea acestei comenzi 
+observăm că nu avem dreptul să vedem aceste informații dacă nu suntem logați ca un utilizator privilegiat 
+sau dacă nu folosim construcția ''sudo''.
+
+<code bash>
+student@uso:~/uso.git/$ fdisk -l
+fdisk: cannot open /dev/loop0: Permission denied
+fdisk: cannot open /dev/loop1: Permission denied
+fdisk: cannot open /dev/loop2: Permission denied
+fdisk: cannot open /dev/loop3: Permission denied
+fdisk: cannot open /dev/loop4: Permission denied
+fdisk: cannot open /dev/loop5: Permission denied
+fdisk: cannot open /dev/loop6: Permission denied
+fdisk: cannot open /dev/loop7: Permission denied
+fdisk: cannot open /dev/sda: Permission denied
+fdisk: cannot open /dev/loop8: Permission denied
+fdisk: cannot open /dev/loop9: Permission denied
+fdisk: cannot open /dev/loop10: Permission denied
+fdisk: cannot open /dev/loop11: Permission denied
+</code>
+
+<note>
+Fără a mai tasta din nou comanda de mai sus, putem folosi ''!!'' care ține locul ultimei comenzi pe care 
+am dat-o, în cazul nostru ''sudo !!'' expandat înseamnă ''sudo fdisk -l''.
+</note>
+
+<code bash>
+student@uso:~/uso.git/$ sudo !!
+sudo fdisk -l
+[sudo] password for student:
+Disk /dev/loop0: 2.3 MiB, 2433024 bytes, 4752 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+Disk /dev/loop1: 13 MiB, 13619200 bytes, 26600 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+
+Disk /dev/loop2: 13 MiB, 13619200 bytes, 26600 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+(...)
+</code>
+
+Shell-ul operează cu diferite variabile (pentru detalii, reveniți la secțiunea [[https://ocw.cs.pub.ro/courses/uso/laboratoare/new/05-cli/concepts|Concepte]]). Avem 
+posibilitatea să ne definim propriile variabile în shell. Pentru a defini o nouă variabilă procedăm în felul 
+următor:
+
+<code bash>
+student@uso:~/uso.git/$ x=4
+student@uso:~/uso.git/$ echo $x
+4
+</code>
+
+Pentru a inspecta valoarea variabilei ''x'' folosim comanda ''echo''. Deschideți un nou terminal 
+și rulați comanda ''echo $x''.
+
+<code bash>
+student@uso:~/uso.git/$ echo $x
+
+student@uso:~/uso.git/$
+</code>
+
+<note>
+Observați că variabila ''x'' este vizibilă acum doar în cadrul terminalul în care a fost definită.
+</note>
+
+Vom crea acum un scipt care să folosească variabila ''x''. Urmăriți pașii de mai jos pentru a realiza acest 
+lucru. Creați un script cu numele ''script.sh'' care să conțină următoarele linii:
+
+<code bash>
+#!/bin/bash
+
+echo $x
+</code>
+
+Acest script afișează valoarea variabilei ''x'' definită mai devreme. Dați drept de execuție pentru 
+acest script folosind comanda ''chmod'' și asigurați-vă că aveți drept să îl rulați. Pentru a rula 
+script folosim comanda ''./script.sh''.
+
+<code bash>
+student@uso:~/uso.git/$ ./script.sh
+
+student@uso:~/uso.git/$
+</code>
+
+Observăm că deși variabila ''x'' este definită din acest terminal, la rulare nu obținem nicio valoare. Acest 
+lucru nu se întâmplă deoarece variabila ''x'', așa cum a fost deinită, nu este vizibilă subproceselor pornite 
+din cadrul acestui terminal. Pentru a face acest lucru posibil, trebuie să o exportăm.
+
+<code bash>
+student@uso:~/uso.git/$ export x=4
+</code>
+
+Rulați din nou scriptul și observați diferențele.
+
+<code bash>
+student@uso:~/uso.git/$ ./script.sh
+4
+</code>
+
+==== Redirectarea datelor de intrare, ieșire și erorile ====
+
+Pentru a urmări acest tutorial, mutați-vă în directorul ''~/uso.git/labs/05-cli/support/need-to-know''. 
+Listăm conținutul directorul și observăm că avem un program C și un Makefile. Compilăm programul 
+folosind comanda ''make''. Folosiți comanda ''make run'' pentru a rula program și introduceți inputul 
+care vi se cere.
+
+<code bash>
+student@uso:~/.../05-cli/support/need-to-know$ ls 
+dummy_check.c   Makefile
+student@uso:~/.../05-cli/support/need-to-know$ make
+gcc dummy_check.c -o out
+student@uso:~/.../05-cli/support/need-to-know$ make run
+./out
+(...)
+</code>
+
+Încercați să introduceți și date care nu se potrivesc cerințelor. Programul va produce erori care ne deranjează 
+pe care vrem să le separăm de datele de ieșire standard. Pentru a face acest lucru putem redirecta erorile 
+într-un fișier. Rulați comanda ''make run_redirect_err'' care va redirecta eventualele erori apărute în 
+fișierul ''err.txt''.
+
+<code bash>
+student@uso:~/.../05-cli/support/need-to-know$ make run_redirect_err
+./out 2> err.txt
+(...)
+</code>
+
+<note>
+Uzual, erorile sunt redirectare erorile către fișierul special ''/dev/null''.
+</note>
+
+    - Adăugați o regulă în fișierul ''Makefile'' care să ruleze același program și să redirecteze atât intrările, cât și erorile, într-o singură comandă. Pentru intrări, creați un fișier numit ''input.txt'' care să conțină informațiile pe care le cere programul. Folosiți operatorul ''<''. Pentru erori, redirectați în fișierul ''errors.txt''. Observați că pentru a redirecta ieșirile sau erorile, fișierul va fi creat automat.
+
+==== Comunicare interprocese ====
+
+Mai devreme am văzut cum putem redirecta intrarea standard astfel încât programul să preia dintr-un 
+fișier datele de care are nevoie. Putem obține același efect folosind operatorul ''|'' (pipe).
+
+<code bash>
+student@uso:~/.../05-cli/support/need-to-know$ cat input.txt | ./out
+Enter your name. Make sure it only contains letters: Now enter your surname. Make sure it only 
+contains letters: Can I have your email? And last, give me your age: [log] Thanks! You're good 
+to go..
+</code>
+
+Diferența dintre cele 2 exemple de mai sus o face numărul de procese create. În cazul redirectării, 
+este creat un singur proces, pe când în cel de-al doilea sunt create procese, primul pornit de comanda 
+''cat input.txt'' și ''./out'' care se ocupă de rularea binarului. Este de reținut faptul că **ieșirea** 
+primului proces este servită drept **intrare** pentru ce de-al doilea.
+
+==== Filtre de procesare ====
+
+Să ne amintim de fișierul ''/etc/passwd'' conține informații despre toți utilizatorii din sistem. 
+
+<code bash>
+student@uso:~/.../05-cli/support/need-to-know$ cd ~/uso.git/
+student@uso:~/uso.git/$ cat /etc/passwd
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
+gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
+systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
+syslog:x:102:106::/home/syslog:/usr/sbin/nologin
+messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
+_apt:x:104:65534::/nonexistent:/usr/sbin/nologin
+uuidd:x:105:111::/run/uuidd:/usr/sbin/nologin
+avahi-autoipd:x:106:112:Avahi autoip daemon,,,:/var/lib/avahi-autoipd:/usr/sbin/nologin
+usbmux:x:107:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+dnsmasq:x:108:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
+rtkit:x:109:114:RealtimeKit,,,:/proc:/usr/sbin/nologin
+cups-pk-helper:x:110:116:user for cups-pk-helper service,,,:/home/cups-pk-helper:/usr/sbin/nologin
+speech-dispatcher:x:111:29:Speech Dispatcher,,,:/var/run/speech-dispatcher:/bin/false
+whoopsie:x:112:117::/nonexistent:/bin/false
+kernoops:x:113:65534:Kernel Oops Tracking Daemon,,,:/:/usr/sbin/nologin
+saned:x:114:119::/var/lib/saned:/usr/sbin/nologin
+pulse:x:115:120:PulseAudio daemon,,,:/var/run/pulse:/usr/sbin/nologin
+avahi:x:116:122:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/usr/sbin/nologin
+colord:x:117:123:colord colour management daemon,,,:/var/lib/colord:/usr/sbin/nologin
+hplip:x:118:7:HPLIP system user,,,:/var/run/hplip:/bin/false
+geoclue:x:119:124::/var/lib/geoclue:/usr/sbin/nologin
+gnome-initial-setup:x:120:65534::/run/gnome-initial-setup/:/bin/false
+gdm:x:121:125:Gnome Display Manager:/var/lib/gdm3:/bin/false
+student:x:1000:1000:Student User,,,:/home/student:/bin/bash
+vboxadd:x:999:1::/var/run/vboxadd:/bin/false
+sshd:x:122:65534::/run/sshd:/usr/sbin/nologin
+festival:x:123:29::/nonexistent:/usr/sbin/nologin
+test:x:1001:1001::/home/test:/bin/sh
+test2:x:1002:1002:,,,:/home/test2:/bin/bash
+</code>
+
+În Linux există filtrul de text ''cut'' prin care putem extrage doar anumite informații dintr-un output. 
+Să zicem că vrem să extragem doar numele utilizatorilor, fără informațiile legate de grupuri sau home directory.
+
+
+<code bash>
+student@uso:~/uso.git/$ cat /etc/passwd | cut -f1 -d:
+root
+daemon
+bin
+sys
+sync
+games
+man
+lp
+mail
+news
+uucp
+proxy
+www-data
+backup
+list
+irc
+gnats
+nobody
+systemd-network
+systemd-resolve
+syslog
+messagebus
+_apt
+uuidd
+avahi-autoipd
+usbmux
+dnsmasq
+rtkit
+cups-pk-helper
+speech-dispatcher
+whoopsie
+kernoops
+saned
+pulse
+avahi
+colord
+hplip
+geoclue
+gnome-initial-setup
+gdm
+student
+vboxadd
+sshd
+festival
+test
+test2
+</code>
+
+<note>
+Argumentul ''-f1'' specifică faptul că vrem prima coloană, iar argumentul ''-d:'' specifică delimitatorul 
+de coloane, în cazul nostru '':''.
+</note>
+
+    - Pornind de la comanda de mai sus, afișați numele utilizatorilor sortați alfabetic. (Hint: ''man sort'')
+    - Folosind utilitarul ''wc'', obțineți numărul de utilizatori din sistem.
+    - Să afișeze cele mai consumatoare de memorie 10 procese din sistem. (Hint: folosiți ''|'' și ''tail'').
+
+Comanda ''stat'' ne afișează mai multe informații despre un fișier din sistem. Vrem să extragem din outputul 
+acestei comenzi doar data ultimei modificări. Vom folosi utilitaturl grep pentru a extrage linia pe care se 
+află informațiile despre data ultimei modificări.
+
+<code bash>
+student@uso:~/uso.git/$ cd ~/uso.git/labs/05-cli/support/need-to-know
+student@uso:~/.../05-cli/support/need-to-know$ stat Makefile | grep "Modify"
+Modify: 2018-10-29 23:40:49.942659138 +0200
+</code>
+
+    - Folosind filtrul ''cut'' extrageți din ieșirea comenzii anterioare doar data modificării.
+
+Fișierul special ''/dev/urandom'' conține bytes aleatori. Listați conținutul acestui fișier. Folosiți 
+combinația de taste ''CTRL + C'' pentru a opri acest proces.
+
+<code bash>
+student@uso:~/uso.git/$ cat /dev/urandom
+(...)
+
+^C
+student@uso:~/uso.git/$
+</code>
+
+    - Folosindu-vă de fișierul ''/dev/random'', generați o parolă aleatoare de 32 de caractere. Vă 
+puteți inspira de 
+[[https://www.howtogeek.com/howto/30184/10-ways-to-generate-a-random-password-from-the-command-line/|aici]].
+
+==== Înlănțuirea comenzilor ====
+
+Pentru a înlănțui 2 sau mai multe comenzi folosim operatorul '';''. Cele de procese pornite sunt 
+independente și se vor executa indiferent de finalitatea celei care se execută prima.
+
+<code bash>
+student@uso:~/uso.git/$ cd ~/uso/labs/05-cli/support/need-to-know; ls -l
+total 8
+-rw-rw-r-- 1 student student  122 Oct 29 23:40 Makefile
+-rw-rw-r-- 1 student student 1463 Oct 29 23:39 dummy_check.c
+student@uso:~/.../05-cli/support/need-to-know$
+</code>
+
+    - Alegeți 2 aplicații de [[https://www.binarytides.com/linux-fun-commands/|aici]] și instalați-le 
+folosind o singură comandă.
+
+În continuare, vom folosi comanda ''ping www.google.com'' pentru a testa dacă avem conectivitate la 
+Internet. În cazul în care avem, vrem să deschidem un browser pe pagina ''www.google.com''. Vom folosi 
+operatorul ''&&''.
+
+<code bash>
+student@uso:~/uso.git/$ ping -c 1 www.google.com && firefox www.google.com
+</code>
+
+Acum încercați să înlocuiți ''www.google.com'' cu ''www.random-webiste.xyz'' și ''&&'' cu ''||''. 
+Observați ce se întâmplă.
+
+    - Mutați-vă la calea ''~/uso.git/labs/05-cli/support/need-to-know/err-file'' și, folosind o singură comandă, compilați și rulați programul ''simple_pow.c''. În cazul în care apar erori de compilare, vrem să nu rulăm executabilul. Rezolvați eroarea astfel încât programul să compileze cu succes și rulați-l. (Hint: ce bibliotecă folosește programul ''simple_pow.c''?)
