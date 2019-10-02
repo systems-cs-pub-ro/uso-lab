@@ -2,7 +2,7 @@
 
 ==== 1. Lucrul cu fișiere speciale (X Karma points) ====
 
-**[1a]** Intrați în directorul ''~/uso.git/labs/01-fs/support/get-a-life/1-to_delete''. Folosind linia de comandă, ștergeți fișierul ''-to_delete''.
+**[1a]** Intrați în directorul ''~/uso-lab/01-fs/support/get-a-life/1-to_delete''. Folosind linia de comandă, ștergeți fișierul ''-to_delete''.
 
 **[1b]** Creați și ștergeți un fișier cu **Enter** în nume, folosind linia de comandă.
 

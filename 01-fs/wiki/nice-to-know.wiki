@@ -3,9 +3,9 @@
 ==== 1. Redirectări ====
 
 <note important>
-Pentru acest set de exerciții trebuie să vă aflați în directorul ''~/uso.git/labs/''. Folosiți comanda:
+Pentru acest set de exerciții trebuie să vă aflați în directorul ''~/uso-lab/''. Folosiți comanda:
 <code>
-cd ~/uso.git/labs
+cd ~/uso-lab
 </code>
 </note>
 
@@ -24,7 +24,7 @@ Un caz de utilizare este atunci când dorim să rulăm o comandă fără a ne pr
 
 Pentru a exemplifica redirectarea în fișierul special ''/dev/null'' vom folosi utilitarul/comanda ''strace''. Comanda ''strace'' monitorizează apelurile pe care le face o altă comandă către sistemul de operare (''strace'' -- //system call tracing//). Pentru început rulăm comanda de mai jos și obținem rezultatul indicat:
 <code>
-student@uso:~/uso.git/labs$ strace ls
+student@uso:~/uso-lab$ strace ls
 execve("/bin/ls", ["ls"], 0x7ffdde615410 /* 35 vars */) = 0
 brk(NULL)                               = 0x5651b5da3000
 access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
@@ -47,7 +47,7 @@ O comandă poate afișa informații la ieșirea standard (//standard output//) �
 
 **[1a]** Ne dorim să afișăm la terminal doar rezultatul comenzii ''strace'', adică apelurile realizate de comanda primită ca argument, fără să ne preocupe rezultatul comenzii. Pentru aceasta redirectăm ieșirea standard la ''/dev/null'', adică în acel fișier special **gaură neagră**. Rulăm acum fără redirectare și cu redirectare comenzile de mai jos pentru a investiga fișierele deschise de comanda ''ls'':
 <code>
-student@uso:~/uso.git/labs$ strace -e openat ls
+student@uso:~/uso-lab$ strace -e openat ls
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
@@ -61,7 +61,7 @@ openat(AT_FDCWD, "/usr/lib/locale/UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOE
 openat(AT_FDCWD, ".", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3
 00-intro  01-fs  02-process  03-user  04-appdev  05-cli  06-hw-boot  07-storage  08-net  09-vm	10-sec	11-ctf	strace.out
 +++ exited with 0 +++
-student@uso:~/uso.git/labs$ strace -e openat ls > /dev/null
+student@uso:~/uso-lab$ strace -e openat ls > /dev/null
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
@@ -83,14 +83,14 @@ Argumentul ''-e openat'' al comenzii ''strace'' ne permite să selectăm doar ap
 
 **[1b]** Într-o situație ne interesează să redirectăm rezultatul comenzii ''strace'' într-un fișier; adică acea înlănțuire de apeluri efectuate de comanda primită ca argument către sistemul de operare. Pentru aceasta, folosim operatorul ''2>'' de redirectare a ieșirii de eroare standard (//standard error//) ca mai jos:
 <code>
-student@uso:~/uso.git/labs$ strace -e openat ls 2> strace.out
+student@uso:~/uso-lab$ strace -e openat ls 2> strace.out
 00-intro  01-fs  02-process  03-user  04-appdev  05-cli  06-hw-boot  07-storage  08-net  09-vm	10-sec	11-ctf
 </code>
 În comanda de mai sus ieșirea de eroare standard (//standard error//) a fost redirectată în fișierul ''strace.out''; adică rezultatul comenzii ''strace'', adică șirul de apeluri ale comenzii ''ls'' la sistemul de operare. La terminal a fost afișată ieșirea standard a comenzii, adică rezultatul comenzii ls.
 
 Verificăm faptul că redirectarea a avut loc cu succes afișând conținutul fișierului ''strace.out'' cu ajutorul comenzii
 <code>
-student@uso:~/uso.git/labs$ cat strace.out
+student@uso:~/uso-lab$ cat strace.out
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
@@ -108,11 +108,11 @@ Observăm că, așa cum ne așteptam, rezultatul comenzii strace (lista de apelu
 
 **[1c]** Ne poate interesa să redirectăm și rezultatul comenzii ''strace'' într-un fișier și rezultatul comenzii primite ca argument. În acest caz folosim atât operatorul ''>'' de redirectare a ieșirii standard (//standard output//) cât și operatorul ''2>'' de redirectare a ieșirii de eroare standard (//standard error//). Pentru aceasta folosim comanda:
 <code>
-student@uso:~/uso.git/labs$ strace -e openat ls 2> strace.out > ls.out
+student@uso:~/uso-lab$ strace -e openat ls 2> strace.out > ls.out
 </code>
 În comanda de mai sus am redirectat ieșirea standard (//standard output//), adică rezultatul comenzii ''ls'', în fișierul ''ls.out'' și ieșirea de eroare standard (//standard error//), adică rezultatul comenzii ''strace'', în fișierul ''strace.out''. Putem verifica acest lucru prin afișarea conținutului celor două fișiere:
 <code>
-student@uso:~/uso.git/labs$ cat strace.out
+student@uso:~/uso-lab$ cat strace.out
 openat(AT_FDCWD, "/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libselinux.so.1", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
@@ -125,7 +125,7 @@ openat(AT_FDCWD, "/usr/share/locale/locale.alias", O_RDONLY|O_CLOEXEC) = 3
 openat(AT_FDCWD, "/usr/lib/locale/UTF-8/LC_CTYPE", O_RDONLY|O_CLOEXEC) = -1 ENOENT (No such file or directory)
 openat(AT_FDCWD, ".", O_RDONLY|O_NONBLOCK|O_CLOEXEC|O_DIRECTORY) = 3
 +++ exited with 0 +++
-student@uso:~/uso.git/labs$ cat ls.out
+student@uso:~/uso-lab$ cat ls.out
 00-intro
 01-fs
 02-process
@@ -151,26 +151,26 @@ A nu afișa nimic la terminal înseamnă că trebuie să ignorați rezultatul co
 
 **[1e]** Utilitarul ''grep'' este folosit pentru a căuta un șir de caractere într-un fișier. De exemplu comanda de mai jos caută șirul ''root'' în fișierul ''/etc/passwd'':
 <code>
-student@uso:~/uso.git/labs$ grep root /etc/passwd
+student@uso:~/uso-lab$ grep root /etc/passwd
 root:x:0:0:root:/root:/bin/bash
 </code>
 După rularea unei comenzi putem folosi comanda ''echo $?'' pentru a vedea dacă s-a rulat cu succes. De exemplu, dacă după rularea comenzii ''grep'' de mai sus, rulăm comanda de verificare a unei rulări cu succes, obținem:
 <code>
-student@uso:~/uso.git/labs$ echo $?
+student@uso:~/uso-lab$ echo $?
 0
 </code>
 Rezultatul ''0'' înseamnă o comandă anterioară s-a rulat cu succes.
 
 Construiți o comanda ''grep'' cu redirectare care să nu afișeze **nimic** la terminal (nici //standard output//, nici //standard error//). Iar după rularea acelei comenzi să verificați rularea cu succes. Pentru a verifica faptul că ați construit comanda ''grep'' cum trebuie, folosind secvența de comenzi de mai jos:
 <code>
-student@uso:~/uso.git/labs$ grep 'a' /etc/passwd TODO
-student@uso:~/uso.git/labs$ echo $?
+student@uso:~/uso-lab$ grep 'a' /etc/passwd TODO
+student@uso:~/uso-lab$ echo $?
 0
-student@uso:~/uso.git/labs$ grep 'aaa' /etc/passwd TODO
-student@uso:~/uso.git/labs$ echo $?
+student@uso:~/uso-lab$ grep 'aaa' /etc/passwd TODO
+student@uso:~/uso-lab$ echo $?
 1
-student@uso:~/uso.git/labs$ grep 'aaa' /etc/pass TODO
-student@uso:~/uso.git/labs$ echo $?
+student@uso:~/uso-lab$ grep 'aaa' /etc/pass TODO
+student@uso:~/uso-lab$ echo $?
 2
 </code>
 În loc de ''TODO'' trebuie să completați cu acele părți din construcție care folosesc redirectre pentru a nu afișa **nimic** la terminal.
@@ -178,29 +178,29 @@ student@uso:~/uso.git/labs$ echo $?
 ==== 2. Lucru cu arhive ====
 
 <note important>
-Pentru acest set de exerciții trebuie să vă aflați în directorul ''~/uso.git/labs/01-fs/''. Folosiți comanda:
+Pentru acest set de exerciții trebuie să vă aflați în directorul ''~/uso-lab/01-fs/''. Folosiți comanda:
 <code>
-cd ~/uso.git/labs/01-fs
+cd ~/uso-lab/01-fs
 </code>
 </note>
 
-**[2a]** Aflându-vă în directorul ''~/uso.git/labs/01-fs'', creați o arhivă ''.zip'' cu numele ''support-g.zip'' și o arhivă ''.tar.gz'' cu numele ''support-g.tar.gz'' cu toate intrările (fișiere, directoare etc.) care încep cu litera ''g'' din directorul ''support/''.
+**[2a]** Aflându-vă în directorul ''~/uso-lab/01-fs'', creați o arhivă ''.zip'' cu numele ''support-g.zip'' și o arhivă ''.tar.gz'' cu numele ''support-g.tar.gz'' cu toate intrările (fișiere, directoare etc.) care încep cu litera ''g'' din directorul ''support/''.
 
 Verificați-vă folosind comanda de afișare a conținutului unei arhive ''.zip'', respectiv comanda de afișare a conținutului unei arhive ''.tar.gz''.
 
-**[2b]** Aflându-vă în directorul ''~/uso.git/labs/01-fs'', creați o arhivă ''.zip'' cu numele ''01-fs-g.zip'' și o arhivă ''.tar.gz'' cu numele ''01-fs-g.tar.gz'' cu toate intrările (fișiere, directoare etc.) care încep cu litera ''g'' din directorul ''support/'' **și** toate intrările (fișiere, directoare etc.) care încep cu litera ''g'' din directorul ''wiki/''.
+**[2b]** Aflându-vă în directorul ''~/uso-lab/01-fs'', creați o arhivă ''.zip'' cu numele ''01-fs-g.zip'' și o arhivă ''.tar.gz'' cu numele ''01-fs-g.tar.gz'' cu toate intrările (fișiere, directoare etc.) care încep cu litera ''g'' din directorul ''support/'' **și** toate intrările (fișiere, directoare etc.) care încep cu litera ''g'' din directorul ''wiki/''.
 
 Verificați-vă folosind comanda de afișare a conținutului unei arhive ''.zip'', respectiv comanda de afișare a conținutului unei arhive ''.tar.gz''.
 
 **[2c]** Putem actualiza o arhivă adăugând sau ștergând un fișier din cadrul ei. De exemplu în arhiva de ''01-fs-g.zip'' de mai sus putem adăuga fișierul ''wiki/recap.wiki'' folosind comanda
 <code>
-student@uso:~/uso.git/labs/01-fs$ zip 01-fs-g.zip wiki/recap.wiki
+student@uso:~/uso-lab/01-fs$ zip 01-fs-g.zip wiki/recap.wiki
   adding: wiki/recap.wiki (stored 0%)
 </code>
 
 Putem verifica adăugarea cu succes a fișierului ''wiki/recap.wiki'' folosind comanda
 <code>
-student@uso:~/uso.git/labs/01-fs$ unzip -l 01-fs-g.zip
+student@uso:~/uso-lab/01-fs$ unzip -l 01-fs-g.zip
 Archive:  01-fs-g.zip
   Length      Date    Time    Name
 ---------  ---------- -----   ----
@@ -216,7 +216,7 @@ Observăm în rezultatul comenzii existența fișierului ''wiki/recap.wiki'', de
 
 Putem șterge fișiere dintr-o arhivă ''.zip''. De exemplu, pentru a șterge fișierul ''wiki/get-a-life.wiki'' din arhiva ''01-fs-g.zip'' folosim opțiunea ''-d'' a comenzii ''zip'':
 <code>
-student@uso:~/uso.git/labs/01-fs$ zip -d 01-fs-g.zip wiki/get-a-life.wiki
+student@uso:~/uso-lab/01-fs$ zip -d 01-fs-g.zip wiki/get-a-life.wiki
 updating: wiki/get-a-life.wiki (stored 0%)
 </code>
 
@@ -245,7 +245,7 @@ O situație frecventă în lucrul cu fișiere este să parcurgem toate fișierel
 
 În mod implicit ''find'' afișează recursiv toate intrările din directorul curent, așa cum se vede când rulăm comanda
 <code>
-student@uso:~/uso.git/labs/01-fs$ find
+student@uso:~/uso-lab/01-fs$ find
 .
 ./wiki
 ./wiki/basics.wiki
@@ -264,7 +264,7 @@ student@uso:~/uso.git/labs/01-fs$ find
 
 Dacă-i dăm un argument un director, va afișa **recursiv** toate intrările din acel director. De exemplu, comanda de mai jos afișează toate intrările din ierarhia ''/var/lib/apt/'':
 <code>
-student@uso:~/uso.git/labs/01-fs$ find /var/lib/apt
+student@uso:~/uso-lab/01-fs$ find /var/lib/apt
 /var/lib/apt
 /var/lib/apt/mirrors
 /var/lib/apt/mirrors/partial
@@ -275,7 +275,7 @@ student@uso:~/uso.git/labs/01-fs$ find /var/lib/apt
 
 **[3a]** Putem afișa folosind ''find'' doar anumite tipuri de intrări, de exemplu doar fișiere. Pentru a afișa doar fișierele din directorul curent folosim opțiunea ''-type f'', la fel ca în comanda de mai jos:
 <code>
-student@uso:~/uso.git/labs/01-fs$ find -type f
+student@uso:~/uso-lab/01-fs$ find -type f
 ./wiki/basics.wiki
 ./wiki/concepts.wiki
 ./wiki/demo.wiki
@@ -288,7 +288,7 @@ Observăm în output că sunt afișate numai fișiere, folosind opțiunea ''-typ
 
 **[3b]** Putem afișa fișierele care corespund unui anumit pattern. De exemplu pentru a afișa toate fișierele cu extensia ''.tex'' vom folosi opțiunea ''-name'', la fel în comanda de mai jos:
 <code>
-student@uso:~/uso.git/labs/01-fs$ find -type f -name '*.tex'
+student@uso:~/uso-lab/01-fs$ find -type f -name '*.tex'
 ./support/nice-to-know/fruits/pear.tex
 ./support/get-a-life/4-rename/5.tex
 ./support/get-a-life/4-rename/3.tex
@@ -298,12 +298,12 @@ Observăm că sunt afișate numai fișierele cu extensia ''.tex''.
 
 **[3c]** Putem folosi comanda ''find'' pentru a aplica o altă comandă pe intrările găsite. De exemplu dacă dorim să ștergem toate fișierele cu extensia ''.c'' vom folosi opțiunea ''-exec'', la fel ca în comanda de mai jos:
 <code>
-student@uso:~/uso.git/labs/01-fs$ find -type f -name '*.c'
+student@uso:~/uso-lab/01-fs$ find -type f -name '*.c'
 ./support/nice-to-know/fruits/apple.c
 ./support/get-a-life/2-passwd/reader.c
-student@uso:~/uso.git/labs/01-fs$ find -type f -name '*.c' -exec rm {} \;
-student@uso:~/uso.git/labs/01-fs$ find -type f -name '*.c'
-student@uso:~/uso.git/labs/01-fs$
+student@uso:~/uso-lab/01-fs$ find -type f -name '*.c' -exec rm {} \;
+student@uso:~/uso-lab/01-fs$ find -type f -name '*.c'
+student@uso:~/uso-lab/01-fs$
 </code>
 Dacă la început aveam două fișiere cu extensia ''.c'' (''./support/nice-to-know/fruits/apple.c'' și ''./support/get-a-life/2-passwd/reader.c'') după rularea comenzii find acele fișiere dispar.
 
@@ -324,13 +324,13 @@ Fișierele temporare sunt fișiere care se încheie cu caracterul ''~'' (tildă)
 
 ==== 4. Corectare lucru cu fișier header și Makefile ====
 
-În directorul ''~/uso.git/labs/01-fs/support/04-compile/'' găsiți un set de fișiere și un fișier ''Makefile'' pentru compilarea lor. Există o eroare ce ține de căi în sistemul de fișiere, astfel că nu merge compilarea în momentul rulării comenzii ''make''.
+În directorul ''~/uso-lab/01-fs/support/04-compile/'' găsiți un set de fișiere și un fișier ''Makefile'' pentru compilarea lor. Există o eroare ce ține de căi în sistemul de fișiere, astfel că nu merge compilarea în momentul rulării comenzii ''make''.
 
 Corectați eroarea și obțineți fișierul executabil ''write_hello''.
 
 ==== 5. Copiere ierarhie pe un stick USB ====
 
-Conectați un stick USB pe un port USB al sistemului vostru. Folosiți linia de comandă pentru a copia ierarhia curentă (''~/uso.git/labs/01-fs/support/04-compile/'') pe stick.
+Conectați un stick USB pe un port USB al sistemului vostru. Folosiți linia de comandă pentru a copia ierarhia curentă (''~/uso-lab/01-fs/support/04-compile/'') pe stick.
 
 <note important>
 După ce ați conectat stick-ul, verificați folosind comanda ''mount'' unde este montat, în ce director este accesibil.
@@ -353,29 +353,29 @@ Similar, comanda ''find'' folosește executabilul ''/usr/bin/find'', comanda ''z
 
 Directoarele în care caută shell-ul executabile aferente unei comenzi se găsesc într-o construcție de tip variabilă de mediu numită ''PATH''. Vom vorbi mai multe despre variabile și variabile de mediu la un laborator viitor. Pe moment, este suficient să știm că pentru a afișa valoarea variabilei ''PATH'' folosim comanda
 <code>
-student@uso:~/uso.git/labs/01-fs$ echo $PATH
+student@uso:~/uso-lab/01-fs$ echo $PATH
 /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
 </code>
 Directoarele afișate, conținute de variabila ''PATH'' sunt afișate în rezultatul comenzii, separate prin caracterul '':'' (două puncte, //colon//). Asta înseamnă ca dacă un utilizator tastează comanda ''ls'', shell-ul va căuta, în ordine, existența executabilului ''/usr/local/sbin/ls'', apoi ''/usr/local/bin/ls'', apoi ''/usr/sbin/ls'' și așa mai departe. Când găsește un executabil îl va rula, ducând la afișarea rezultatului comenzii la terminal.
 
 Calea către executabilul aferent unei comenzi poate fi afișată folosind comanda ''which'' urmată de numele comnezii, ca mai jos:
 <code>
-student@uso:~/uso.git/labs/01-fs$ which ls
+student@uso:~/uso-lab/01-fs$ which ls
 /bin/ls
-student@uso:~/uso.git/labs/01-fs$ which find
+student@uso:~/uso-lab/01-fs$ which find
 /usr/bin/find
-student@uso:~/uso.git/labs/01-fs$ which zip
+student@uso:~/uso-lab/01-fs$ which zip
 /usr/bin/zip
 </code>
 În rulările celor trei comenzi ''which'' de mai sus am obținut calea către fișierele executabilele aferente respectiv comenzilor ''ls'', ''find'' și ''zip''.
 
 Putem verifica faptul că acele fișiere sunt executabile prin folosirea comenzii ''file'' urmată de calea către fișierul executabil, ca mai jos:
 <code>
-student@uso:~/uso.git/labs/01-fs$ file /bin/ls
+student@uso:~/uso-lab/01-fs$ file /bin/ls
 /bin/ls: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=9567f9a28e66f4d7ec4baf31cfbf68d0410f0ae6, stripped
-student@uso:~/uso.git/labs/01-fs$ file /usr/bin/find
+student@uso:~/uso-lab/01-fs$ file /usr/bin/find
 /usr/bin/find: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=b920f53e0c67a31d8ef07b84b1344f87a0e82d71, stripped
-student@uso:~/uso.git/labs/01-fs$ file /usr/bin/zip
+student@uso:~/uso-lab/01-fs$ file /usr/bin/zip
 /usr/bin/zip: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=c828586e6e7cf929500a5b9c04faece9eceed5cc, stripped
 </code>
 În rezultatul rulării celor trei comenzi ''file'' de mai sus vedem că apare informația ''ELF'', ''dynamically linked''. Fără a intra în detalii, acest lucru este indiciul că aceste fișiere sunt, într-adevăr, fișiere executabile.

@@ -41,9 +41,9 @@ student@uso:~$ pwd
 /home/student
 student@uso:~$ ls
 Desktop  Documents  Downloads  Music  Pictures  Public  Templates  Videos  examples.desktop  uso.git  vm-actions-log.txt
-student@uso:~$ cd uso.git/labs/01-fs/support/demo/
+student@uso:~$ cd uso-lab/01-fs/support/demo/
 student@uso:~/.../01-fs/support/demo$ pwd
-/home/student/uso.git/labs/01-fs/support/demo
+/home/student/uso-lab/01-fs/support/demo
 student@uso:~/.../01-fs/support/demo$ tree
 .
 ├── empty_directory
@@ -94,7 +94,7 @@ ac_dc  cargo  hammerfall
 student@uso:~/.../support/demo/music$ cd ac_dc   # aici am folosit o cale relativă la directorul curent
 student@uso:~/.../demo/music/ac_dc$ ls
 angus  bon  brian  chris  cliff  dave  george  malcom  mark  phil
-student@uso:~/.../demo/music/ac_dc$ cd .. # Am navigat în directorul părinte directorului ac_dc, care este /home/student/uso.git/labs/01-fs/support/demo/music
+student@uso:~/.../demo/music/ac_dc$ cd .. # Am navigat în directorul părinte directorului ac_dc, care este /home/student/uso-lab/01-fs/support/demo/music
 student@uso:~/.../support/demo/music$ ls -R
 .:
 ac_dc  cargo  hammerfall
@@ -107,7 +107,7 @@ angus  bon  brian  chris  cliff  dave  george  malcom  mark  phil
 ./hammerfall:
 anders  jesper  joacim  magnus  oscar  pontus  stefan
 
-student@uso:~/.../support/demo/music$ cd /home/student/uso.git/labs/01-fs/support/demo/music/hammerfall  # am fi putut folosi și cd hammerfall, dar am folosit cale absolută
+student@uso:~/.../support/demo/music$ cd /home/student/uso-lab/01-fs/support/demo/music/hammerfall  # am fi putut folosi și cd hammerfall, dar am folosit cale absolută
 student@uso:~/.../demo/music/hammerfall$ ls
 anders  jesper  joacim  magnus  oscar  pontus  stefan
 </code>
@@ -124,8 +124,8 @@ student@uso:~/.../demo/music/hammerfall$ ls -l ../ac_dc/brian
 student@uso:~/.../demo/music/hammerfall$ ls -l anders
 -rw-r--r-- 1 student student 0 aug 22 18:43 anders
 
-student@uso:~/.../demo/music/hammerfall$ ls -l /home/student/uso.git/labs/01-fs/support/demo/music/hammerfall/oscar
--rw-r--r-- 1 student student 0 aug 22 18:32 /home/student/uso.git/labs/01-fs/support/demo/music/hammerfall/oscar
+student@uso:~/.../demo/music/hammerfall$ ls -l /home/student/uso-lab/01-fs/support/demo/music/hammerfall/oscar
+-rw-r--r-- 1 student student 0 aug 22 18:32 /home/student/uso-lab/01-fs/support/demo/music/hammerfall/oscar
 </code>
 
 <note important> Mare atenție la căile relative vs. cele absolute. O cale relativă este o cale raportată la directorul curent, în timp ce o cale absolută este raportată la directorul rădăcină (''/''). O cale relativă începe, de obicei, cu un nume, cu ''.'' sau cu ''..'', în timp ce o cale absolută începe întotdeauna cu ''/''. De reținut faptul că și ''~/uso'' este tot o cale absolută, chiar dacă începe cu caracterul ''~'', acest lucru fiind datorat faptului că ''~'' este doar un alias către directorul ''home'' al utilizatorului curent (''/home/student'').</note>
@@ -143,7 +143,7 @@ student@uso:~/.../demo/music/ac_dc$ ls ../hammerfall/       # ls ../h<TAB>
 Câteva exemple de utilizare a căilor absolute:
 <code bash>
 student@uso:~/.../demo$ ls /
-student@uso:~/.../demo$ tree /home/student/uso.git/labs/01-fs/support/demo/music/hammerfall
+student@uso:~/.../demo$ tree /home/student/uso-lab/01-fs/support/demo/music/hammerfall
 student@uso:~/.../demo$ tree -L 1 ~
 </code>
 
@@ -153,8 +153,8 @@ Acum să vedem câteva erori care pot să apară. Ce credeți că se întâmplă
 student@uso:~/.../demo/music/hammerfall$ ls brian
 ls: cannot access 'brian': No such file or directory
 
-student@uso:~/.../demo/music/hammerfall$ cd /home/student/uso.git/labs/01-fs/support/demo/music/scorpions
-bash: cd: /home/student/uso.git/labs/01-fs/support/demo/music/scorpions: No such file or directory
+student@uso:~/.../demo/music/hammerfall$ cd /home/student/uso-lab/01-fs/support/demo/music/scorpions
+bash: cd: /home/student/uso-lab/01-fs/support/demo/music/scorpions: No such file or directory
 </code>
 
 <note important>
@@ -191,9 +191,9 @@ Un alt simbol bine de reținut - este o prescurtare pentru directorul anterior a
 <code bash>
 
 student@uso:~$ cd -
-/home/student/uso.git/labs/01-fs/support/demo/movies
+/home/student/uso-lab/01-fs/support/demo/movies
 student@uso:~/.../support/demo/movies$ pwd
-/home/student/uso.git/labs/01-fs/support/demo/movies
+/home/student/uso-lab/01-fs/support/demo/movies
 
 </code>
 

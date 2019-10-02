@@ -76,22 +76,16 @@ Pentru a obține informații detaliate despre noțiunile și tehnicile din acest
 
 Pe parcursul laboratoarelor, pentru descărcarea fișierelor necesare laboratorului, vom folosi Git. Git este un sistem de controlul versiunii și e folosit pentru versionarea codului în proiectele software mari. Celor interesați să aprofundeze conceptele din spatele comenzii ''git'', precum și utilizări avansate, le recomandăm cursul practic online de pe [[http://gitimmersion.com/|gitimmersion]].
 
-Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso|acest repository Git]].
-
-În laboratorul curent, pe mașina virtuală furnizată, aveți deja clonat repository-ul Git în directorul ''~/uso.git/''. Vom preciza acest lucru pe parcursul laboratorului.
+Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso-lab|acest repository Git]].
 
 <note important>
-Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal deschis în mașina virtuală. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați. Recomandăm să **nu** folosiți //copy-paste// ca să vă acomodați cu linia de comandă:
+Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați.
+
 <code>
-student@uso:~$ cd uso.git/
-student@uso:~/uso.git$ git reset --hard
-student@uso:~/uso.git$ git clean -f -d
-student@uso:~/uso.git$ git fetch origin
-student@uso:~/uso.git$ git checkout -b lab-01-fs
-student@uso:~/uso.git$ git rebase origin/lab-01-fs
+student@uso:~$ cd ~
+student@uso:~$ git clone https://github.com/systems-cs-pub-ro/uso-lab
 </code>
 
-Dacă la a cincea comandă rulată (''git checkout -b lab-01-fs'') primiți o eroare de forma ''fatal: A branch named 'lab-01-fs' already exists.'', nu vă îngrijorați, nu e nici o problemă.
 </note>
 
 Cam atât cu pregătirea laboratorului. Acum haideți să ne apucăm de treabă! :-)

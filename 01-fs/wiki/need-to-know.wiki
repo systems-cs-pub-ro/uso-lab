@@ -211,7 +211,7 @@ Bineînteles, am verificat că redirectarea a avut succes prin afișarea conțin
 
 ==== 3. Compilare automata - Makefile (X puncte) ====  
 
-În directorul ''~/uso.git/labs/01-fs/support/need-to-know/3-compile'' avem 2 fișiere: Makefile si hello_world.c. Rolul fișierului Makefile este de a compila sursa hello_word.c. Putem compila și executa fișierul obținut astfel:
+În directorul ''~/uso-lab/01-fs/support/need-to-know/3-compile'' avem 2 fișiere: Makefile si hello_world.c. Rolul fișierului Makefile este de a compila sursa hello_word.c. Putem compila și executa fișierul obținut astfel:
 
 <code bash>
 student@uso:~/.../support/need-to-know/3-compile$ make

@@ -52,7 +52,7 @@ Pentru schimbarea directorului curent se folosește comanda ''cd'' (change direc
 Să luăm ca exemplu următoarea structură de fișiere și directoare din laboratorul introductiv:
 
 <code bash>
-$ cd ~/uso.git/labs
+$ cd ~/uso-lab
 $ tree
 .
 ├── 00-intro
@@ -72,7 +72,7 @@ $ tree
 
 Dacă dorim să afișăm fișierul ''concepts.wiki'' folosind o cale absolută vom folosi comanda ''ls'', astfel:
 <code bash>
-$ ls /home/student/uso.git/labs/00-intro/wiki/concepts.wiki 
+$ ls /home/student/uso-lab/00-intro/wiki/concepts.wiki 
 </code>
 
 Dacă ne aflăm curent în directorul ''labs'', putem să folosim o cale relativă:
