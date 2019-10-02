@@ -1,0 +1,141 @@
+===== Nice to Know =====
+
+==== 1. WHOIS ====
+
+''whois'' este o comandă de Linux folosită pentru a afla informați despre orice domeniu sau adresă IP din Internet.
+
+De exemplu dacă vrem să aflăm cine deține adresa IP ''141.85.241.51'', folosim comanda ''whois'' urmată de IP:
+
+<code bash>
+student@uso:~$ whois 141.85.241.51
+...
+inetnum:        141.85.0.0 - 141.85.255.255
+netname:        PUB-NET
+org:            ORG-PUB1-RIPE
+country:        RO
+...
+org-name:       Politehnica University of Bucharest
+...
+</code>
+
+Din outputul obținut aflăm că adresa IP aparține Universității Politehnica din București, iar dacă derulați mai jos vedeți și detaliile persoanelor de contact.
+
+Putem să obține informații și despre domenii, cum ar fi: organizația, datele de contact ale administratorilor, domain server, data la care a fost creat, ultima dată când a fost actualizat, etc.:
+
+<code bash>
+student@uso:~$ whois cs.curs.pub.ro
+...
+contact:      administrative
+name:         Ionut Eugen SANDU
+organisation: National Institute for R&D in Informatics
+...
+created:      1993-02-26
+changed:      2018-05-11
+source:       IANA
+...
+</code>
+
+==== 2. Autentificarea fără parolă ====
+
+Până în acest moment ați folosit protocolul ''SSH'' pentru a vă conecta remote de nenumărate ori.
+''SSH'' funcționează în modul ''client-server'', unde mașinile voastre sunt clienții iar pe mașina pe care doriți să vă autentificați există un server SSH (''daemonul sshd'') care acceptă conexiuni pe portul 22.
+Modul implicit de autentificare, pe care l-ați folosit până în acest moment, este cu parola utilizatorului cu care vreți să vă conectați la server.
+
+Dezavantajele acestei metode sunt:
+  * securitatea scazută (parolele trebuie să fie puternice, dar în acest caz sunt greu de reținut)
+  * imposibilitatea automatizării anumitor taskuri (dacă este cazul)
+
+Metoda recomandată pentru autentificarea clientului la serverul SSH este folosirea unei perechi de chei publice și private.
+
+Pentru a realiza o conexiune SSH fără parolă de pe mașina locală pe o mașină remote (în cazul nostru mașina ''tom''), trebuie să:
+
+1. Generați o pereche de chei publice și private pe masina locală:
+
+<code bash>
+student@uso:~$ ssh-keygen -t rsa
+</code>
+
+Apăsați ''enter'' pentru fiecare input cerut.
+Pentru a verifica că cheia SSH a fost creată inspectați conținutul directorului ''~/.ssh/''. Acesta ar trebui să conțină următoarele fișiere:
+  * ''id_rsa'' -- cheia privată
+  * ''id_rsa.pub'' -- cheia publică
+
+<code bash>
+student@uso:~$ ls ~/.ssh/
+id_rsa  id_rsa.pub  known_hosts
+</code>
+
+2. Copiați cheia publică pe server:
+
+<code bash>
+student@uso:~$ ssh-copy-id -i ~/.ssh/id_rsa.pub student@<IP-tom>
+</code>
+
+<note>
+Citiți întotdeauna rezultatul comenzilor pe care le rulați. În acest exemplu ar trebui să vedeți mesajul: ''Number of key(s) added: 1''.
+</note>
+
+3. Vă conectați la mașina remote. Dacă totul a funcționat corect, ar trebui să nu aveți nevoie de parolă:
+
+<code bash>
+student@uso:~$ ssh student@<IP-tom>
+</code>
+
+**[2a]** Acum că ați reușit să vă autentificați fără parolă pe mașina ''tom'', faceți același lucru și pe mașina vituală ''jerry''.
+
+**[2b]** Conectați-vă prin SSH pe mașina ''tom'' de pe mașina ''jerry''. După cum vedeți, se cere parola utilizatorului. Realizați autentificarea fără parolă în ambele direcții pentru cele două mașini virtuale: ''tom'' și ''jerry''.
+
+**[2c]** Conectați-vă fără parolă de pe mașina locală pe ''fep.grid.pub.ro''. Dacă ați generat deja o pereche de chei publică și privată pe mașina locală, este nevoie să generați alta?
+
+==== 3. Hostname ====
+
+După cum știți, hostname-ul unei mașini se poate observa din prompt-ul terminalui. Acesta se mai poate obține folosind comanda ''hostname''.
+Pentru a schimba hostname-ul unei mașini folosiți aceeași comandă, urmată de noul hostname. Pentru a observa modificarea hostname-ului, deschideți alt terminal.
+
+<code bash>
+student@uso:~$ hostname <new_hostame>
+</code>
+
+**[3a]** Schimbați hostname-ul celor două mașini virtuale ''tom'' și ''jerry'' în ''cat'' și ''mouse''.
+
+**[3b]** Realizați modificările necesare a.î. hostname-ul să fie persistent (să nu se piardă după repornirea mașinii).
+
+**[3c]** Dorim să rulăm comanda ''ping'' între mașinile virtuale ''tom'' și ''jerry'' folosind hostname-ul în loc de adresa IP.
+Pentru aceasta trebuie să instalați pachetul ''avahi-daemon''.
+
+<note tip>
+HINT: ping <hostname>.local
+</note>
+
+==== 4. SSH X11 forwarding ====
+
+X11 forwarding este folosit pentru a accesa interfața grafică a unei mașini de la distanță, prin intermediul protocolului SSH.
+Pentru a funcționa, X11 forwarding trebuie să fie activat atât pe client cât și pe server.
+
+Pentru acest exercițiu trebuie să vă grupați în echipe de câte doi. Vă veți conecta la calculatorul colegului și veți rula programe cu interfață grafică (firefox, xeyes, etc.).
+
+<code bash>
+student@uso:~$ ssh -X <user>@<IP>
+</code>
+
+==== 5. Alias pentru conectare la un server SSH ====
+
+Pentru a ușura conectarea prin SSH, se poate defini un alias care să înglobeze username, adresa serverului, port și diverse opțiuni.
+În cadrul aliasului se poate activa și X11 forwarding folosind opțiunea ''ForwardX11 yes''.
+
+<code bash>
+student@uso:~$ cat ~/.ssh/config
+Host coleg
+    HostName <IP-coleg>
+    User student
+    XForward yes
+</code>
+
+Putem folosi alias-ul ''server'' ca în exemplul următor:
+
+<code bash>
+student@uso:~$ ssh coleg
+</code>
+
+**[5a]** Faceți modificările necesare a.î. să vă conectați prin SSH către cele două mașini virtuale folosind aliasuri în loc de numele de domeniu sau adresa IP.
+Pentru verificare testați folosind ''ssh tom'', respecitv ''ssh jerry''.

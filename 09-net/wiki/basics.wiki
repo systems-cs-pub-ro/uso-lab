@@ -1,0 +1,287 @@
+===== Basics =====
+
+==== 1. Interfețe de rețea ====
+
+''ip'' este o comandă de Linux folosită pentru a afișa interfețele de rețea disponibile pe sistemul curent de operare. De aici putem afla informații esențiale legate de conectivitatea la internet.
+
+<code bash>
+student@uso:~$ ip a s
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN group default qlen 1000
+    link/ether 08:00:27:49:1d:cd brd ff:ff:ff:ff:ff:ff
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:b1:36:c8 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.4/24 brd 10.0.2.255 scope global dynamic noprefixroute enp0s8
+       valid_lft 666sec preferred_lft 666sec
+    inet6 fe80::9927:3d0d:77b5:8ca9/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+</code>
+
+Parametrii ''a'' și ''s'' sunt prescurtările de la ''address'' și ''show''. Astfel, semnificația comenzii ''ip a s'' se traduce în ''ip address show''.
+
+
+Interfața **loopback** este o interfață virtuală (**nu** una fizică). Scopul acestei interfețe este de a întoarce pachetele trimise către ea.
+
+<code bash>
+student@uso:~$ ip a s lo
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+</code>
+
+La câmpul inet, putem observa adresa IP ''127.0.0.1''. De obicei, aceasta este adresa interfaței de loopback. (De aici și glumele de pe internet cu ''There's no place like 127.0.0.1''. Pentru că fiecare sistem are propria interfață virtuală loopback, pe care o numim "acasă").
+
+Dacă dorim să afișăm informațiile unei singure interfețe de rețea, adăugăm după utilitarul **ip a s**, numele acesteia. Putem observa mai sus interfața **lo** ce succede **ip a s**.
+
+=== Conectivitatea la internet ===
+
+Putem verifica conectivitatea la internet folosind utilitarul ''ping''. Acesta transmite pachete către o anumită adresa (dată ca parametru). Acest utilitar ne arată dacă pachetele trimise ajung la destinație și în cât timp. O adresă pe care o putem folosi întotdeauna este ''8.8.8.8'' (Google).
+
+<code bash>
+student@uso:~$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+64 bytes from 8.8.8.8: icmp_seq=0 ttl=121 time=17.324 ms
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=121 time=18.513 ms
+^C
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 17.324/17.919/18.513/0.594 ms
+</code>
+
+Putem observa ca pachetele noastre au ajuns la destinație în 17ms. De aici putem trage concluzia că avem o conexiune la internet funcțională.
+
+**[1a]** Aflați adresa IP de pe mașina virtuală și dați un ping in ea. Vă răspunde?
+
+**[1b]** Aflați adresele IP ale colegilor (minim 2) și dați ping in ele. Vă răspund?
+
+==== 2. Urmărirea pachetelor ====
+
+Atunci când apelăm utilitarul ping cu o anumită adresă din internet, se trimit pachete până la aceasta. Dacă acestea nu ajung la destinație, ce concluzie putem trage? Că nu avem interfața configurată corespunzător? Dar dacă providerul de internet (să spunem RDS) are o problemă sau nu ne-am plătit factura la internet? Trebuie să putem afla unde este problema. Care este punctul în care pachetele noastre se pierd. Putem afla această informație folosind utilitarul ''traceroute''
+
+<code bash>
+student@uso:~$ traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 64 hops max, 52 byte packets
+ 1  danubiu12.lan (192.168.255.1)  3.677 ms  0.870 ms  0.808 ms
+ 2  10.0.0.1 (10.0.0.1)  1.991 ms  2.075 ms  1.908 ms
+ 3  10.30.1.209 (10.30.1.209)  3.720 ms  2.215 ms  1.959 ms
+ 4  10.220.137.28 (10.220.137.28)  21.973 ms
+    10.220.137.30 (10.220.137.30)  15.755 ms
+    10.220.128.72 (10.220.128.72)  15.574 ms
+ 5  213-154-130-234.rdsnet.ro (213.154.130.234)  17.572 ms  16.963 ms  18.208 ms
+ 6  74.125.242.241 (74.125.242.241)  17.910 ms  18.196 ms  16.700 ms
+ 7  108.170.238.135 (108.170.238.135)  15.377 ms
+    108.170.225.23 (108.170.225.23)  18.141 ms
+    209.85.142.19 (209.85.142.19)  19.790 ms
+ 8  google-public-dns-a.google.com (8.8.8.8)  16.774 ms  16.613 ms  15.950 ms
+</code>
+
+Putem observa calea pachetelor de la routerul unde suntem conectați până la serverele Google.
+Putem apela același utilitar și cu o adresa http:
+
+<code bash>
+student@uso:~$ traceroute google.com
+traceroute to google.com (216.58.209.174), 64 hops max, 52 byte packets
+ 1  danubiu12.lan (192.168.255.1)  1.115 ms  0.817 ms  0.835 ms
+ 2  10.0.0.1 (10.0.0.1)  2.068 ms  2.027 ms  1.991 ms
+ 3  10.30.1.209 (10.30.1.209)  2.134 ms  3.027 ms  2.515 ms
+ 4  10.220.132.8 (10.220.132.8)  16.611 ms
+    10.220.128.66 (10.220.128.66)  14.901 ms
+    10.220.128.62 (10.220.128.62)  16.787 ms
+ 5  213-154-130-234.rdsnet.ro (213.154.130.234)  17.705 ms  16.165 ms  17.994 ms
+ 6  74.125.242.241 (74.125.242.241)  16.531 ms  18.200 ms  17.689 ms
+ 7  66.249.94.123 (66.249.94.123)  18.622 ms
+    66.249.94.163 (66.249.94.163)  17.212 ms  16.840 ms
+ 8  bud02s21-in-f14.1e100.net (216.58.209.174)  15.921 ms  16.906 ms  16.412 ms
+</code>
+
+Ieșirea comenzii afișează și adresa publică a site-ului google.com.  
+
+
+**[2a]** Afișați calea urmată de mașina virtuală către un site ales de voi. Prin care interfață ies pachetele?
+
+==== 3. Default gateway ====
+
+Atunci când pachetele pleacă către Internet, sistemul trebuie să știe cui ii va trimite pachetele în mod implicit. Această configurare se poate vedea folosind utilitarul ''ip'' cu opțiunea ''route''.
+
+<code bash>
+student@uso:~$ ip route
+default via 10.0.2.1 dev enp0s8 proto dhcp metric 100 
+10.0.2.0/24 dev enp0s8 proto kernel scope link src 10.0.2.4 metric 100 
+169.254.0.0/16 dev enp0s8 scope link metric 1000 
+</code>
+
+Putem observa că implicit pachetele se duc către adresa IP ''10.0.2.1''.
+
+**[3a]** Afișați ruta implicită de pe mașina virtuală.
+
+==== 4. DNS ====
+
+Destinațiile din internet sunt întotdeauna IP-uri. Pentru ca ne este greu sa reținem aceste adrese, se face o mapare între un nume și o adresă IP. Putem apela utilitarul ''traceroute'' cu adresa IP afișată mai sus (google.com). 
+
+<code bash>
+student@uso:~$ traceroute 216.58.209.174
+traceroute to 216.58.209.174 (216.58.209.174), 64 hops max, 52 byte packets
+ 1  danubiu12.lan (192.168.255.1)  1.147 ms  4.124 ms  0.814 ms
+ 2  10.0.0.1 (10.0.0.1)  2.040 ms  2.579 ms  2.006 ms
+ 3  10.30.1.209 (10.30.1.209)  2.768 ms  2.651 ms  2.097 ms
+ 4  10.220.137.34 (10.220.137.34)  15.924 ms
+    10.220.128.56 (10.220.128.56)  17.283 ms
+    10.220.132.14 (10.220.132.14)  19.323 ms
+ 5  213-154-130-234.rdsnet.ro (213.154.130.234)  23.228 ms  15.458 ms  17.341 ms
+ 6  74.125.242.225 (74.125.242.225)  16.377 ms  16.215 ms  40.340 ms
+ 7  66.249.94.163 (66.249.94.163)  15.995 ms  16.073 ms
+    66.249.94.123 (66.249.94.123)  16.880 ms
+ 8  bud02s21-in-f174.1e100.net (216.58.209.174)  16.500 ms  16.222 ms  17.468 ms
+</code>
+
+Această translatare se face cu ajutorul DNS (Domain Name Service). Dacă destinația este un nume, se face o cerere DNS pentru a afla adresa IP. La fel pentru fiecare hop din traceroute. Dacă folosim parametrul ''-n'', această translatare nu se mai face, deci comanda se va executa mai repede.
+
+<code bash>
+student@uso:~$ traceroute -n google.com
+traceroute to google.com (172.217.20.14), 64 hops max, 52 byte packets
+ 1  192.168.255.1  1.192 ms  0.790 ms  0.758 ms
+ 2  10.0.0.1  1.951 ms  1.943 ms  1.951 ms
+ 3  10.30.1.209  2.159 ms  2.082 ms  2.094 ms
+ 4  10.220.128.68  31.860 ms
+    10.220.128.48  40.103 ms
+    10.220.128.62  15.942 ms
+ 5  213.154.130.234  17.344 ms  16.432 ms  24.014 ms
+ 6  74.125.242.241  18.140 ms
+    74.125.242.225  17.783 ms  18.995 ms
+ 7  216.239.35.251  16.408 ms
+    216.239.35.185  14.143 ms  16.104 ms
+ 8  172.217.20.14  16.355 ms  15.526 ms  14.035 ms
+</code>
+
+Putem vedea adresa serverului DNS in ''/etc/resolv.conf'':
+
+<code bash>
+student@uso:~$ cat /etc/resolv.conf | tail -n 3
+#
+domain lan
+nameserver 192.168.255.1
+</code>
+
+Putem face interogări la serverul DNS folosind utilitarul ''nslookup''. Interogare directă este atunci când folosind numele, obținem IP-ul, iar interogare inversă este atunci când folosind IP-ul, aflăm numele.
+
+Direct:
+<code bash>
+student@uso:~$ nslookup www.google.com
+Server:		192.168.255.1
+Address:	192.168.255.1#53
+
+Non-authoritative answer:
+Name:	www.google.com
+Address: 172.217.19.68
+</code>
+
+Invers:
+<code bash>
+student@uso:~$ nslookup 172.217.19.68
+Server:		192.168.255.1
+Address:	192.168.255.1#53
+
+Non-authoritative answer:
+68.19.217.172.in-addr.arpa	name = mil02s05-in-f68.1e100.net.
+68.19.217.172.in-addr.arpa	name = ham02s17-in-f4.1e100.net.
+</code>
+
+
+**[4a]** Afișați serverul DNS de pe mașina virtuală.
+
+**[4b]** Dați ping în google.com folosind numele și adresa IP.
+
+**[4c]** Faceți 3 interogări DNS ale unor site-uri(ex: facebook.com, ocw.cs.pub.ro, studenti.pub.ro).
+
+
+==== 5. Conexiune SSH ====
+
+Un mod semnificativ mai ușor de a folosi o mașina virtuală este următorul: având un terminal pe mașina fizică ne conectăm prin SSH la mașina virtuală. Astfel, trecerea de la mașina fizică la cea virtuală se reduce la schimbarea de tab-uri in terminal. Un alt avantaj este că putem folosi copy-paste fără probleme din terminal.
+Pentru a ne conecta la mașina virtuală ne trebuiesc 2 informații: user-ul cu care vrem să fim autentificați pe mașina virtuală și adresa mașinii virtuale (putem folosi ''ip a s'' pentru a afla IP). Sintaxa este de forma ssh <user>@<IP>.
+
+<code bash>
+student@uso:~$ ssh student@uso
+The authenticity of host 'uso (127.0.1.1)' can't be established.
+ECDSA key fingerprint is SHA256:EqKvzIRVrt/2T8NqzCiBZI8QkXUnqpP627KkMCqscV0.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'uso' (ECDSA) to the list of known hosts.
+student@uso's password: 
+Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-32-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+ * Read about Ubuntu updates for L1 Terminal Fault Vulnerabilities
+   (L1TF).
+
+   - https://ubu.one/L1TF
+
+ * Check out 6 great IDEs now available on Ubuntu. There may even be
+   something worthwhile there for those crazy EMACS fans ;)
+
+   - https://bit.ly/6-cool-IDEs
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+18 packages can be updated.
+0 updates are security updates.
+
+*** System restart required ***
+Last login: Tue Aug 21 14:27:08 2018
+</code bash>
+
+Pentru a ne deconecta de la mașina virtuală folosim comanda ''exit'':
+
+<code bash>
+student@uso:~$ exit
+logout
+Connection to uso closed.
+</code>
+
+**[5a]** Adăugați un utilizator nou pe mașina ''tom''. Conectați-vă de pe mașina locală pe mașina ''tom'' cu noul utilizator creat.
+
+**[5b]** Conectați-vă la mașina virtuală ''jerry'' de pe mașina virtuală ''tom''.
+
+
+==== 6. wget ====
+
+Utilitarul ''wget'' descarcă conținutul unei pagini web. Un exemplu de folosire este ''wget http://website.com/files/file.zip''.
+
+<code bash>
+student@uso:~$ wget http://ipecho.net/plain
+--2018-09-02 16:08:55--  http://ipecho.net/plain
+Resolving ipecho.net (ipecho.net)... 146.255.36.1
+Connecting to ipecho.net (ipecho.net)|146.255.36.1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘plain.1’
+
+plain.1                                    [ <=>                                                                        ]      13  --.-KB/s    in 0s      
+
+2018-09-02 16:08:55 (1,48 MB/s) - ‘plain.1’ saved [13]
+
+student@uso:~$ ls plain
+plain
+student@uso:~$ cat plain
+188.26.36.205
+</code>
+
+sau
+
+<code bash>
+student@uso:~$ wget -qO- http://ipecho.net/plain ; echo
+188.26.36.205
+</code>
+
+**[6a]** Descărcați arhiva folosind wget de la link-ul: wget http://www.openss7.org/repos/tarballs/strx25-0.9.2.1.tar.bz2

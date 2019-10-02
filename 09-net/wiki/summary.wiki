@@ -1,0 +1,19 @@
+===== Sumar. Cuvinte cheie =====
+
+  * Interfață de rețea, conexiune, adresă IP, ''localhost'' (''127.0.0.1'')
+  * Default gateway, DNS, client/server, serviciu
+  * SSH (conexiune la distanță), web (acces resurse)
+  * Vizualizare adresă IP: ''ip a s''
+  * Verificare conectivitate: ''ping''
+  * Configuare adresă IP: ''dhclient''
+  * Identificare default gateway: ''ip r s''
+  * Interogare DNS: ''host''
+  * Configurare DNS: ''/etc/resolv.conf''
+  * Calea în Internet până la o stație: ''treceroute''
+  * Conectare și transfer la distanță: ''ssh'', ''scp''
+  * Autentificare cu cheie publică la distanță: ''ssh-keygen'', ''ssh-copy-id'', ''~/.ssh/id_rsa.pub'', ''~/.ssh/authorized_keys''
+  * Descărcare web în linia de comandă: ''wget'', ''curl''
+  * Vizualizarea serviciilor de rețea locale: ''netstat''
+  * Configurare client de SSH: alias-uri, X Forwarding: ''~/.ssh/config''
+  * Acces grafic la distanță: VNC, RDP
+  * Server web: ''apache2''

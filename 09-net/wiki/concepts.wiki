@@ -1,0 +1,228 @@
+===== Concepte =====
+
+==== Identificarea unei stații în Internet ====
+
+=== Introducere ===
+
+Mai înainte de toate, ca să putem vorbi despre identificarea unei stații în Internet, trebuie să dăm o definiție 
+scurtă Internetului. Pentru asta, trebuie să știm ce este o stație, ce este legătura dintre stații și ce este o rețea.
+
+Când ne referim la o ''stație'', ne gândim la un calculator, la un telefon mobil, sau la orice dispozitiv electronic care are
+o placă de rețea și care se poate conecta la Internet.
+
+Dacă vorbim despre legătura dintre 2 stații, ne putem referi la 2 lucruri:
+    - legătura fizică dintre acestea (prin fir, wireless)
+    - legătura logică dintre ele (conexiune)
+
+Știm ce este o stație, știm că se poate conecta la o altă stație, deci știm să definim o ''rețea''. **Rețeaua** reprezintă o mulțime
+de stații (noduri) interconectate. Putem spune că dacă interconectăm 2 rețele formăm o rețea mai mare.
+Mergând pe aceeași logică mai departe, ajungem să definim Internetul (INTERconected NETworks)
+drept totalitatea rețelelor interconectate de pe planetă.
+
+Pe planetă exista miliarde de dispozitive conectate la Internet zi de zi, și, așa cum identificăm un om prin nume, cod numeric
+personal, loc de muncă, putem identifica și stațiile în mod unic. Astfel, un mesaj trimis pe o rețea de socializare către
+un anumit prieten nu va ajunge niciodată unde nu trebuie (cel puțin în teorie :D ).
+
+=== Adresă IP ===
+
+Cea mai simpla modalitate de identificare a unei stații în Internet ar fi să numerotăm fiecare stație începând de la 1. Cu
+siguranță această idee ar putea funcționa (în teorie) însă trebuie să avem în vedere că resursele de care dispunem sunt limitate
+(viteza), iar această alegere este nefavorabilă în cazul comunicării între stații (identificarea unei alte stații ar dura mult prea 
+mult).
+
+În anul 1969 a fost inventat IP (protocolul internet), folosit și în ziua de astăzi. Practic, IP-ul unei stații este un număr, pe
+''32 de biți'' în cazul protocolului ''IPv4'' sau pe ''128 de biți'' în cazul protocolului ''IPv6''.
+Uzual, adresele IP sunt scrise sub forma restransă. În cazul IPv4, adresa IP este reprezentată de 4 numere în baza zecimală, cu valori
+între 0 și 255, separate
+prin ''.'', (ex: ''192.168.0.14''), iar în cazul IPv6, adresa IP este reprezentată de 8 grupuri numere în baza hexazecimală, cu valori 
+cuprinse între ''0000'' și ''ffff'', separate prin
+'':'' (ex: ''2001:0db8:85a3:0000:0000:8a2e:0370:7334'').
+
+<note tip>
+Pentru IPv4, **range-ul** de IP-uri este ''0.0.0.0 - 255.255.255.255'', iar pentru IPv6 ''0000:0000:0000:0000:0000:0000:0000:0000 - 
+fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff''
+</note>
+
+Să luăm drept exemplu protocolul IPv4. Se pune întrebarea, cum putem identifica un număr atât de mare de stații având la dispoziție
+doar 32 de biți. Vom lămuri acest aspect la o secțiune de mai jos. Momentan, trebuie să
+reținem că IP-ul este o formă de a identifica o stație în Internet.
+
+=== Numele de domeniu ===
+
+Știm că o stație se identifică prin IP-ul ''216.58.201.78''. Această formă de adresare nu este întocmai intuitivă, putând asemăna
+această formă de identificare a unei stații cu identificarea un om după codul numeric personal. Pe langă adresa IP a unei stații, 
+putem avea un ''nume de domeniu'' pentru aceasta. 
+Frecvent, în browser întroducem un URL pentru a deschide o pagină pe Internet, care este "înlocuitor" al IP-ului. Încercați să
+căutați în browser pagina ''http://216.58.201.78'' și observați se întâmplă. 
+
+=== DNS ===
+
+DNS-ul (Domain Name Server), așa cum sugerează și numele, este un sistem care se ocupă de translatarea adreselor IP în nume și
+viceversa. Așadar, faptul pentru care ''https://www.google.com'' și ''http://216.58.201.78'' sunt echivalente este existența
+unui server de DNS. Acesta poate răspune la întrebările:
+    - Cine este ''216.58.201.78'' ?
+    - Ce adresă IP are ''www.google.com''?
+
+==== Tipuri de adrese IP ====
+
+Ne-am pus problema mai devreme cum putem folosi numere pe 32 de biți pentru a identifica toate stațiile din Internet. Este evident
+că **pot exista** mai mult de 2^32 stații conectate simultan la Internet, așadar, ne trebuie o modalitate de a le identifica pe toate
+în mod **unic**. Pentru a rezolva această insuficiență, protocolul IP sare în ajutor prin separarea adreselor IP în 2 categorii:
+private și publice.
+
+=== Adrese IP publice ===
+
+Adresele IP publice sunt alocate în general unui server (email, web, you name it) și permit accesarea directă a acestuia în Internet.
+Adresele IP publice sunt unice la nivel global și pot fi alocate unui sigur host care ulterior va fi identificat prin această adresă
+IP.
+
+=== Adrese IP private ===
+
+Adresele private sunt cele care salvează situația. Proprietatea de ''unicitate'' a unei adrese IP private dispare, cel puțin la
+nivel global. Adresele IP private sunt adrese alocate local/privat stațiilor dintr-o rețea (mai mică) și sunt folosite drept identificatori
+unici **doar în cadrul acelei rețele**. În general, dispozitivele pe care le folosim (laptop-uri, telefoane mobile) au alocate o
+adresă IP privată în cadrul rețelei din care face parte. Dacă spre exemplu, un telefon este conectat la o rețea acum, el va avea
+o adresă IP unică alocată în cadrul acelei rețele, iar dacă se deconectează de la această și ulterior se conectează la alta, acesta
+va avea cel mai probabil o adresă IP diferită față de cea anterioară (se poate ca **pur întâmplător** să fie aceeași). Expunerea în
+Internet nu se face prin această adresă IP privată, această problemă fiind rezolvată de router.
+
+<note tip>
+IPv4 începe să devină insuficient și el, așa că ușor, ușor, se face trecerea spre protocolul IPv6.
+</note>
+
+==== Conectarea la Internet ====
+=== Adresă IP ===
+Am văzut mai devreme că identificăm o stație în Internet după adresa IP a acestia. Așadar, ca o stație să poată stabili
+o conexiune la Internet, trebuie să aibă asociată o adresă IP cu care poate fi identificat în cadrul rețelei din care
+face parte.
+=== Mască de rețea ===
+Dacă ne uităm la adresele IP private asociate unor stații din rețea, vom observa că acestea au primii ''N'' biți comuni,
+adică sunt biții identificatori ai rețelei, iar restul până la 32 sunt specifici stației. Acest număr ''N'' este variabil
+în funcție de dimensiunea rețelei, iar pentru a identifica rapid care este adresa de rețea avem nevoie de o **mască de
+rețea**. Așa cum sugerează și numele, masca de rețea nu este altceva decât o mască de biți cu proprietatea că primii ''N''
+biți au valoarea 1, iar restul 0. Vom folosi această mască de rețea pentru a identifica adresa de rețea făcând operația
+de ''și logic'' între ea și o adresă IP din rețea.
+Putem întâlni masca de rețea sub 2 forme, fie reprezentată sub forma unei adrese IP (de exemplu, masca de rețea
+''255.255.255.0'' este una validă, pe când ''255.255.255.1'' nu), fie sub forma ''/N'', unde ''N'' reprezintă numărul de
+biți care sunt specifici rețelei (de exemplu, putem întâlni ''192.168.0.14/16'', iar în acest caz ne este sugerat faptul că primii
+16 biți sunt ''biții de rețea'').
+=== Default Gateway ===
+De cele mai multe ori vrem ca o stație să comunice cu o altă stație aflată într-o altă rețea. Pentru a face posibil acest
+lucru, avem nevoie să setăm un ''default gateway'' pentru fiecare stație. Într-o explicație largă, default gateway-ul este
+adresa IP a interfeței routerului la care este conectată respectiva stație. Astfel, comunicarea către exteriorul rețelei de
+la această stație va merge pe acea cale. Default gateway-ul trebuie să fie o adresă IP din cadrul aceleiași rețele.
+=== DHCP ===
+Adresă IP, mască de rețea, default gateway. Acestea sunt informațiile necesare pentru ca o stație să poată stabili conexiuni
+cu orice altă stație din Internet. Această configurație poate fi făcută manual, de către un utilizator, dar de cele mai multe
+ori se preferă o configurație automată cu ajutorul protocolului ''DHCP (Dynamic Host Configuration Protocol)''. Configurările
+obișnuite care se obțin prin DHCP sunt: adresa IP și masca de rețea, default gateway, precum și server DNS. 
+
+==== Probleme de conectivitate ====
+Cea mai frecventă problemă care apare în cadrul Internetului este, evident, lipsa de conectivitate la Internet. Pentru a testa 
+conectivitatea la Internet
+a unei stații folosim comanda ''ping''. Comanda primește ca argument un IP sau un nume de domeniu. Dacă vrem să verificăm dacă 
+avem conexiune
+la Internet putem da comanda ''ping 8.8.8.8'' (adresa IP ''8.8.8.8'' este una dintre adresele IP folosite de Google).
+''ping'' ne poate spune doar dacă avem sau nu conexiune la Internet, dar nu și care este motivul pentru care nu avem conexiune.
+În continuare, vom prezenta cele mai frecvente greșeli care duc la lipsa de conectivitate.
+
+=== Gateway picat sau greșit ===
+Așa cum am văzut mai devreme, default gateway-ul este punctul prin care o stație stabilește conexiuni cu exteriorul rețelei din
+care face parte. Se poate întâmpla ca interfața de rețea a routerului să nu fie ridicată, 
+caz în care nu exista o cale de ieșire în Internet.
+
+O altă problemă care poate apărea în această zona este configurarea greșită a default gateway-ului, fie adresa IP a interfeței
+este incorectă (nu face parte din rețea), fie o stație are o configurație greșită în ceea ce privește default gateway-ului.
+
+=== Firewall ===
+Firewall-ul este o modalitate de a securiza o stație din rețea. Mai exact, firewall-ul are rolul de a ține evidența conexiunii
+calculatorului, analizează conexiunea și decide dacă va permite conexiunea sau nu în funcție de filtrele care sunt setate.
+Așadar, firewall-ul poate bloca traficul de date spre si dinspre rețea, acest lucru putând duce la lipsa de conexiune.
+
+=== Adresă IP configurată greșit ===
+Atunci când o stație vrea să stabilească o conexiune, fie în cadrul rețelei, fie cu o altă stație din exterior, aceasta trebuie
+să aibă o configurație corectă în ceea ce privește adresa IP. Dacă din greșeală unei stații îi este setată o adresă IP care nu
+face parte din range-ul de adrese IP al rețele coordonate de router, atunci nu va putea crea o conexiune cu niciuna dintre
+stațiile din cadrul rețelei.
+
+=== DNS picat sau greșit ===
+Am observat mai devreme că serverul de DNS are rolul de a asocia adrese IP cu nume pentru identificare mai intuitivă a stațiilor.
+O configurație greșită a acestuia este un indicator al unei probleme. Se poate întâmpla ca ''ping 216.58.201.78'' să funcționeze,
+dar ''ping www.google.com'' să nu funcționeze, caz în care știm că există o problemă cu serverul de DNS.
+
+==== Servicii de rețea ====
+=== Modelul client-server ===
+În general, orice serviciu de rețea se bazează pe modelul client-server.
+În cea mai simplă definiție, un server este un program capabil să primească cereri de la alte stații din rețea și oferă acestora
+un serviciu. 
+
+Clientul este un program care este capabil să efectueze cereri către un server și care știe să interpreteze răspunsul
+primit de la acesta.
+
+=== Tipuri de servicii ===
+Există mai multe tipuri de servicii de rețea, cele mai importante fiind cele enumerate mai jos.
+=== Conexiune la distanță ===
+=== Telnet ===
+Telnet (TELetype NETwork) este un serviciu de tip client-server. In mod implicit nu există nicio diferență între
+resursele disponibile unui utilizator ce rulează un interpretor local și unul ce rulează prin telnet. Pentru a iniția
+o conexiune folosim comanda telnet trebuie să specificăm adresa stației unde dorim să ne conectăm și pe această stație
+trebuie să ruleze un server de telnet.
+=== SSH ===
+SSH (Secure Shell) este un serviciu de acces la distanță securizat. Funcționează similar cu telnet dar, spre deosebire
+de acesta, toată comunicația este criptată. Din această cauză este serviciul pe care îl veți folosi cel mai des atunci
+când va trebui să lucrați pe o stație la distanță. Comanda pentru a iniția o conexiune este ''ssh''. Ea primeste un
+argument de forma ''user@host'', unde ''user'' este numele utilizatorului drept care dorim să ne autentificăm și
+''host'' este adresa stației pe care dorim să ne autentificăm.
+=== Transferul de fișiere securizat ===
+Un serviciu de rețea util pentru orice utilizator este transferul de fișiere. În cadrul unei rețele, există posibilitatea
+transmiterii de fișiere între stații folosind utilitarul ''scp''.
+SCP (Secure CoPy) este un utilitar ce permite transferul de fișiere între stațiile din rețea. El folosește ssh pentru
+a transfera datele deoarece acesta oferă deja suport pentru autentificare și criptare. Pentru a putea fi folosit pe
+stația remote trebuie să ruleze un server ssh.
+=== Email - Poșta electronică ===
+Email-ul este o metodă de compunere, transmitere și recepție de mesaje online. Pentru livrarea mesajelor se folosește 
+un mecanism de adresare care are nevoie de 2 informații:
+- numele din Internet (rezolvat de DNS)
+- numele utilizatorului
+Cel mai important protocol folosit în transmiterea mesajelor electronice este ''SMTP (Simple Mail Transfer Protocol)''.
+Acest protocol permite preluarea mesajelor de la clienți și transmiterea lor către server. Pentru a realiza operațiunea 
+inversă, cele mai utilizate protocoale sunt ''IMAP (Internet Message Acces Protocol)'' și ''POP3 (Post Office Protocol 
+version 3)''.
+=== Serviciul web ===
+World Wide Web (WWW) este probabil cel mai utilizat și cel mai cunoscut serviciu din Internet și este format din 
+totalitatea documentelor și informaților de tip ''hipertext'' legate între ele, care pot fi accesate prin 
+Internet.
+
+== Protocolul HTTP ==
+Hypertext Transfer Protocol (HTTP) este cel mai utilizat protocol pentru accesarea informațiilor și date
+pe Internet. La fel ca toate celelalte servicii de rețea, el se bazează pe modelul client-server, în care clientul
+este navigatorul care face o cerere către un server și așteaptă în schimb pagina (resursa) cerută.
+
+== Protocolul HTTPS ==
+Secure Hyper Text Transfer Protocol (HTTPS) nu este decât o îmbunătățire a protocolului HTTP, prin care datele 
+transmise sunt criptate, astfel conexiunea la server este sigură. Să ne gândim la plățile online pe care le efectuăm
+cu toții tot mai des. Întotdeauna vrem ca datele noastre să nu fie expuse altor persoane în afara companiei către care 
+efectuăm plata, deci cu siguranță vrem ca acele website-uri să folosească protocolul HTTPS în defavoarea HTTP.
+
+== Browser web == 
+Un navigator web (sau browser) este un program care ne permite să accesăm pagini din WWW. Majoritatea browserelor 
+existente în ziua de azi vin cu funcții utile pentru utilizator cum ar fi posibilitatea instalării unui ad-blocker,
+păstrarea istoricului de navigări sau gestionare de bookmark-uri. De asemenea, majoritatea browserelor au adus îmbunătățiri
+în ceea ce privește performanța, și când vorbim de performanță ne referim în special la cantitatea de trafic de date 
+utilizat. Majoritatea browserelor folosind un sistem de ''cache'' care devine util atunci când încărcam foarte des 
+o pagină web. La prima încărcare se va face o cerere 
+către server, iar după pagina respectivă va fi cache-uită. La o doua încărcare vom observa că pagina se va incărca mult 
+mai rapid datorită "scutirii" pasului de cerere la server.
+
+Cele mai utilizate navigatoare din lume sunt ''Google Chrome'', ''Mozilla Firefox'', ''Safari'', ''Microsoft Internet 
+Explorer'' și ''Microsoft Edge''.
+
+=== Accesul web în linia de comandă ===
+== Utilitarul wget ==
+Acest utilitar ofera suport pentru a descărca pagini și fișiere folosind două protocoale foarte comune, HTTP
+(HyperText Transfer Protocol) și FTP (File Transfer Protocol). Comanda pentru a-l folosi este wget, căreia îi
+vom transmite ca argument URL-ul (Universal Resource Locator) resursei pe care dorim să o descărcăm.
+== Utilitarul curl ==
+Asemănător cu ''wget'', utilitarul ''curl'' permite descărcarea de fișiere și pagini. Un avantaj major al
+utilitarului ''curl'' este faptul că acesta suportă mult mai multe protocoale decât ''wget''. Prezintă totuși și
+un dezavantaj față de ''wget'', și anume faptul că nu permite descărcarea recursivă.

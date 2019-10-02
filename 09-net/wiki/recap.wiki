@@ -1,0 +1,30 @@
+===== Recapitulare =====
+
+Facem o recapitulare a principalelor noțiuni și comenzi ce țin de administrarea spațiului de stocare. Să începem.
+
+==== Afișare discuri și partiții ====
+
+Spațiul de stocare al unui sistem este compus din discuri, acestea sunt partiționate, iar partițiile sunt formatate cu un sistem de fișiere.
+
+Pentru a afișa discurile și partițiile sistemului, folosim comanda ''lsblk'':
+<code>
+</code>
+În ieșirea comenzii observăm discul ''/dev/sda'' care are o singură partiție numită ''/dev/sda1''.
+
+Un alt mod de a afișa discuri și partiții este cu ajutorul comenzii ''fdisk -l'':
+<code>
+</code>
+
+Dacă ne interesează să știm ce sistem de fișiere se găsește pe o partiție dată rulăm comanda de mai jos, cu parametru numele partiției:
+<code>
+</code>
+
+Pentru a vizualiza partițiile folosite curent (adică montate) rulam comanda ''mount'':
+<code>
+</code>
+
+==== Investigare și montare fișier .iso ====
+
+Vrem să investigăm conținutul unui fișier ''.iso''. Pentru aceasta fișierul trebuie descărcat și montat local folosind comanda ''mount'' și opțiunea ''-o loop''.
+
+Descărcați fișierul ''.iso'' de la adresa http://www.udpcast.linux.lu/20120424/udpcd.iso. Investigați tipul său și apoi montați-l local. Vedeți ce fișiere conține și tipul acestora. Demontați fișierul.
