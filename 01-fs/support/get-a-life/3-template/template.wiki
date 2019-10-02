@@ -1,0 +1,19 @@
+====== Laborator 02 - Utilizarea sistemului de fișiere. Comenzi de bază. ======
+
+===== World of USO =====
+TODO
+
+===== Utilizare terminal =====
+TODO
+
+===== Suport laborator =====
+TODO
+
+===== Obiective laborator =====
+TODO
+
+===== Pe scurt despre Git =====
+TODO
+
+===== Demo =====
+TODO
