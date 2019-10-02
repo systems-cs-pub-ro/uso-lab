@@ -1,6 +1,6 @@
 ===== Recapitulare =====
 
-==== 1. Navigare și scurtături în mediul Linux (X puncte) ====
+==== 1. Navigare și scurtături în mediul Linux  ====
 
 Așa cum am discutat în laboratorul trecut, în mediul Linux folosim adesea linia de comandă și scurtături de taste pentru a naviga în/între aplicații.
 
@@ -30,7 +30,7 @@ Atunci când folosim terminalul, dorim adesea să căutăm comenzi pe care le-am
 
 **[1e]** Folosind ''Ctrl+r'' căutați în istoricul de comenzi ale shell-ului comenzi care conțineau șirul ''man'' (de la //manual//). După prima comandă găsită în istorie, dacă apăsați ''Ctrl+r'' din nou vă va găsi următoarea comandă, și tot așa.
 
-==== 2. Lucrul cu fișiere (X puncte) ====
+==== 2. Lucrul cu fișiere  ====
 
 Adesea, în mediul din linia de comandă, dorim să vedem conținut de fișiere. Pentru aceasta folosim comanda ''cat'' urmată de numele fișierului.
 
@@ -77,7 +77,7 @@ Editorul ''Vim'' este dificil de folosit la început. Dacă pe parcursul folosir
 
 **[2c]** Folosiți ''Vim'' pentru a crea fișierul ''quote.txt'' cu mesajul ''Go ahead, make my day!''. Apoi folosiți, pe rând, comanda ''cat'' și comanda ''less'' pentru a afișa conținutul fișierului ''quote.txt''.
 
-==== 3. Contul root (X puncte) ====
+==== 3. Contul root  ====
 
 Contul privilegiat (''root'') este folosit în Linux pentru a realiza acțiuni privilegiate. De exemplu, nu putem vedea conținutul fișierului ''/etc/sudoers'' decât ca ''root''. Astfel, dacă rulăm comanda
 <code>

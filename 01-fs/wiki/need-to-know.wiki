@@ -1,6 +1,6 @@
 ===== Need to Know =====
 
-==== 1. Lucrul cu Sistemul de Fișiere (X puncte) ====
+==== 1. Lucrul cu Sistemul de Fișiere  ====
 Pentru a căuta un fișier în sistemul de fișiere putem folosi comanda **locate**. Aceasta se folosește în felul următor:
 <code bash>
 student@uso:~$ locate --help
@@ -73,7 +73,7 @@ lab02/anul_1/programare/teme/tema4/src/constants.c:int main()
 
 **[1c]** Căutați în interiorul fișierelor în ierarhia de fișiere ''~/uso.git'' patternul **"include <stdio.h>"**. Folosiți ''grep recursiv''.
 
-==== 2. Ierarhie de directoare (X puncte) ====
+==== 2. Ierarhie de directoare  ====
 
 Putem crea directoare folosind comanda **mkdir**. Aceasta se folosește în felul următor:
 <code bash>
@@ -209,7 +209,7 @@ Bineînteles, am verificat că redirectarea a avut succes prin afișarea conțin
 
 **[2e]** Repetați redirectarea de mai sus în fișierul **ierarhie_ascii**, dar de data aceasta în format ASCII.
 
-==== 3. Compilare automata - Makefile (X puncte) ====  
+==== 3. Compilare automata - Makefile  ====  
 
 În directorul ''~/uso-lab/01-fs/support/need-to-know/3-compile'' avem 2 fișiere: Makefile si hello_world.c. Rolul fișierului Makefile este de a compila sursa hello_word.c. Putem compila și executa fișierul obținut astfel:
 
@@ -228,7 +228,7 @@ Hello, World!
 **[3c]** Creați un nou director numit ''nu_intrati'' și în cadrul acestuia un fișier sursă ''manele_2018.c'' în care să afișați un text la alegere. Copiați Makefile-ul folosit anterior și adaptați-l pentru cazul vostru. Compilați executabilul folosind Makefile și rulați executabilul. ''Hint: Pentru a crea un fișier puteți folosi utilitarul vim care primește ca argument un nume de fișier/o cale. În cazul în care fișierul există, se continuă editarea acestuia din starea în care se află, altfel este creat un nou fișier cu acel nume.''
 
 
-==== 4. Arhive (X puncte) ====
+==== 4. Arhive  ====
 
 Putem crea archive folosind diferite extensii. E bine să știm să creăm diferite tipuri de arhive deoarece fiecare are beneficiul ei. Astfel, pentru arhiva.zip folosim:
 <code bash>
