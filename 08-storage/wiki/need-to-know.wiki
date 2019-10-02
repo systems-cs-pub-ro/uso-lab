@@ -1,0 +1,13 @@
+===== Need to know =====
+
+==== Informații despre discuri și partiții ====
+**Exerciții**
+  - Listați device-urile de tip block ce identifică un dispozitiv de tip disk în sistem. (hint: sdX)
+  - Afișați identificatorii unici (UUID) pentru discurile și partițiile aflate în sistem. (hint: ''blkid'')
+
+==== Montare/Demontare ====
+  - Montați fișierul ''image.iso'' la calea ''/mnt/my_image/'' (hint: ''mount -o loop''). Asigurați-vă că
+  directorul ''my_image'' există.
+  - Cu ajutorul comenzii ''mount'' inspectați dacă montarea s-a efectuat cu succes.
+  - Demontați imaginea. (hint: ''umount'')
+

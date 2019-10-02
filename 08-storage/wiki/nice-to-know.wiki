@@ -1,0 +1,348 @@
+===== Nice to know =====
+
+==== Adăugarea unui HDD în cadrul unei mașini virtuale ====
+Ne dorim să efectuăm operațiile de partiționare, formatare și montare într-un caz real. 
+Deoarace operațiile amintite mai sus pot duce la pierderea informațiilor utile de pe un disk vom lucra cu o mașina virtuală disponibilă aici.
+
+Vom adăuga un hard disk virtual mașinii virtuale. Mai întâi trebuie să ne asigurăm că
+mașina virtuală este oprită.
+
+Pentru a adăuga un HDD virtual accesăm setările mașinii virtuale ''Settings > Storage > Add new storage attachement > Add Hard disk > Create new disk''.
+
+Selectăm VDI (VirtualBox Disk Image) > Fixed size.
+Vom genera un HDD cu dimensiunea totală de 2GB > Create.
+
+Observăm că HDD-ul pe care l-am creat a fost atașat cu succes mașinii virtuale.
+
+Pornim mașina virtuală. Verificăm dacă HDD-ul adăugat anterior are asociat un dispozitiv de tip block la în
+directorul ''/dev/'':
+<code bash>
+    student@uso:~$ ls -l /dev/sd*
+    brw-rw---- 1 root disk 8,  0 nov 12 10:02 /dev/sda
+    brw-rw---- 1 root disk 8,  1 nov 12 10:02 /dev/sda1
+    brw-rw---- 1 root disk 8, 16 nov 12 10:02 /dev/sdb
+</code>
+
+<note important>
+    Noul HDD va apărea în directorul ''/dev/'' sub forma unui fișier cu denumirea ''sdX'' unde X identifică unic prin forma unei litere un disk.
+</note>
+
+În exemplul de mai sus, HDD-ul pe care l-am adăugat este identificat în directorul ''/dev/'' de intrarea ''sdb'' .
+
+**Exerciții**
+    - Adăugați un HDD urmărind tutorialul de mai sus.
+    - Adăugați încă un HDD cu dimensiunea de 2.5GB.
+
+==== Partiționare (fdisk) ====
+După ce am atașat HDD-urile va trebui să le partiționăm. Vom folosi utilitarul ''fdisk''.
+<code bash>
+student@uso:~$ ls -lh /dev/sdb
+brw-rw---- 1 root disk 8, 16 nov 12 10:02 /dev/sdb
+</code>
+
+
+Comanda ''fdisk sdb'' pornește utilitarul ''fdisk'' în modul interactiv. Pentru a lista toate comenzile disponibile la un moment dat folosim comanda ''m'' - menu.
+
+<code bash>
+student@uso:~$ sudo fdisk /dev/sdb
+Command (m for help): m
+
+Help:
+
+  DOS (MBR)
+   a   toggle a bootable flag
+   b   edit nested BSD disklabel
+   c   toggle the dos compatibility flag
+
+  Generic
+   d   delete a partition
+   F   list free unpartitioned space
+   l   list known partition types
+   n   add a new partition
+   p   print the partition table
+   t   change a partition type
+   v   verify the partition table
+   i   print information about a partition
+[...]
+  Save & Exit
+   w   write table to disk and exit
+   q   quit without saving changes
+[...]
+
+</code>
+
+Pentru a crea o partiție primară de dimensiune 200MB vom introduce următoarele comenzi în modul interactiv:
+  * ''n'' - adăugare partiție nouă;
+  * ''p'' - partiție primară;
+  * ''1'' - numărul partiției;
+  * First sector - selectăm valoarea ''default'' apăsând tasta ''enter''.
+  * Last sector - +200M
+<code bash>
+Command (m for help): n
+Partition type
+   p   primary (0 primary, 0 extended, 4 free)
+   e   extended (container for logical partitions)
+Select (default p): p
+Partition number (1-4, default 1): 1
+First sector (2048-4194303, default 2048): 
+Last sector, +sectors or +size{K,M,G,T,P} (2048-4194303, default 4194303): +200M
+
+Created a new partition 1 of type 'Linux' and of size 200 MiB.
+</code>
+
+Pentru a scrie modificările făcute în sesiunea curentă a utilitarului ''fdisk'' folosim comanda ''w'' - write.
+<code bash>
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+</code>
+Comanda are ca efect alterarea tabele de partiții a disk-ului curent.
+
+Observăm că a fost adăugat un fișier ce identifică partiția generată în directorul ''/dev/'':
+<code bash>
+student@uso:~$ ls -l /dev/sdb*
+brw-rw---- 1 root disk 8, 16 nov 12 10:23 /dev/sdb
+brw-rw---- 1 root disk 8, 17 nov 12 10:23 /dev/sdb1
+</code>
+
+**Exerciții**
+    - Adăugați încă două partiții folosind aceiași parametri de mai sus. (hint: se va modifica doar numărul partiției). Nu uitați să folosiți comanda ''w'' - write la final.
+
+După ce ați rezolvat exercițiul de mai sus, ar trebui să obțineți următorul output:
+<code bash>
+student@uso:~$ sudo fdisk -l /dev/sdb
+Disk /dev/sdb: 2 GiB, 2147483648 bytes, 4194304 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xe901124e
+
+Device     Boot  Start     End Sectors  Size Id Type
+/dev/sdb1         2048  411647  409600  200M 83 Linux
+/dev/sdb2       411648  821247  409600  200M 83 Linux
+/dev/sdb3       821248 1230847  409600  200M 83 Linux
+
+student@uso:~$ ls -lh /dev/sdb*
+brw-rw---- 1 root disk 8, 16 nov 12 10:30 /dev/sdb
+brw-rw---- 1 root disk 8, 17 nov 12 10:30 /dev/sdb1
+brw-rw---- 1 root disk 8, 18 nov 12 10:30 /dev/sdb2
+brw-rw---- 1 root disk 8, 19 nov 12 10:30 /dev/sdb3
+</code>
+
+Spațiul rămas îl vom transforma într-o partiție extinsă.
+<code bash>
+student@uso:~$ sudo fdisk /dev/sdb
+Command (m for help): n
+Partition type
+   p   primary (3 primary, 0 extended, 1 free)
+   e   extended (container for logical partitions)
+Select (default e): e
+
+Selected partition 4
+First sector (1230848-4194303, default 1230848): 
+Last sector, +sectors or +size{K,M,G,T,P} (1230848-4194303, default 4194303): 
+
+Created a new partition 4 of type 'Extended' and of size 1,4 GiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+student@uso:~$ sudo fdisk -l /dev/sdb
+Disk /dev/sdb: 2 GiB, 2147483648 bytes, 4194304 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xe901124e
+
+Device     Boot   Start     End Sectors  Size Id Type
+/dev/sdb1          2048  411647  409600  200M 83 Linux
+/dev/sdb2        411648  821247  409600  200M 83 Linux
+/dev/sdb3        821248 1230847  409600  200M 83 Linux
+/dev/sdb4       1230848 4194303 2963456  1,4G  5 Extended
+</code>
+
+În cadrul partiției extinse putem crea oricâte partiții logice. Vom crea o partiție logică cu dimensiunea de 200MB.
+
+<code bash>
+student@uso:~$ sudo fdisk  /dev/sdb
+
+Welcome to fdisk (util-linux 2.31.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): n
+All primary partitions are in use.
+Adding logical partition 5
+First sector (1232896-4194303, default 1232896): 
+Last sector, +sectors or +size{K,M,G,T,P} (1232896-4194303, default 4194303): +200M
+
+Created a new partition 5 of type 'Linux' and of size 200 MiB.
+
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
+
+student@uso:~$ sudo fdisk -l /dev/sdb
+Disk /dev/sdb: 2 GiB, 2147483648 bytes, 4194304 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xe901124e
+
+Device     Boot   Start     End Sectors  Size Id Type
+/dev/sdb1          2048  411647  409600  200M 83 Linux
+/dev/sdb2        411648  821247  409600  200M 83 Linux
+/dev/sdb3        821248 1230847  409600  200M 83 Linux
+/dev/sdb4       1230848 4194303 2963456  1,4G  5 Extended
+/dev/sdb5       1232896 1642495  409600  200M 83 Linux
+</code>
+
+Verificăm că au fost create fișierele corespunzătoare fiecărei partiții generate în directorul ''/dev/'':
+<code bash>
+student@uso:~$ ls -lh /dev/sdb*
+brw-rw---- 1 root disk 8, 16 nov 12 10:40 /dev/sdb
+brw-rw---- 1 root disk 8, 17 nov 12 10:40 /dev/sdb1
+brw-rw---- 1 root disk 8, 18 nov 12 10:40 /dev/sdb2
+brw-rw---- 1 root disk 8, 19 nov 12 10:40 /dev/sdb3
+brw-rw---- 1 root disk 8, 20 nov 12 10:40 /dev/sdb4
+brw-rw---- 1 root disk 8, 21 nov 12 10:40 /dev/sdb5
+</code>
+
+**Exerciții**
+    - Partiționați HDD-ul cu dimensiunea de 2.0GB după modelul prezentat mai sus.
+    - Partiționați HDD-ul cu dimensiunea de 2.5GB după modelul următor:
+        * Partiția 1 - Primară 1024MB
+        * Partiția 2 - Primară 500MB
+        * Partiția 3 - Primară 500MB
+        * Partiția 4 - Extinsă 500MB
+        * Partiția 5 - Logică (Inclusă în partiția 4) 300MB
+
+==== Formatare (mkfs) ====
+După ce am partiționat un HDD dorim să instalăm un sistem de fișiere în cadrul unei partiții.
+Pentru a instala sistemul de fișiere ''ext4'' pe prima partiția identificată de fișierul de la calea
+''/dev/sdb1'' folosim următoarea comandă.
+
+<code bash>
+student@uso:~$ sudo mkfs.ext4 /dev/sdb1 
+mke2fs 1.44.1 (24-Mar-2018)
+Creating filesystem with 204800 1k blocks and 51200 inodes
+Filesystem UUID: 637f30fb-6ed0-4309-b3bd-c613e2623c60
+Superblock backups stored on blocks: 
+	8193, 24577, 40961, 57345, 73729
+
+Allocating group tables: done                            
+Writing inode tables: done                            
+Creating journal (4096 blocks): done
+Writing superblocks and filesystem accounting information: done
+</code>
+
+Observăm că partiției i s-a asociat un identificator unic al sistemului de fișiere (Filesystem UUID). Acesta poate fi văzut cu ajutorul comenzii ''blkid'':
+<code bash>
+student@uso:~$ sudo blkid /dev/sdb*
+/dev/sdb: PTUUID="e901124e" PTTYPE="dos"
+/dev/sdb1: UUID="637f30fb-6ed0-4309-b3bd-c613e2623c60" TYPE="ext4" PARTUUID="e901124e-01"
+/dev/sdb2: PARTUUID="e901124e-02"
+/dev/sdb3: PARTUUID="e901124e-03"
+/dev/sdb4: PTTYPE="dos" PARTUUID="e901124e-04"
+/dev/sdb5: PARTUUID="e901124e-05"
+</code>
+
+**Exerciții**
+    - Instalați sistemul de fișiere ''ext4'' pe partițiile identificate de fișierele ''sdb1'', ''sdb2'', ''sdb3'', ''sdb5''. Aveți grijă să omiteți partiția extinsă ''sdb4''.
+    - Pe HDD-ul cu dimensiunea de 2.5GB instalați cel puțiun două sisteme de fișiere diferite.
+
+==== Montare/Demontare ====
+
+Pentru a avea acces la oricare dintre sistemele de fișiere instalate anterior, va trebui să îl montăm în cadrul sistemului de fișiere curent.
+Montarea se poate realiza în două modalități:
+  * Temporar - cu ajutorul ''mount'';
+  * Permanent - prin configurarea ''fstab''.
+
+În cele ce urmează vom descrie pașii necesari pentru a monta temporar un sistem de fișiere.
+
+Vom monta temporar prima partiție creată la calea ''/mnt/first_partition''. Va trebui să ne asigurăm
+ca directorul ''first_partition'' există.
+<code bash>
+student@uso:~$ sudo mkdir /mnt/first_partition
+student@uso:~$ ls -l /mnt/
+total 4
+drwxr-xr-x 2 root root 4096 nov 12 11:11 first_partition
+
+student@uso:~$ sudo mount /dev/sdb1 /mnt/first_partition/
+</code>
+
+Observăm că a apărut directorul ''lost+found'' în ''/mnt/first_partition'':
+<code bash>
+student@uso:~$ ls -l /mnt/first_partition/
+total 12
+drwx------ 2 root root 12288 nov 12 10:47 lost+found
+</code>
+
+De asemenea, utilitarul ''mount'' ne arată că operația a fost realizată cu succes:
+<code bash>
+student@uso:~$ mount | grep /dev/sdb1
+/dev/sdb1 on /mnt/first_partition type ext4 (rw,relatime,data=ordered)
+</code>
+
+Pentru a demonta sistemul de fișiere pe care l-am montat anterior folosim următoarea comandă:
+<code bash>
+student@uso:~$ umount /dev/sdb1
+student@uso:~$ mount | grep /dev/sdb1
+</code>
+
+**Exerciții**
+    - Montați fiecare dintre partițiile create anterior. Creați pentru fiecare partiție o intrare în ''/mnt/''.
+    - Creați câte un fișier în fiecare dintre sistemele de fișiere montate anterior.
+    - Introduceți un stick USB în sistem. Urmăriți mesajele kernelului cu ajutorul ''dmesg'' pentru a identifica fișierul block asociat în directorul ''/dev''. Montați stick-ul în ''/mnt''.
+    - Repartiționați stick-ul usb și formatați fiecare partiție.
+
+==== Montare permanentă (fstab) ====
+Am văzut anterior cum putem să montăm temporar un sistem de fișiere în cadrul unui sistem de opare Linux. În mod implicit, ne dorim ca partițiile unui HDD să fie montate permanent. Pentru a realiza această operație ne vom folosi de ''fstab'' (file system table).
+
+''fstab'' este un fișier de configurare care poate fi găsit la calea ''/etc/fstab''.
+<code bash>
+student@uso:~$ cat /etc/fstab
+# <file system> <mount point>   <type>  <options>       <dump>  <pass>
+# / was on /dev/sda1 during installation
+UUID=a14d0991-a3d8-48d6-ac8c-327d1a524501 /               ext4    errors=remount-ro 0       1
+/swapfile                                 none            swap    sw              0       0
+</code>
+Fiecare linie conține 6 câmpuri cu următoarea semnificație:
+  - Identificator - UUID-ul file-system-ului sau calea către fișierul care conține un filesystem;
+  - Mount point   - calea unde va fi montat sistemul de fișiere (ex. ''/mnt/first_partition'');
+  - Tip - tipul sistemului de fișiere (ex. ''ext4'')
+  - Opțiuni - mai multe detalii [[https://en.wikipedia.org/wiki/Fstab#Options_common_to_all_filesystems|aici]]
+  - Dump - flag ce deternună dacă este necesar backup;
+  - Pass - flag ce determină dacă se va efectua o verificare a sistemului de fișiere la start-up.
+
+**Exerciții**
+    - Identificați UUID-ul sistemului de fișiere pentru partiția ''/dev/sdb1'' (hint: ''blkid'');
+    - Introduceți o intrare în fișierul de configurare ''fstab'' pentru a monta permanent această partiție în ''/mnt/first_partition''. Asigurați-vă ca există directorul ''first_partition''.
+
+==== Backup ====
+
+Ne dorim să avem o copie de backup pentru datele importante din cadrul sistemului curent. Vom folosi utilitarul ''rsync'' pentru a îndeplini această sarcină.
+
+Cu ajutorul comenzii ''rsync'' putem face o copie backup atât local, cât și la distanță.
+De exemplu, dacă dorim să facem backup întregului conținut al directorului ''dir1'' în cadrul directorului ''dir2'' putem folosi următorea comandă:
+
+<code bash>
+rsync -a dir1/ dir2
+</code>
+
+Mai multe detalii despre cum poate fi folosit utilitarul ''rsyinc'' găsiți [[https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps|aici]]
+
+Presupunem că toate datele utile disponibile în sistem se află în cadrul directorului ''/home/student/Documents''
+
+**Exerciții**
+    - Realizați o copie backup a directorului ''/home/student/Documents'' în directorul ''/home/student/backups''. Asigurați-vă că directorul ''backups'' există.
+    - Urmărind articolul de [[https://www.digitalocean.com/community/tutorials/how-to-use-rsync-to-sync-local-and-remote-directories-on-a-vps|aici]] faceți un backup la distanță pe ''fep.grid.pub.ro''. Credențialele sunt aceleași cu cele de pe site-ul de cursuri ''acs.curs.pub.ro''.

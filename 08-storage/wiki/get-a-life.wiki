@@ -1,0 +1,15 @@
+===== Get a life =====
+
+** 1. Montare disk mașină virtuală VirtualBox **
+Montați unul dintre disk-urile (.vdi) create anterior în cadrul mașinii virtuale fără a porni mașina virtuală.
+(hint: [[https://bethesignal.org/blog/2011/01/05/how-to-mount-virtualbox-vdi-image|aici]])
+
+** 2. Montare sistem de fișiere cu criptare **
+Montați un sistem de fișiere folosind eCryptfs.
+(hint: [[https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/storage_administration_guide/ch-efs|aici]])
+
+** 3. Extindere partiție swap **
+Extindeți partiția de swap prin intermediului unui fișier de pe disk. (hint: ''dd, chown, mkswap, swapon, fstab'')
+
+** 4. Creare filesystem într-un fișier **
+Creați un filesystem într-un fișier. (hint: ''dd, mkfs, mount'')
