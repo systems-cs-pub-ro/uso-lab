@@ -1,0 +1,67 @@
+===== Get a Life =====
+
+==== 1. SUID ====
+
+  -Citiți despre **SUID** [[https://www.linux.com/blog/what-suid-and-how-set-suid-linuxunix|aici]] 
+  -Compilați programul de mai jos. 
+  -Setați bitul de SUID pe binarul creat. (puteți folosi sudo) 
+  -Este posibil să fie nevoie să setați utilizatorul **root** ca owner pe binar 
+  -Afișați /etc/shadow folosind binarul creat fără a folosi sudo. (./binar) 
+
+<code c>
+#include <stdio.h> 
+#include <stdlib.h> // For exit() 
+
+int main() 
+{ 
+	FILE *fptr; 
+
+	char filename[100], c; 
+
+	printf("Enter the filename to open \n"); 
+	scanf("%s", filename); 
+
+	// Open file 
+	fptr = fopen(filename, "r"); 
+	if (fptr == NULL) 
+	{ 
+		printf("Cannot open file \n"); 
+		exit(0); 
+	} 
+
+	// Read contents from file 
+	c = fgetc(fptr); 
+	while (c != EOF) 
+	{ 
+		printf ("%c", c); 
+		c = fgetc(fptr); 
+	} 
+
+	fclose(fptr); 
+	return 0; 
+}
+</code>
+
+ ==== 2. Iptables ==== 
+  
+ Folosiți comanda **iptables** pentru a bloca traficul SSH către sistemul fizic. Puteți urmări exemplu de [[https://unix.stackexchange.com/questions/397481/use-iptables-to-block-ssh|aici]]. 
+  
+ Pentru a testa, rugați un coleg să se conecteze pe adresa voastră ip prin ssh. 
+  
+ ==== 3. XSS ==== 
+  
+ XSS sau **Cross-site scripting** este o vulnerabilitate web listată în ''OWASP TOP 10''. Citiți mai multe despre XSS, precum și niște exemple, [[https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)|aici]]. 
+  
+ Parcurgeți câte nivele puteți din [[https://xss-game.appspot.com/|XSS GAME]] 
+  
+ ==== 4. Python encrypt ==== 
+  
+ Scrieți un program în python ce encripteaza și apoi decriptează un text folosind **AES** în modul **CBC**. Puteți citi mai multe despre AES [[https://thebestvpn.com/advanced-encryption-standard-aes/|aici]]. 
+  
+ Pentru program, puteți urmări indicațiile de [[https://docs.python-guide.org/scenarios/crypto/|aici]] 
+  
+ ==== 5. Obținere certificat ==== 
+  
+  -Alegeți un site care să folosească **HTTPS** 
+  -Obțineți certificatul site-ului din CLI folosind ''openssl'' 
+

@@ -1,0 +1,10 @@
+ ===== Recapitulare =====  
+  
+ ==== 1. Conectare prin ssh la un VM ====  
+    * Conectați-vă prin ssh la mașina virtuală din cloud ''fep.grid.pub.ro''. Folosiți userul și parola de pe cs.curs. 
+  
+ ==== 2. VM din CLI ====  
+    * Porniți mașina Tom din linia de comandă folosind **VBoxManage**. 
+  
+ ==== 3. VM din CLI 2.0 ====  
+    * Listați mașinile virtuale pornite folosind linia de comandă. 

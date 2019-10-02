@@ -1,0 +1,90 @@
+ ===== Need to know ===== 
+ Dacă nu se precizează altfel, în această secțiune veți rula comenzile pe **stația fizică** (sau pe mașina virtuală ''uso'' dacă lucrați acasă). 
+  
+ Asigurați-vă că ați importat mașinile virtuale Tom și Jerry. Detalii în secțiunea [[uso:laboratoare:new:10-sec:setup|]]. 
+  
+ ==== 1. SSH pe mașina TOM ==== 
+  
+ Înainte de exercițiile următoare, vrem să ne putem conecta la mașina TOM prin ssh ca până acum, folosind parola. Porniți mașina TOM. 
+  
+ Pentru a face o conexiune SSH între stația fizică și mașina virtuală ''tom'' va trebui să avem interfața activată, pe mașină virtuală ''tom''. Pentru aceasta rulați comanda 
+ <code bash> 
+ student@tom:~$ sudo dhclient enp0s8 
+ </code> 
+ care vă asigură obținerea, prin DHCP, a parametrilor de rețea pentru interfața ''enp0s8''. 
+  
+ Folosind comanda 
+ <code bash> 
+ student@tom:~$ ip a s enp0s8 
+ 3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000 
+     link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff 
+     ineț 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8 
+        valid_lft forever preferred_lft forever 
+     inet6 fe80::a00:27ff:fe71:db21/64 scope link 
+        valid_lft forever preferred_lft forever 
+ </code> 
+ aflăm adresa IP a mașinii virtuale ''tom''. În cazul de fată este vorba de ''192.168.56.101''. 
+  
+ Este posibil ca adresa IP pentru mașina virtuală ''tom'' să fie alta în rularea voastră. Folosiți în continuare adresa IP obtinută din rularea voastră. 
+  
+ Verificați că vă puteți conecta prin ssh la TOM. **NU treceți mai departe dacă nu vă merge conexiunea**. 
+  
+ ==== 2. SSH cu chei publice/private ==== 
+  
+ **[2a]** Generați o pereche de chei ssh folosind ''ssh-keygen'', apăsați Enter de câteva ori: 
+  
+ <code bash> 
+ student@uso:~$ ssh-keygen 
+ Generating public/private rsa key pair. 
+ Enter file in which to save the key (/home/student/.ssh/id_rsa):  
+ Enter passphrase (empty for no passphrase):  
+ Enter same passphrase again:  
+ Your identification has been saved in /home/student/.ssh/id_rsa. 
+ Your public key has been saved in /home/student/.ssh/id_rsa.pub. 
+ The key fingerprint is: 
+ SHA256:Ob3LFt6KV0yTz006l8Zhjj8stJe6mKWsRmWoZs/CDSk student@uso 
+ The key's randomart image is: 
+ +---[RSA 2048]----+ 
+ |                 | 
+ |                 | 
+ |          .  .   | 
+ |         + o+  o.| 
+ |        S +o +=+o| 
+ |     E * o..oo==o| 
+ |      = *..+..=o.| 
+ |       o B=.*o * | 
+ |        ++=* o= .| 
+ +----[SHA256]-----+ 
+ </code> 
+  
+ **[2b]** Copiați cheia publică creată mai devreme pe TOM, folosind ''ssh-copy-id''. ''HINT: ssh-copy-id user@ipaddress'' 
+  
+ **[2c]** Dacă copierea a avut loc cu succes, conectați-vă prin ssh la TOM. Veți observa că autentificarea se face pe baze cheii publice și nu mai este cerută parola. 
+  
+ **[2d]** Creați un user nou pe mașina TOM numit ''gion'', cu ce parolă doriți voi. 
+  
+ **[2e]** Dezactivați autentificarea cu parolă prin ssh. ''HINT: /etc/ssh/sshd_config''. Încercați apoi să vă conectați prin ssh mai întâi cu **student**, iar apoi cu **gion**. 
+
+
+ ==== 3. Least privilege  ==== 
+  
+ **Principle of least privilege** se referă la faptul că un utilizator, program, modul, etc va putea accesa doar informațiile și resursele necesare pentru desfășurarea activității **intenționate**.  
+  
+ Cu alte cuvinte, utilizatorul **student** va putea accesa doar fișierele și directoarele care îl privesc, nu și cele ce conțin date private ale altor utilizatori, de exemplu directorul ''/home/gion'', care este home-ul utilizatorului ''gion''. 
+  
+ În Linux, acest lucru se definește folosind permisiuni. Ne amintim de suita de comenzi ''chown'', ''chgrp'', ''chmod'' din laboratoarele trecute. Dorim de exemplu să îi dăm drepturi doar utilizatorului student pe directorului sau de home: 
+  
+ <code bash> 
+  
+ student@uso:~$ sudo chown student /home/student/ 
+ student@uso:~$ sudo chgrp student /home/student/ 
+ student@uso:~$ sudo chmod 700 /home/student/ 
+ student@uso:~$ ls -l /home/ 
+ total 4 
+ drwx------ 23 student student 4096 dec  8 23:30 student 
+  
+ </code> 
+  
+ Cu ''chown'' schimbăm **ownerul** directorului, cu ''chgrp'' schimbat **group ownerul**, iar cu ''chmod'' îi permitem doar utilizatorului ''student' să vadă sau modifice conținutul directorului ''/home/student''. 
+  
+ **Principle of least privilege** se aplică foarte mult în zona de web. Se asigură astfel faptul ca dacă o pagină a unui site a fost compromisă, nu va fi compromis întreg site-ul sau chiar întreg serve-ul. 

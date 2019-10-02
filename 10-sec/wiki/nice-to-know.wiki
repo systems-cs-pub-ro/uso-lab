@@ -1,0 +1,106 @@
+ ===== Nice to Know ===== 
+  
+ Pentru exercițiile urmatoare, mergeți în directorul ''/home/student/uso.git/labs/10-sec/support/nice-to-know''. 
+  
+ ==== 1. Spargerea parolei prin brute-force ==== 
+  
+ Tehnica de **brute-force** presupune încercarea oricăror combinării posibile de caractere în încercarea de a sparge o parolă. În cazul nostru, vom lucra cu un **zip**. 
+  
+ Dacă parola este suficient de lungă (peste 10-12 caractere) atunci ea este considerată relativ sigură pentru un atac de acest tip întrucât va dura mult prea mult găsirea parolei corecte, chiar cu cele mai puternice CPU-uri din prezent. 
+  
+ Vom încerca să spargem parola arhive zip ''secret_brute_force.zip''. Pentru a face acest lucru, vom instala utilitarul **fcrackzip**: 
+  
+ <code bash> 
+ student@uso:~$ sudo apt-get install fcrackzip 
+ </code> 
+  
+ Știm faptul că arhiva are o parolă de maxim 4 caractere, deci este fezabil să rulăm un atac de tip brute-force: 
+  
+ <code bash> 
+ student@uso:~/.../10-sec/support/nice-to-know$ fcrackzip -v -l 1-4 -u secret_brute_force.zip  
+ found file 'flag.txt', (size cp/uc     34/    22, flags 1, chk 6543) 
+  
+  
+ PASSWORD FOUND!!!!: pw == fd7 
+ student@uso:~/.../10-sec/support/nice-to-know$ unzip -P fd7 secret_brute_force.zip  
+ Archive:  secret_brute_force.zip 
+  extracting: flag.txt                 
+ student@uso:~/.../10-sec/support/nice-to-know$ cat flag.txt  
+ USO{viața_pe_internet} 
+  
+ </code> 
+  
+ Argumentele comenzii **fcrackzip** sunt următoarele: 
+   * ''-v'' -> verbose 
+   * ''-l 1-4'' -> atac de tip brute-force cu lungimea parolei între 1 și 4 caractere 
+   * ''-u'' -> verifică parola prin încercarea de a dezarhiva arhiva 
+  
+ ==== 2. Spargerea parolei cu wordlist ==== 
+  
+ Asemănător exemplului de mai sus, avem în același director arhiva zip ''secret_wordlist.zip''. Deoarece parola este suficient de lungă, ea nu poate fi spartă folosind un atac de tip brute-force. 
+  
+ Poate fi însă spartă folosind un dicționar de cuvinte. **fcrackzip** are opțiunea de a încerca parole dintr-o listă (numite wordlist). Dacă parola arhivei se află în lista de cuvinte, atunci ea va putea fi spartă. 
+  
+ Deși sună greu de realizat în practică (Ce wordlist va avea în ea parola mea ''5gangmoduavion??'' ??), multe persoane folosesc parole simple pentru a-și proteja datele personale. 
+  
+ **[2a]** Spargeți parola arhivei ''secret_wordlist.zip'' folosind dicționarul ''wordlists.txt''. ''HINT: man fcrackzip sau Google'' 
+
+ ==== 3. Capturi de rețea ====  
+    
+ Atacatorul Trudy a reușit să obțină acces la calculatorului studentului **Vladimir**. Trudy a capturat tot traficul pe care Vladimir l-a făcut în rețea în captura de rețea ''capture.pcapng'' și va încerca să găsească date care l-ar putea interesa. Pentru acest lucru, el instalează **Wireshark** rulând comenzile următoare: 
+  
+ <code bash> 
+ student@uso:~$ sudo add-apt-repository ppa:wireshark-dev/stable 
+ student@uso:~$ sudo apt-get update 
+ student@uso:~$ sudo apt-get install wireshark 
+ </code> 
+  
+ După ce s-a instalat, el pornește **Wireshark**: 
+  
+ <code bash> 
+ student@uso:~$ wireshark 
+ </code> 
+  
+ {{:uso:laboratoare:new:10-sec:wireshark_start.png?nolink&750|}} 
+  
+ Deschide apoi captura de rețea ''capture.pcapng'' în Wireshark folosind ''File -> Open'': 
+  
+ {{:uso:laboratoare:new:10-sec:wireshark_2.png?nolink&700|}} 
+  
+ Vladimir a navigat mult pe internet și deci a generat mult trafic. Trudy știe că el a intrat pe 2 site-uri care îi pot fi de interes **aavtrain.com** și **acs.curs.pub.ro**. 
+  
+ Pentru început, Trudy află adresa ip a site-ului **aavtrain.com**: 
+  
+ <code bash> 
+ student@uso:~$ ping aavtrain.com 
+ PING aavtrain.com (192.185.11.183) 56(84) bytes of data. 
+ 64 bytes from pss24.win.hostgator.com (192.185.11.183): icmp_seq=1 ttl=128 time=148 ms 
+ ...... 
+ </code> 
+  
+ Acum că știe adresa IP a site-ului, dorește să vadă în Wireshark doar pachetele schimbate cu această adresă IP. Pentru a face asta, el aplică un filtru în Wireshark, ''ip.addr == 192.185.11.183'' și apasă Enter: 
+  
+  
+ {{:uso:laboratoare:new:10-sec:wireshark_3.png?nolink&900|}} 
+  
+ Acum că vede doar informațiile legate de **aavtrain.com**, Trudy observă că Vladimir a făcut un request de **POST** pe acest site. Request-urile de POST se fac de multe ori în cazul unei pagini de **login**. Pentru a investiga, Trudy urmărește traficul HTTP astfel: ''Click-dreapta pe request-ul de POST -> Follow -> HTTP Stream'': 
+  
+ {{:uso:laboratoare:new:10-sec:wireshark_4.png?nolink&850|}} 
+  
+ Trudy vede în clar informațiile trimise de Vladimir la Login: 
+  
+ **userul**: ''student_vladimir'' 
+ **parola**: ''supersecretpasswordvladimir'' 
+  
+ {{:uso:laboratoare:new:10-sec:wireshark_5.png?nolink&800|}} 
+  
+ Trudy dorește acum să afle și contul de **acs.curs.pub.ro**. Află adresa IP că mai sus: ''141.85.241.51'', filtrează după ea în Wireshark : ''ip.addr == 141.85.241.51'', găsește requestul de **POST** și urmărește traficul TCP similar ca mai sus: 
+  
+  
+ {{:uso:laboratoare:new:10-sec:wireshark_6.png?nolink&800|}} 
+  
+ De data aceasta, Trudy nu poate să extragă nicio informație. 
+  
+ Motivul este că **acs.curs.pub.ro** folosește **HTTPS**, deci întreg traficul este criptat. **aavtrain.com** folosește HTTP, fapt ce îl face vulnerabil la atacuri de tip **Man-in-the-middle**, adică exact ce a făcut Trudy. 
+  
+  

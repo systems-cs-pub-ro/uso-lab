@@ -1,0 +1,92 @@
+===== Concepte ===== 
+
+==== Prezentarea și securizarea datelor (encodare, criptare, hashing) ==== 
+
+=== Encodare === 
+
+**Encodarea** este folosită când dorim să prezentăm o serie de date sub o altă formă. De exemplu, când există caractere neprintabile în datele noastre nu le putem afișa sub forma unui string. **Base64** este un cunoscut exemplu de algoritm de encodare pentru că transformă orice vector de octeți într-un string de caractere printabile. Vom prezenta în secțiunea de Demo cum encodam și decodăm un mesaj. 
+
+<note> 
+Este important de precizat faptul că encodarea **nu ascunde/securizează** informații, ci doar le prezintă sub o altă formă. 
+</note> 
+
+TODO IMAGE_BASE64 
+
+=== Criptarea === 
+
+Să presupunem că Alice și Bob doresc să comunice pe internet. Pentru început, cei doi folosesc un canal simplu prin care transmit mesajele în clar. Problema care apare este că Trudy, care este rău intenționat, poate asculta ce vorbesc Alice și Bob și va și înțelege mesajele deoarece ele sunt transmise în clar. 
+
+TODO IMAGE_TRUDY 
+
+**Criptarea** înseamnă ascunderea datelor folosind un algoritm public și o cheie secretă. În cazul nostru, Alice **criptează** mesajul pe care dorește să îl transmită, iar Bob îl **decriptează**. Alice și Bob au aceeași cheie secretă negociată într-un moment de timp anterior comunicării. **Trudy** vede în continuare mesajele, știe algoritmul de criptare (deoarece e public), dar nu cunoaște cheia de decriptare, deci nu poate vedea conținutul lor. Un exemplu de algoritm de criptare este **AES**. 
+
+<note> 
+**Criptarea** presupune ascunderea/securizarea datelor într-o manieră recuperabilă. Adică ele vor putea fi ulterior **decriptate**. 
+</note> 
+
+=== Hashing === 
+
+**Hash-ul** este o funcție [[https://en.wikipedia.org/wiki/One-way_function|one-way]]. Ea primește un input oricât de mare (1 byte, un cuvânt, un fișier, un întreg HDD, etc) și returnează un string de o dimensiune fixă în funcție de tipul de hash folosit. Hash-urile sunt rezistente la **coliziuni**. Și anume, este extrem de greu de găsit 2 input-uri care să producă același hash. Mai mult, un singur bit schimbat în input va genera un output complet diferit. Exemple de algoritmi de hashing: md5 (învechit), SHA-1, SHA-256. 
+
+<note> 
+Hash-urile sunt folosite pentru verificarea integrității unui fișier (dacă chiar și un bit diferă, atunci va avea alt hash) și la stocarea parolelor. 
+</note> 
+
+TODO: IMAGE_MD5 
+
+==== SSH și chile publice/private ==== 
+
+În laboratoarele trecute, când foloseam SSH, era mereu nevoie să introducem parola utilizatorului pe care ne conectăm. Pentru a evită acest lucru (și a și securiza mașina virtuală de linux) putem folosi o **pereche de chei** publice și private. Aceste chei sunt folosite de un algoritm de criptare asimetric (folosește 2 chei). Numim **E(m, k)** encriptarea unui mesaj cu cheia p și **D(m, k)** decriptarea unui mesaj cu cheia k, p = cheia publică, iar s = cheia secretă. Nu intrăm în concepte de matematică, ci doar vom explica simbolic cum funcționează un algoritm de criptare asimetric: 
+
+1. Orice mesaj criptat cu cheia **publică** poate fi decriptat doar cu cheia **privată**: **D(E(m, p), s) = m** 
+
+2. Orice mesaj criptat cu cheia **privată** poate fi decriptat doar cu cheia **publică**. **D(E(m, s), p) = m** 
+
+Revenind la **SSH**, userul **student** își generează o pereche de chei publice/private pe mașina sa locală și copiază **cheia publică** pe mașina virtuală. Când se autentifică pe aceasta cu userul student, primește un **challenge**: criptează-mi cu cheia privată a userului student mesajul ''Salut sunt student!''. Mașina locală criptează mesajul cu cheia privată și o trimite la server. Serverul decriptează mesajul și obține un mesaj valid. Trudy nu poate encripta același mesaj deoarece nu cunoaște cheia privată, și deci serverul va obține o decriptare invalida și nu îi va permite accesul. 
+  
+
+==== Stocarea parolelor ==== 
+
+1. Cea mai naivă abordare de stocare a parolelor într-o bază de date este în clar. Dacă un atacator reușește să obține acces la baza de date respectivă, nu doar că obține acces la toate conturile, ci și la orice alt cont al unui utilizator de pe alt site unde a fost folosită aceeași parolă. Este evident că această abordare nu este **sigură**. 
+
+^ User ^ Password ^ 
+| Mihai | mereverzi | 
+| Radu | usoemisto | 
+| Andrei | usoemehmateemisto | 
+
+2. O altă variantă (mai sigură) ar fi să nu stocăm parolele în clar, ci să stocăm **hash-ul** parolei în baza de date. Astfel, când un utilizator se loghează, facem hash-ul parolei introduse de el și îl comparam cu cel din baza de date. 
+
+^ User ^ Password ^ 
+| Mihai | 43eff133cceacbf1354369568b486450 | 
+| Radu | 4491fea305731261a83f75672e25bb88 | 
+| Andrei | 96f3e4decfcd7cd02c3027f0b6416b6e | 
+
+Abordarea este într-adevăr mai bună, dar încă nu complet sigură. Deși hash-urile nu pot fi sparte direct (dintr-un hash să obținem mesajul inițial), ele pot fi atacate folosind dicționare. Un dicționar este o mulțime de corespondențe ''(hash_mesaj) -> (mesaj)''. Pentru a sparge un hash, putem folosi dicționare mari online precum [[https://crackstation.net/|acesta]]. Dacă avem noroc că hash-ul să se afle în dicționar, atunci obținem parola în clar. Deobicei acest lucru se întâmplă pentru toate parolele ce folosesc cuvinte cunoscute sau au o dimensiune/complexitate mică. 
+
+TODO IMAGE_CRACK 
+
+Pentru baza de date de mai sus, parola lui Mihai a putut fi spartă, dar cea a lui Andrei nu. Andrei a avut o parola mai lungă, dar acest lucru nu asigură neapărat siguranța ei. 
+
+3. O abordare finală ar fi să folosim un salt pentru hash-uirea parolei. Salt-ul este un string random de câteva caractere random ce se folosește în felul următor la construirea unui hash: Hash(salt | parolă), unde "|" înseamnă concatenare. Astfel, salt-ul previne atacul cu dicționar de mai sus deoarece este foarte puțin probabil ca hash-ul respectiv să existe într-un dicționar. Salt-ul se stochează în clar   de date. 
+
+^  ^ Salt ^ Password ^ 
+| Mihai | 3*6as0':+ | f98ad20d2f42dcd4e53a4d1f40f9c1a5 | 
+
+Pentru Mihai,   este: Hash(3*6as0':+mereverzi). 
+
+TODO: IMAGE_CRACK_2 
+
+==== Password manager ==== 
+
+tot este recomandat  avem parole   lungi  complexe. Diferite    parole diferite  tot așa. Pentru   folosirea de parole sigure  diferite este  folosirea unui password manager precum [[https://www.lastpass.com/business-password-manager|acesta]]. Un password manager aduce următoarele avantaje: 
+
+-Stochează el parolele pentru fiecare site, astfel  nu vor trebui memorate  vor  fi folosite parole complexe 
+-Se  share-ui anumite parole cu  utilizatori 
+
+==== HTTP vs HTTPS ==== 
+
+Protocolul de rețea **HTTP** aduce beneficii din multe puncte de vedere. Unul din dezavantajele lui este faptul că toate datele sunt trimise în clar. Astfel, un atacator precum Trudy va putea intercepta și înțelege un pachet HTTP. 
+
+Acest start suplimentar necesar de criptare este aduc de **HTTPS**, detaliat mai pe larg [[https://ro.wikipedia.org/wiki/HTTPS|aici]]. Funcționarea lui este asemănătoare cu ce am descris mai sus la SSH. 
+
+TODO: IMAGE_HTTPS 

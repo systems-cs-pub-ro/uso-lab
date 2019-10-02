@@ -1,0 +1,79 @@
+===== Demo ===== 
+
+==== Diferențele dintre encodare, criptare si hashing ====
+
+==== Encodare ====
+Folosind comanda **base64** fără niciun parametru putem să encodăm un text.
+<code bash>
+student@uso:~$ echo -n "Base64 is not encryption!" | base64
+QmFzZTY0IGlzIG5vdCBlbmNyeXB0aW9uIQ==
+</code>
+
+Utilizând parametrul **-d** putem decoda un text encodat.
+<code bash>
+student@uso:~$ echo -n "QmFzZTY0IGlzIG5vdCBlbmNyeXB0aW9uIQ==" | base64 -d
+Base64 is not encryption!
+</code>
+
+==== Criptare ====
+Folosind utilitarul **openssl** putem să encriptăm un fișier.
+
+<code bash>
+student@uso:~$ echo -n "plaintext content" > plaintext_file.txt
+student@uso:~$ openssl aes-256-cbc -in plaintext_file.txt -out encrypted_file.enc -pass pass:"uso rules"
+student@uso:~$ ls
+encrypted_file.enc  plaintext_file.txt
+</code>
+
+Utilizând parametrul **-d** putem decripta fișierul encrypted_file.enc.
+<code bash>
+student@uso:~$ openssl aes-256-cbc -d -in encrypted_file.enc -out decrypted_file.txt -pass pass:"uso rules"
+student@uso:~$ cat decrypted_file.txt 
+plaintext content
+</code>
+
+==== Hashing ====
+Folosind comanda **md5sum** fără niciun parametru putem să generăm hash-ul unui text.
+
+<code bash>
+student@uso:~$ echo -n "plaintext content" | md5sum
+f88d6c9eab9c6a2ef3cfd3c59832b4d6  -
+</code>
+
+==== Liste de cuvinte ====
+**John the Ripper** este un utlitar de spargere al parolelor. În cadrul acestui laborator dorim sa aflăm parolele utilizatorilor din linux. Pentru a reduce timpul de brute-force al utilitarului **John** vom crea o listă de cuvinte.
+
+Instalare **John The Ripper**
+<code bash>
+student@uso:~$ sudo apt-get update
+student@uso:~$ sudo apt-get install john
+</code>
+
+Copiem hash-urile parolelor în fișierul mypasswd.txt
+<code bash>
+student@uso:~$ sudo unshadow /etc/passwd /etc/shadow > mypasswd.txt
+</code>
+
+Creăm o listă de cuvinte care ne-ar putea ajuta sa ghicim parola unui calculator dintr-o universitate
+<code bash>
+student@uso:~$ echo -ne "school\nuniversity\nstudent" > wordlist.txt
+</code>
+
+Rulăm utilitarul **John the Ripper**
+<code bash>
+student@uso:~$ john --wordlist=wordlist.txt mypasswd.txt 
+Loaded 3 password hashes with 3 different salts (crypt, generic crypt(3) [?/64])
+Remaining 2 password hashes with 2 different salts
+Press 'q' or Ctrl-C to abort, almost any other key for status
+0g 0:00:00:00 100% 0g/s 50.00p/s 100.0c/s 100.0C/s school..student
+Session completed
+</code>
+
+Pentru a vizualiza rezultatele rulăm următoarea comandă
+<code bash>
+student@uso:~$ john --show mypasswd.txt 
+student:student:1000:1000:Student User,,,:/home/student:/bin/bash
+
+1 password hash cracked, 1 left
+</code>
+Utilitarul ne indică faptul că parola **student** este parola utilizatorului ''student''.

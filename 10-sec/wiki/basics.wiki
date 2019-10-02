@@ -1,0 +1,111 @@
+ ===== Basics ===== 
+  
+ Dacă nu se precizează altfel, în această secțiune veți rula comenzile pe **stația fizică** (sau pe mașina virtuală ''uso'' dacă lucrați acasă). 
+  
+ Asigurați-vă că ați importat mașinile virtuale Tom și Jerry. Detalii în secțiunea [[uso:laboratoare:new:10-sec:setup|]]. 
+  
+ ==== 1. Hash me ==== 
+  
+ **[1a]** Realizați un md5 pe string-ul ''whoareyou'' folosind md5sum, vedeți exemplul din [[uso:laboratoare:new:10-sec:demo|]] 
+  
+ Hash-ul obținut trebuie să fie ''a46601d9f660704eb28d1ce17ac1fae4''. Asigurați-vă că obțineți același rezultat. 
+  
+ **[1b]** Intrați pe [[https://crackstation.net/|CrackStation]] și introduceți hash-ul vostru. Veți observa că el a fost deja spart. 
+  
+  
+ {{:uso:laboratoare:new:10-sec:found_hash.png?nolink&700|}} 
+  
+ **[1c]** Generați un string de 10 caractere random că în exemplul de mai jos: 
+  
+ <code bash> 
+ student@uso:~$ head /dev/urandom | tr -dc A-Za-z0-9 | head -c 10 ; echo '' 
+ oargwZRgEv 
+ </code> 
+  
+ **[1d]** Folosiți string-ul generat mai devreme ca **Salt** pentru mesajul ''whoareyou''. În cazul din exemplu, s-ar fi realizat md5-ul pe ''oargwZRgEvwhoareyou'' 
+  
+ **[1e]** Încercați pe [[https://crackstation.net/|CrackStation]] să spargeți acest nou md5. Observați că un **Salt** întărește securitatea unui hash. 
+  
+ {{:uso:laboratoare:new:10-sec:image_crack_2.png?nolink&700|}} 
+  
+  
+ ==== 2. Generare de parole ==== 
+  
+ Pe Linux, putem genera parole folosind utilitarul ''pwgen'': 
+  
+ <code bash> 
+ student@uso:~$ pwgen 
+ ceigie4E phie3fuG ooQua8ch Quochu7A Wi2iesha fiena3Qu xohWah7w nahte9Ao 
+ Caem6Eis Jeiquo2f phahM1je oLou6ohb aishae2O bo1Eishu PhugeS1z Tang6oox 
+ Gaif4aij xoh1Evoa Eipoax7A ADi5Hohx ahJ8aida Aef0och4 iuD7oa3y Tatoo8po 
+ Aephuit2 Segh9gah usaif4Ah Oex5quoo Thei9kae aoyuPh0F iu2vi3Ph aipai3Ow 
+ Oof4Tei9 Naing5Ru nee9geiN noosh7Fo aF7ae8va zoo0IT7w uoj2Sie8 Zooghee0 
+ ........ 
+ </code> 
+  
+ **[2a]** În modul default, **pwgen** generează parole ușor de memorat. Generați o parolă greu de memorat, sigură. ''Hint: man pwgen'' 
+  
+ **[3a]** Folosind pwgen, generați o parolă de **80 de caractere**, **singură pe linie**, **fără vocale**, cu **cel puțin o majusculă** și fără să conțină **numere**. ''Hint: man pwgen'' 
+
+ ==== 3. CLI password manager ==== 
+  
+ Vom folosi utilitarul ''pass'' pentru a memora parole în Linux din CLI. Instalați ''pass'': 
+  
+ <code bash> 
+ student@uso:~$ sudo apt-get install pass -y 
+ </code> 
+  
+ Dorim să salvăm parola ''t-series-wins'' pentru adresa de mail ''pwedpei@example.com''. Putem face asta în felul următor: 
+  
+   * Generăm o pereche de chei pentru securizarea parolelor: 
+  
+ <code bash> 
+ student@uso:~$ gpg --full-generate-key 
+ </code> 
+  
+ Selectați **(1) RSA and RSA (default)**, apăsați enter de câteva ori, apoi **apăsați y**, introduceți orice date doriți pentru **Real name**, **email** etc, **apăsați O** pentru opțiunea **(O)kay**. Vi se va cere să introduceți un **Passphrase**, folosiți ''student''. După, selectați **Take this one anyway**. Mișcați mouse-ul random și scrieți pe tastatură cuvinte random pentru a grăbi procesul (entropie). Când se termină generarea, veți vedea următorul output: 
+  
+  
+ <code bash> 
+ pub   rsa3072 2018-12-08 [SC] 
+       8E3237EC764994471F898A82B3752D3483E457E9 
+ uid                      octav 
+ sub   rsa3072 2018-12-08 [E] 
+ </code> 
+  
+ Ne interesează codul ''8E3237EC764994471F898A82B3752D3483E457E9''. În cazul vostru va fi alt cod. Copiați codul generat și folosiți-l pentru a inițializa managerul de parole. 
+  
+   * Inițializăm managerul de parole: 
+ <code bash> 
+ student@uso:~$ pass init 8E3237EC764994471F898A82B3752D3483E457E9 
+ Password store initialized for 8E3237EC764994471F898A82B3752D3483E457E9 
+ </code> 
+  
+   * Adăugăm parola pentru adresa de e-mail dorită: 
+  
+ <code bash> 
+ student@uso:~$ pass edit pwedpei@example.com 
+ </code> 
+  
+ Vi se va deschide în Vim un fișier, scrieți în el parola, și anume ''t-series-wins''. Salvați fișierul și ieșiți din el. 
+  
+   * Când dorim să folosim o anumită parolă, rulăm comanda următoare și introducem parola ''student'': 
+  
+ <code bash> 
+ student@uso:~$ pass pwedpei@example.com 
+ t-series-wins 
+ </code> 
+  
+ ==== 4. Site-uri considerate sigure ==== 
+  
+ Putem folosi [[https://www.ssllabs.com/ssltest/|ssllabs]] pentru a verifica certificatul unui site HTTPS. 
+  
+ Introduceți **Hostname-ul** ''youtube.com'' și observați ce notă primește: 
+  
+ {{:uso:laboratoare:new:10-sec:ssllabs_youtube.png?nolink&700|}}  
+  
+ Introduceți apoi **Hostname-ul** ''expired.badssl.com'' ce are certificatul expirat: 
+  
+ {{:uso:laboratoare:new:10-sec:ssllabs_expired.png?nolink&700|}} 
+  
+ [[https://www.ssllabs.com/ssltest/|ssllabs]] este un bun utilitar de a verifica dacă un site este sigur sau nu. 
