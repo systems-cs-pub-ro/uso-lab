@@ -134,5 +134,5 @@ lrwxrwxrwx 1 student student  7 sep 10 12:25 hello_from_the_other_side.h -> hell
 Am afișat recursiv (-R) directorul **uso** și am transmis rezultatul către utilitarul **grep** pentru a căuta fișierele ce conțin cuvântul ''hello''.
 
 **Exerciții**
-  - Afișați recursiv toate fișierele și directoarele din **uso.git**, redirectând totul într-un fișier. Înspectați fișierul pentru verificare.
-  - Înlănțuiți comanda precedentă cu **grep** pentru a căuta în **uso.git** fișierele ce conțin cuvântul **lab**.
+  - Afișați recursiv toate fișierele și directoarele din **uso-lab**, redirectând totul într-un fișier. Înspectați fișierul pentru verificare.
+  - Înlănțuiți comanda precedentă cu **grep** pentru a căuta în **uso-lab** fișierele ce conțin cuvântul **lab**.
