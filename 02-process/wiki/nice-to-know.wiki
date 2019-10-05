@@ -5,16 +5,16 @@
 Putem verifica dacă comanda executată anterior s-a executat cu succes folosind **$?**:
 
 <code bash>
-student@uso:~/uso$ cat README.md 
+student@uso:~/.../02-process/support$ cat README.md 
 uso
 ===
 
    * Directorul ''lab02'' conține toate fișierele și structura de directoare necesare rezolvării laboratorului 2 de către studenți
-student@uso:~/uso$ echo $?
+student@uso:~/.../02-process/support$ echo $?
 0
-student@uso:~/uso$ cat fisier-care-nu-exista.txt
+student@uso:~/.../02-process/support$ cat fisier-care-nu-exista.txt
 cat: fisier-care-nu-exista.txt: No such file or directory
-student@uso:~/uso$ echo $?
+student@uso:~/.../02-process/support$ echo $?
 1
 </code>
 
@@ -29,7 +29,7 @@ Atunci când valoarea este **0**, procesul s-a executat cu succes. Orice diferit
 Afișăm toate procesele din sistem cu atributele PID, PPID, CMD:
 
 <code bash>
-student@uso:~/uso$ ps ax -o pid,ppid,cmd
+student@uso:~/.../02-process/support$ ps ax -o pid,ppid,cmd
   PID  PPID CMD
     1     0 /sbin/init splash
 [...]
