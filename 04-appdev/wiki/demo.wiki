@@ -6,7 +6,7 @@ procesului compilării precum și asupra utilității și utilizării fișierelo
 Pentru această secțiune trebuie să vă asigurați că sunteți în directorul potrivit. Rulați comanda
 
 <code bash>
-student@uso:~$cd ~/uso.git/labs/04-appdev/support/
+student@uso:~$cd ~/uso-labs/04-appdev/support/demo
 </code>
 
 ==== Compilarea codului în C/C++ ====

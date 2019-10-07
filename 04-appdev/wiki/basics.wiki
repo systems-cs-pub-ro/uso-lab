@@ -5,7 +5,7 @@
 
 ==== Scrierea unui program C ====
 
-La calea ''~/uso.git/labs/04-appdev/support/basics/simple.c'' un program simplu C care afișează bine-cunoscutul mesaj "Hello, World!".
+La calea ''~/uso-labs/04-appdev/support/basics/simple.c'' un program simplu C care afișează bine-cunoscutul mesaj "Hello, World!".
 
 <note>
 Nu uita să folosești <TAB> pentru auto-completare, nu scrie de mână toată calea!
@@ -21,45 +21,162 @@ int main(void) {
 }
 </code>
 
-==== Compilare folosind reguli din Makefile ====
+==== Compilarea unui fișier C ====
 
-Tot acolo găsiți un fișier Makefile:
-
-<code bash>
-simple:
-	gcc -Wall simple.c -o simple
-
-clean:
-	rm simple
-</code>
-
-  - Folosind regulile din Makefile, compilați fișierul ''simple.c'' și asigurați-vă că această acțiune s-a terminat cu succes (hint: verificați existența fișierului generat ''simple'').
-  - Faceți orice modificare asupra fișierului ''simple.c'' și compilați din nou fișierul.
-  - Ștergeți fișierul ''simple'' după ce acesta a fost generat. Verificați că el nu mai există în sistem.
-
-Acum, fișierul Makefile va executa orice regula de fiecare dată când acest lucru este solicitat, indiferent
-dacă fișierele implicate au fost modificate sau nu. Putem (și vrem) să aducem o îmbunătățire în acest sens.
-Aceasta constă în adăugarea de **dependențe** în acest fișier.
-
-Mai jos este un exemplu de Makefile (găsit la calea ''~/uso.git/labs/04-appdev/support/demo/Makefile'') care
-conține dependențe:
+Cel mai folosit compilator de C folosit pe Ubuntu este ''gcc''. Asta vom folosi și noi la laborator să compilăm fișiere scrise în limbajul C.
+Pentru a compila un fișier, rulăm comanda ''gcc'' urmată de numele fișierului pe care vrem să-l compilăm. 
 
 <code bash>
-rule1: print.c
-	gcc -Wall print.c -o print
-
-clean:
-	rm print
+student@uso:~/uso-labs/04-appdev/support/basics/$ gcc simple.c
+student@uso:~/uso-labs/04-appdev/support/basics/$ ls
+a.out   simple.c
+student@uso:~/uso-labs/04-appdev/support/basics/$ file a.out
+a.out: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=c5ad78cfc1de12b9bb6829207cececb990b3e987, not stripped
 </code>
 
-Regula ''rule1'' are dependența ''print.c''. Aceasta semnifică faptul că la rularea comenzii ''make rule1''
-se va executa regula ''rule1'' doar dacă fișierul ''print.c'' a fost modificat de ultima oară când a fost
-rulată aceasta regulă.
+Outputul produs de această comandă este un fișier executabil cu numele ''a.out''. Comanda ''file'' ne ajută să inspectăm tipul fișierului dat ca argument. În acest caz, ne spune că fișierul ''a.out''
+este de tip ELF pe 64 de biți.
 
-  - Adăugați dependențe în fișierul Makefile de la calea ''~/uso.git/labs/04-appdev/support/basics/Makefile'' astfel încât fișierul ''simple.c'' să nu fie compilat de fiecare dată, ci doar după ce au fost produse modificări asupra lui. Pentru verificare, rulați comanda ''make simple'' de 2 ori consecutiv, prima dată ar trebui să execute comanda de compilare (''gcc ..''), iar a doua oară trebuie să vedeți mesajul ''make: Nothing to be done for `simple`''.
-  - Modificați din nou fișierul ''simple.c'' și compilați folosind regula din Makefile. Observați că regula s-a executat de data această și că fișierul ''simple'' a fost generat.
-  - Ștergeți fișierul generat folosind, desigur, regula ''clean'' din Makefile.
-
+  - De multe ori nu vrem ca executabilul rezultat să se numească a.out, ci vrem să aibă un nume mai intuitiv, spre exemplu ''simple''. Compilați programul ''simple.c'' astfel încât fișierul rezultat să se numească ''simple'' (hint: man gcc, căutați după cuvântul cheie ''outfile'').
+  - Folosind comanda ''file'', verificați că fișierul ''simple'' este într-adevăr un fișier executabil.
+  
 ==== Primii pași în lumea git-ului ====
 
-Așa cum a fost precizat și la secțiunea ''Concepte'', **git** ne ajută la versionarea codului. 
+Așa cum a fost precizat și la secțiunea ''Concepte'', **git** ne ajută la versionarea codului. Versionarea codului este un pas
+foarte important în dezvoltarea aplicațiilor. Atunci când lucrăm la un proiect mai mare sau suntem mai mulți oameni care lucrăm
+la un proiect, este important să păstrăm o ordine în cod. Spre exemplu, ni se poate întâmpla să ne apucăm să implementăm un nou
+feature al aplicației și să modificăm codul suficient de mult încât să stricăm ceea ce aveam înainte. În această situație, vrem 
+să avem o modalitate prin care să revenim la o versiune anterioară a codului. Un alt exemplu care demonstrează nevoia de a folosi
+o modalitate de versionare este dat de situația în care 2 sau mai mulți oameni lucrează la același proiect, dezvoltă două 
+funcționalități diferite și nu vor să aibă probleme atunci când vor imbina cele 2 funcționalități în produsul mare.
+
+Vom trece prin examplele de mai sus în secțiunile următoare. Acum, ne vom concentra de inițializarea proiectului.
+
+  - Înainte de toate, intrați pe [[https://github.com|Github]] sau pe [[https://bitbucket.org/|Bitbucket]] și creați-vă un cont. Vom folosi mai târziu acest cont pentru a ține reposiory-urile pentru proiectele la care lucrăm. 
+
+Pentru a putea versiona codul pe care îl scriem, trebuie întâi și întâi să avem un loc în care să scriem codul. Ne reamintim din 
+laboratoarele anterioare cum se creează un director în Linux. Să presupunem că pornim din directorul ''home'' al uitlizatorului
+''student''. Dacă nu vă aflați acolo, rulați comanda ''cd ~''.
+
+<code bash>
+student@uso:~$mkdir my-awesome-project
+student@uso:~$ cd my-awesome-project
+student@uso:~/my-awesome-project$
+</code>
+
+În acest moment, avem directorul în care vom lucra la proiectul nostru. Pentru a preciza sistemului că vrem să folosim ''git''
+pentru versionare, trebuie să dăm comanda ''git init''. Această comandă creează un **repository local** nou în care vor fi
+ținute toate datele legate de proiect. Vom vorbi despre **repository-uri remote** la secțiunile următoare.
+
+<code bash>
+student@uso:~/my-awesome-project$ git init
+Initialized empty Git repository in /home/student/my-awesome-project/.git/
+student@uso:~/my-awesome-project$ 
+</code>
+
+Dacă această comandă s-a executat cu succes, avem în acest moment un repository de ''git'' în directorul ''my-awesome-project''. Dacă dăm comanda
+''git status'' putem afla foarte ușor ce fișiere am modificat de la ultima actualizare a repository-ului.
+
+<code bash>
+student@uso:~/my-awesome-project$ git status
+# On branch master
+#
+# Initial commit
+#
+nothing to commit (create/copy files and use "git add" to track)
+student@uso:~/my-awesome-project$ 
+</code>
+
+Dat fiind faptul că nu am create/șters/modificat niciun fișier din directorul ''my-awesome-project'', comanda ''git status'' ne spune că nu avem 
+nicio schimbare pe care să o "comitem", adică nu avem nicio schimbare în directorul current pe care ar trebui să o anunțăm.
+
+=== README și .gitignore ===
+
+Uzual, orice proiect vine atașat cu 2 fișiere ''README'' și un fișier ''.gitignore''. Fișierul ''README'' conține informații despre cum este structurat
+proiectul, despre cum se folosește, practic conține orice are nevoie pentru a putea ajuta pe cineva (care nu a lucrat la proiect). Fișierul ''.gitignore''
+este fișierul care îi spune utilitarului ''git'' ce fișiere să ignore atunci când cineva adaugă fișiere la repository. Spre exemplu, fișierele binare
+nu trebuie adăugate niciodată în repository deoarece este **foarte**, atenție **foarte**, probabil ca un program compilat pe un sistem să nu fie compatibil
+pe un altul.
+
+Primul pas pe care trebuie să-l facem după ce am inițializat repository-ul proiectului nostru este să adăugăm un fișier README, care va fi actualizat pe 
+parcursul dezvoltării și un fișier ascuns cu numele ''.gitignore''.
+
+<code bash>
+student@uso:~/my-awesome-project$ echo "Initial content" > README # Scrie textul ''Initial content'' în fișierul ''README''. Fișierul este creat dacă nu exista deja.
+student@uso:~/my-awesome-project$ echo "main" >  .gitignore # Creează fișierul .gitignore cu conținutul ''main''.
+student@uso:~/my-awesome-project$ git status
+# On branch master
+#
+# Initial commit
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	.gitignore
+#	README
+nothing added to commit but untracked files present (use "git add" to track)
+</code>
+
+Comanda ''git status'' ne arată că au fost modificate cele 2 fișiere, dar că sunt ''untracked'', adică nu au fost adăugate (încă în repository). Pentru a le adăuga,
+trebuie să facem 2 pași. Prima dată, le adăugam în setul de fișiere ''tracked''. Pentru a face asta folosim comanda ''git add'' urmată de fișierele pe care vreți să
+le adăugați, în cazul acesta ''README'' și ''.gitignore''.
+
+<code bash>
+student@uso:~/my-awesome-project$ git add README .gitignore
+student@uso:~/my-awesome-project$ git status
+# On branch master
+#
+# Initial commit
+#
+# Changes to be committed:
+#   (use "git rm --cached <file>..." to unstage)
+#
+#	new file:   .gitignore
+#	new file:   README
+#
+</code>
+
+În acest moment ''git'' știe de fișierele ''README'' și ''.gitignore''. Vedem acest lucru cu ajutorul comenzii ''git status''. Al doilea pas este să comitem schimbările.
+Acest lucru se face cu ajutorul comenzii ''git commit'' alături de argumentul ''-m <mesaj>''. Mesajul este o descriere a commit-ului, descrie ce modificări au fost
+aduse odată cu aceasta versiune nouă de cod. ''git commit'' va lua toate fișierele adăugate la pasul anterior, le va marca pe toate cu același mesaj de commit și le va 
+submite în repository-ul local.
+
+<code bash>
+student@uso:~/my-awesome-project$ git commit -m "Initial commit"
+[master (root-commit) 64bccb0] Initial commit
+ Committer: student <student@uso>
+Your name and email address were configured automatically based
+on your username and hostname. Please check that they are accurate.
+You can suppress this message by setting them explicitly:
+
+    git config --global user.name "Your Name"
+    git config --global user.email you@example.com
+
+After doing this, you may fix the identity used for this commit with:
+
+    git commit --amend --reset-author
+
+ 2 files changed, 2 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 README
+student@uso:~/my-awesome-project$ git status
+# On branch master
+nothing to commit, working directory clean
+</code>
+
+La o nouă rulare a comenzii ''git status'' vedem că schimbările au fost efectuate cu succes. Pentru a vedea istoricul commiturilor
+făcute pentru acest repository rulăm comanda ''git log''. Acum trebuie să vedem că a fost efectuat un singur commit de-a lungul timpului
+și anume cel cu identificatorul ''64bccb03c2f3a8e76730582676bd944902a0c1eb''.
+
+<code bash>
+student@uso:~/my-awesome-project$ git log
+commit 64bccb03c2f3a8e76730582676bd944902a0c1eb
+Author: student <student@uso>
+Date:   Mon Oct 7 15:49:20 2019 +0300
+
+    Initial commit
+</code>
+
+  - Creați un program C cu numele ''main.c'' în directorul ''~/my-awesome-project/'' care să afișeze mesajul "Hello, World!".
+  - Verificați faptul că ''git'' vede această schimbare folosind comanda ''git status''.
+  - Comiteți noile schimbări și asigurați-vă că totul este în regulă. Nu treceți mai departe dacă vreo comandă pe care ați dat-o nu funcționează. Chemați asistentul pentru a verifica faptul că totul este în regulă.
