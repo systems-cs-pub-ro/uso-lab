@@ -1,6 +1,6 @@
 ===== Need to know =====
 
-==== Fișiere header vs Fișiere cod sursă în C====
+==== Fișiere header vs. Fișiere cod sursă în C====
 
 Nu există vreo diferență ''tehnică'' între cele două tipuri de fișiere; compilatorul
 îți permite să incluzi un fișier .c într-o altă sursă, sau să compilezi un fișier .h, dacă asta
@@ -11,41 +11,285 @@ Există însă o diferență culturală:
 
 Un fișier .h poate (și este de obicei) inclus în mai multe fișiere .c. În cazul
 în care o funcție este definită în cadrul acestuia, va ajunge în mai multe fișiere
-cod obiect, iar linker-ul se 'va plange' de multiple definiții ale simbolului respectiv.
+cod obiect, iar linker-ul se 'va plânge' de multiple definiții ale simbolului respectiv.
 Din acesta cauză definițiile nu trebuie să fie în fișierele header.
 
-====Variabile în Makefile====
-Un fișier ''Makefile'' permite folosirea de variabile. Astfel, un exemplu uzual de fișier ''Makefile'' este:
- 
-<code make Makefile>
-CC = gcc
-CFLAGS = -Wall -g
+La calea ''~/uso-lab/04-appdev/support/need-to-know'' avem 3 fișiere cod sursă C și 2 fișiere header.
 
-all: hello
-
-hello: hello.o
-        $(CC) hello.o -o hello
-
-hello.o: hello.c
-        $(CC) $(CFLAGS) -c hello.c
-
-clean:
-        rm *.o hello
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
+a.c     a.h     b.c     b.h     main.c
 </code>
 
-În exemplul de mai sus au fost definite variabilele ''CC'' și ''CFLAGS''. Variabila ''CC'' reprezintă compilatorul folosit, iar variabila ''CFLAGS'' reprezintă opțiunile (flag-urile) de compilare utilizate; în cazul de față sunt afișarea avertismentelor și compilarea cu suport de depanare. Referirea unei variabile se realizează prin intermediul construcției %%$%%(VAR_NAME). Astfel, ''%%$%%(CC)'' se înlocuiește cu ''gcc'', iar ''%%$%%(CFLAGS)'' se înlocuiește cu ''-Wall -g''.
+Fișierul ''main.c'' este cel care conține și funcția main, adică punctul de intrare în program.
 
-Observăm că șirurile ''hello'', ''gcc'', precum și flagurile date la compilare apar în foarte multe locuri. Modificați fișierul ''Makefile'' astfel încât să avem de schimbat o singură linie în cazul în care dorim să schimbăm numele executabilului, compilatorului sau să mai adăugăm un alt flag.
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ cat main.c
+#include <stdio.h>
+#include <stdlib.h>
 
-Exemple variabilele predefite:
-  * ** %%$%%@ ** se expandează la numele target-ului. 
-  * ** %%$%%^ ** se expandează la lista de cerințe.
-  * ** %%$%%< ** se expandează la prima cerință. 
+#include "a.h"
+#include "b.h"
 
-Înainte de a rezolva exercițiile, parcurgeți fișierele din directorul support/need-to-know și încercați să înțelegeți cum sunt legate între ele fișierele.
+int main() {
+    printf("globalVar = %d\n", globalVar);
+    print1();
 
-  - Scrieți un Makefile astfel încât fișierul main.c să compileze cu succes. (Hint: Compilați separat fiecare fișier obiect)
-  - Rescrieți Makefile-ul de mai sus folosind variabile automate.  (Hint: https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html)
+    double value = print2(0.5);
+    printf("value = %f\n", value);
+    
+    return 0;
+}
+</code>
+
+Se observă faptul că pe lângă bibliotecile standard ''stdio'' și ''stdlib'', ''main.c'' mai are nevoie de câteva resurse externe și
+anume ''a.h'' și ''b.h''. În aceste 2 fișiere găsim definiții de **funcții** și/sau **variable** pe care vrem să le folosim în ''main.c''.
+
+**a.h**
+<code bash>
+#ifndef A
+#define A
+
+extern int globalVar;
+
+void print1();
+
+#endif
+</code>
+
+**b.h**
+<code bash>
+#ifndef B
+#define B
+
+double print2(double angle);
+
+#endif
+</code>
+
+Fiecare fișier header vine asociat cu un fișier cod sursă în care sunt declarate toate funcțiile/variabilele definite în headere.
+Fișierele cod sursă includ toate headerele asociate. Spre exemplu, ''a.c'' include fișierul ''a.h'', la fel și pentru ''b.c''.
+Trebuie reținut faptul că pentru a putea avea un program funcțional, trebuie să fie compilate toate fișierele cod sursă.
+
+În această situație, vom compila toate cele 3 fișiere cod sursă într-un singur binar. Pentru asta folosim tot ''gcc''.
+
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ gcc main.c a.c b.c -o main
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
+a.c     a.h     b.c     b.h     main    main.c
+</code>
+
 <note>
-De ce nu generează eroare de compilare folosirea variabilei globalVar în fișierul main.c?
+Observați că fișierele header nu au fost incluse în comanda de compilare deoarece ele sunt incluse în fișierele cod sursă și nu e 
+nevoie să le includem și aici.
 </note>
+
+<note warning>
+**NU** includeți niciodată fișiere cod sursă în alte fișiere cod sursă.
+</note>
+
+<note warning>
+**NU** includeți niciodată declarații în fișiere header. Fișierele header sunt **doar** pentru definiții, fișierele cod sursă sunt cele
+care trebuie să conțină implementarea.
+</note>
+
+  - Rulați programul ''main'' și asigurați-vă că rularea lui se termină cu succes.
+	- Urmăriți pașii de mai jos:
+		- Definiți o funcție cu numele ''bad'' fără parametri care nu întoarce nimic în fișierul ''a.h'' (Atenție: doar definiția!).
+		- În fișierul ''main.c'', înainte de linia ''return 0'', apelați această funcție (''bad()'').
+		- Compilați din nou acest program (cu aceeași comandă pe care ați văzut-o mai sus). Ce s-a întâmplat? Care este motivul? Discutați cu asistentul.
+		- Rezolvați problema apărută **fără** a șterge apelul de funcție ''bad()'' din funcția ''main'' din fișierul ''main.c''.
+
+<note>
+De fiecare dată când vreți să apelați o funcție definită într-un fișier header, trebuie să existe o declarație / implementare a ei într-un 
+fișier cod sursă, altfel programul nu este complet și nici corect!
+</note>
+
+==== Linkare cu o bibliotecă ====
+
+Există câteva biblioteci care sunt linkate automat atunci când compilăm un program C. Una dintre acestea este ''libc''. Majoritatea 
+programelor C folosesc funcții din aceastea bibliotecă și s-a hotărât să fie linkată întotdeauna, însă aceasta nu este singura bibliotecă
+externă pe care putem să o folosim. Putem să creăm noi o bibliotecă și să o linkăm programului nostru sau să folosim o bibliotecă deja 
+existentă cum ar fi biblioteca ce conține funcții matematice''math''.
+
+Pentru a folosi biblioteca ''math'' în programul nostru, trebuie să facem 2 lucruri.
+	- Să includem headerul ''math.h'' în program, pentru a putea preciză că se vor folosi funcții definite acolo.
+	- În momentul în care compilăm programul nostru, trebuie să-i precizăm compilatorului că noi folosim funcții din biblioteca ''math.h'' și că vrem ca binarul nostru să fie linkat cu biblioteca ''math''.
+
+Urmăriți tutorialul de mai jos.
+
+În directorul ''~/uso-lab/04-appdev/support/need-to-know'' creați un nou director cu numele ''using-math'' și intrați în el.
+
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ mkdir using-math
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ cd using-math
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ ls
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$
+</code>
+
+Creați aici un fișier simplu numit ''main.c'' cu următorul conținut:
+
+<code>
+#include <stdio.h>
+#include <math.h>
+
+int main(void) {
+	int x;
+	printf("Give me a number: ");
+	scanf("%f", &x);
+	printf("The square root for it is: %f\n", sqrt(x));
+	return 0;
+}
+</code>
+
+<note>
+Observați faptul că am include biblioteca ''math.h'' pentru a putea folosi funcția ''sqrt'' pentru calcularea radicalului unui număr.
+</note>
+
+Compilați programul folosind ''gcc'' astfel încât executabilul obținut să se numeasca ''main''.
+
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ ls
+main.c
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ gcc main.c -o main
+/tmp/ccRBgYrK.o: In function `main':
+main.c:(.text+0x35): undefined reference to `sqrt'
+collect2: error: ld returned 1 exit status
+</code>
+
+Eroarea apare din cauză că ''gcc'' nu știe unde să localizeze funcția ''sqrt'' pe care noi o folosim în program. Pentru a rezolva această
+eroare, atunci când compilăm programul trebuie să dăm un argument în plus lui ''gcc'' care să specifice că vrem să linkăm executabilul
+nostru cu biblioteca ''math''. Practic, îi promitem compilatorului că la rularea programului, funcția ''sqrt'' va exista pentru că îi spunem
+noi acum unde este.
+
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ ls
+main.c
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ gcc main.c -o main -lm
+student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ ./main
+Give me a number: 1234
+The square root for it is: 33925.795731
+</code>
+
+Acum programul a compilat cu succes și am putut să-l și rulăm.
+
+==== Automatizarea procesului de compilare - Makefile ====
+
+Până acum am compilat fișierele sursă folosind comanda ''gcc'' direct din terminal. Acest proces poate deveni anevoios în momentul în
+care proiectul conține mai multe fișiere sursă sau dacă codul depinde de niște variable externe. Nu vrem să scriem comanda de compilare 
+de fiecare dată, vrem să **automatizăm acest proces**. Pentru asta folosim fișierele ''Makefile''.
+
+Dacă avem într-un directorul fișierul ''test.c'' și vrem să-l compilăm, pur și simplu rulăm comanda ''gcc test.c'' acolo și obținem un
+executabil cu numele ''a.out''. Pot apărea situații când compilarea unui program este mai complexă. Spre exemplu, mai sus, existau 3 fișiere
+sursă pe care trebuia să le compilăm ca programul să funcționeze. 
+
+Un exemplu de fișier Makefile simplu care ar automatiza acest proces este următorul:
+
+<code>
+build:
+	gcc main.c a.c b.c -o main
+clean:
+	rm main
+</code>
+
+Fișierul Makefile de mai sus conține 2 **reguli**: ''build'' și ''clean''. Regula build va fi folosită pentru a compila programul, pe 
+când regula ''clean'' va fi folosită pentru a șterge toate fișierele generate în urma compilării.
+
+<note warning>
+Atenție! Regulile în Makefile trebuie scrise la stânga de tot (fără spații la începutul rândului), iar comenzile aferente fiecărei reguli
+trebuie să se afle pe linia următoare, iar linia să înceapă cu <TAB>, **nu** spații.
+<note>
+
+	- Creați fișierul Makefile de mai sus la calea ''~/uso-lab/04-appdev/support/need-to-know/''. Denumiți fișierul ''Makefile''.
+
+Pentru a rula regula ''build'' trebuie să scriem comanda ''make build''.
+
+<code bash>
+student@uso:~$ cd ~/uso-lab/04-appdev/support/need-to-know
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
+a.c     a.h     b.c     b.h     main.c    Makefile
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ make build
+gcc main.c a.c b.c -o main
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
+a.c     a.h     b.c     b.h     main		main.c    Makefile
+</code>
+
+Vedem acum că a fost creat executabilul ''main'' pe care putem să-l rulăm în continuare.
+
+	- Rulați exetuabilul ''main'' și asigurați-vă că funcționează.
+	- Adăugați o regulă numită ''run'' în Makefile care să aibă drept comandă asociată chiar comanda cu care rulăm programul ''main''. Nu treceți mai departe până când partea aceasta nu este clară.
+	- Ștergeți executabilul ''main'' folosind una dintre regulile definite în Makefile.
+
+Dacă se va rula în terminal doar comanda ''make'' (fără a fi urmată de vreun argument), atunci se va executa prima regulă găsită în Makefile, 
+în cazul acesta tot regula ''build''.
+
+
+<code bash>
+student@uso:~$ cd ~/uso-lab/04-appdev/support/need-to-know
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
+a.c     a.h     b.c     b.h     main.c    Makefile
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ make
+gcc main.c a.c b.c -o main
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
+a.c     a.h     b.c     b.h     main		main.c    Makefile
+</code>
+
+	- La calea ''~/uso-labs/04-appdev/support/basics/'' creați un Makefile care să conțină regulile ''build'', ''run'' și ''clean''. Nu treceți mai departe până când asistentul confirmă că este în regulă. 
+
+
+==== Următorii pași în lumea git-ului ====
+
+Înainte de a parcurge această parte a secțiunii, rulați comanda ''cd ~/my-awesome-project''.
+
+Vom crea acum 2 fișiere noi în acest director. Le vom numi ''tom.txt'' și ''jerry.txt''. Scrieți câte un mesaj în fiecare dintre ele.
+
+<code bash>
+student@uso:~/my-awesome-project$ touch tom.txt
+student@uso:~/my-awesome-project$ touch jerry.txt
+(..) # aici editați fișierele
+</code>
+
+Vrem să vedem statusul repository-ul de git. Folosim comanda ''git status''.
+
+<code bash>
+student@uso:~/my-awesome-project$ git status
+# On branch master
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	jerry.txt
+#	tom.txt
+nothing added to commit but untracked files present (use "git add" to track)
+</code>
+
+Scopul nostru acum este de a crea 2 commit-uri, unul care să se refere la adăugarea fișierului ''tom.txt'', iar celălalt la adăugarea lui ''jerry.txt''
+
+	- Creați 2 commit-uri, unul cum mesajul ''added tom.txt file'' și celălalt cu ''added jerry.txt file''. Verificați că cele 2 commit-uri s-au efectuat cu succes (hint: ''git log'').
+
+La rularea comenzii ''git log'' va trebui să primiți un output similar cu următorul:
+
+<code>
+commit 368bf97efe83109491a3f21874aa763a8f1fe682
+Author: student <student@uso>
+Date:   Wed Oct 9 14:30:34 2019 +0300
+
+    added jerry.txt file
+
+commit 55e8b77f46ae355d67e8ed072d2e87c367a078c4
+Author: student <student@uso>
+Date:   Wed Oct 9 14:30:23 2019 +0300
+
+    added tom.txt file
+
+commit a67a3fb85fea113b25e412f813382c4cbaf196f0
+Author: student <student@uso>
+Date:   Wed Oct 9 14:26:38 2019 +0300
+
+    added main file
+
+commit 64bccb03c2f3a8e76730582676bd944902a0c1eb
+Author: student <student@uso>
+Date:   Mon Oct 7 15:49:20 2019 +0300
+
+    Initial commit
+</code>
