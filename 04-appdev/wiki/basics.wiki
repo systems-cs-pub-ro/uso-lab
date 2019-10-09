@@ -179,4 +179,4 @@ Date:   Mon Oct 7 15:49:20 2019 +0300
 
   - Creați un program C cu numele ''main.c'' în directorul ''~/my-awesome-project/'' care să afișeze mesajul "Hello, World!".
   - Verificați faptul că ''git'' vede această schimbare folosind comanda ''git status''.
-  - Comiteți noile schimbări și asigurați-vă că totul este în regulă. Nu treceți mai departe dacă vreo comandă pe care ați dat-o nu funcționează. Chemați asistentul pentru a verifica faptul că totul este în regulă.
+  - Comiteți noile schimbări și asigurați-vă că totul este în regulă. Puteți folosi orice mesaj de commit vreți. Nu treceți mai departe dacă vreo comandă pe care ați dat-o nu funcționează. Chemați asistentul pentru a verifica faptul că totul este în regulă.
