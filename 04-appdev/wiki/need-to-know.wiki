@@ -186,13 +186,13 @@ sursă pe care trebuia să le compilăm ca programul să funcționeze.
 Un exemplu de fișier Makefile simplu care ar automatiza acest proces este următorul:
 
 <code>
-build:
+main:
 	gcc main.c a.c b.c -o main
 clean:
 	rm main
 </code>
 
-Fișierul Makefile de mai sus conține 2 **reguli**: ''build'' și ''clean''. Regula build va fi folosită pentru a compila programul, pe 
+Fișierul Makefile de mai sus conține 2 **reguli**: ''main'' și ''clean''. Regula ''main'' va fi folosită pentru a compila programul, pe 
 când regula ''clean'' va fi folosită pentru a șterge toate fișierele generate în urma compilării.
 
 <note warning>
@@ -202,13 +202,13 @@ trebuie să se afle pe linia următoare, iar linia să înceapă cu <TAB>, **nu*
 
 	- Creați fișierul Makefile de mai sus la calea ''~/uso-lab/04-appdev/support/need-to-know/''. Denumiți fișierul ''Makefile''.
 
-Pentru a rula regula ''build'' trebuie să scriem comanda ''make build''.
+Pentru a rula regula ''main'' trebuie să scriem comanda ''make main''.
 
 <code bash>
 student@uso:~$ cd ~/uso-lab/04-appdev/support/need-to-know
 student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
 a.c     a.h     b.c     b.h     main.c    Makefile
-student@uso:~/uso-lab/04-appdev/support/need-to-know$ make build
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ make main
 gcc main.c a.c b.c -o main
 student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
 a.c     a.h     b.c     b.h     main		main.c    Makefile
@@ -221,7 +221,7 @@ Vedem acum că a fost creat executabilul ''main'' pe care putem să-l rulăm în
 	- Ștergeți executabilul ''main'' folosind una dintre regulile definite în Makefile.
 
 Dacă se va rula în terminal doar comanda ''make'' (fără a fi urmată de vreun argument), atunci se va executa prima regulă găsită în Makefile, 
-în cazul acesta tot regula ''build''.
+în cazul acesta tot regula ''main''.
 
 
 <code bash>
@@ -234,7 +234,7 @@ student@uso:~/uso-lab/04-appdev/support/need-to-know$ ls
 a.c     a.h     b.c     b.h     main		main.c    Makefile
 </code>
 
-	- La calea ''~/uso-labs/04-appdev/support/basics/'' creați un Makefile care să conțină regulile ''build'', ''run'' și ''clean''. Nu treceți mai departe până când asistentul confirmă că este în regulă. 
+	- La calea ''~/uso-labs/04-appdev/support/basics/'' creați un Makefile care să conțină regulile ''main'', ''run'' și ''clean''. Nu treceți mai departe până când asistentul confirmă că este în regulă. 
 
 
 ==== Următorii pași în lumea git-ului ====
