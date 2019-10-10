@@ -1,5 +1,54 @@
 ===== Get a Life =====
 
-  - Scrieți un Makefile astfel încât comanda make să eșueze. (Hint: cicluri în sortarea topologică)
-  - Decomentați linia din fișierul b.c, din folder-ul support/need-to-know și faceți modificările necesare astfel încât fișierul main.c să compileze cu succes din nou.
+==== Makefile ====
 
+Pe parcursul secțiunilor de până acum am văzut cum se poate îmbunătăți procesul de compilare al unui program. Am trecut de la a compila 
+codul "de mână", la fișiere Makefile, la fișiere Makefile cu dependențe. Mai există totuși o formă prin care să putem să îmbunătățim procesul.
+
+==== Variabile în Makefile ====
+
+<code make Makefile>
+CC = gcc
+CFLAGS = -Wall -g
+
+all: hello
+
+hello: hello.o
+        $(CC) hello.o -o hello
+
+hello.o: hello.c
+        $(CC) $(CFLAGS) -c hello.c
+
+clean:
+        rm *.o hello
+</code>
+
+În exemplul de mai sus au fost definite variabilele ''CC'' și ''CFLAGS''. Variabila ''CC'' reprezintă compilatorul folosit, 
+iar variabila ''CFLAGS'' reprezintă opțiunile (flag-urile) de compilare utilizate; În cazul de față sunt afișarea avertismentelor 
+și compilarea cu suport de depanare. Referirea unei variabile se realizează prin intermediul construcției %%$%%(VAR_NAME). 
+Astfel, ''%%$%%(CC)'' se înlocuiește cu ''gcc'', iar ''%%$%%(CFLAGS)'' se înlocuiește cu ''-Wall -g''.
+
+Exemple variabilele predefite:
+  * ** %%$%%@ ** se expandează la numele target-ului. 
+  * ** %%$%%^ ** se expandează la lista de cerințe.
+  * ** %%$%%< ** se expandează la prima cerință. 
+
+Până să treceți mai departe mutați-vă la calea ''~/uso-lab/04-appdev/support/nice-to-know''.
+
+Fișierul Makefile pe care l-ați creat mai devreme este unul funcțional, dar vrem să îl mai îmbunătățim.
+  - Modificați fișierul ''Makefile'' astfel încât să avem de schimbat o singură linie în cazul în care dorim să schimbăm numele executabilului.
+  - Adăugați o variabile în Makefile care să țină locul compilatorului și flag-urilor de compilare. Nu uitați să și folosiți aceste variabile!
+
+La calea ''~/uso-lab/04-appdev/support/get-a-life'' se află un Makefile alături de 3 fișiere sursă și 2 fișiere header.
+
+  - Încercați să compilați programul folosind fișierul Makefile. În cazul în care nu funcționează, rezolvați problema (hint: dependențe ciclice).
+  - Creați voi un program, altul decât cel prezentat până acum și încercați să scrieți un Makefile cu reguli de compilare, rulare și ștergere care să aibă dependențe.
+
+==== Git ====
+
+În acest moment, în directorul ''my-awesome-project'' avem repository-ul nostru de git pentru care avem 2 branch-uri active. Dacă verificăm,
+obesrvăm că fișierul ''tom.txt'' este diferit pe fiecare branch. Vrem ca branch-ul ''my-even-awesomer-branch'' să fie "la zi" cu branch-ul
+''master''. Pentru asta trebuie să efectuăm operațiunea de ''merge''.
+
+  - Scopul acestui exercițiu este să sincronizăm conținutul branch-ului secundar cu cel principal (hint: [[http://gitimmersion.com/lab_28.html|aici]]). Aveți grijă la erorile de ''merge'', rezolvați-le dacă apar și după discutați cu asistentul.
+  - Intrați pe [[http://gitimmersion.com|GitImmersion]] și rezolvați cât de multe etape puteți.
