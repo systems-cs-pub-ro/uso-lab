@@ -192,7 +192,7 @@ clean:
 	rm main
 </code>
 
-Fișierul Makefile de mai sus conține 2 **reguli**: ''main'' și ''clean''. Regula ''main'' va fi folosită pentru a compila programul, pe 
+Fișierul Makefile de mai sus conține 2 **reguli**: ''main'' și ''clean''. Regula main va fi folosită pentru a compila programul, pe 
 când regula ''clean'' va fi folosită pentru a șterge toate fișierele generate în urma compilării.
 
 <note warning>
