@@ -1,16 +1,190 @@
 ===== Nice to Know =====
 
+==== Makefile ====
+
+Înainte de a trece mai departe, mutați-vă la calea ''~/uso-lab/04-appdev/support/need-to-know/''.
+
+La secțiunea anterioară am creat un Makefile cu 3 reguli: ''main'', ''run'' și ''clean''. Spunem despre acest Makefile că nu are dependențe,
+adică nu există reguli definite în el care să depindă de anumite fișiere sau de alte reguli. Să luăm exemplu regula ''main''.
+
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ cat Makefile
+main:
+  gcc main.c a.c b.c -o main
+run:
+  ./main
+clean:
+  rm main
+</code>
+
+Dacă rulăm de 2 ori la rând comanda ''make main'' observăm că executabilul ''main'' este generat la fiecare rulare a acestei comenzi.
+Vrem să nu se mai întâmple acest lucru. Urmărind în continuare această secțiune, vom ajunge să avem un Makefile care să ne permită acest lucru.
+
+În primul rând, pentru a nu da eroare la comanda ''make main'' trebuie să fie îndeplinite câteva condiții:
+  - Să existe toate fișierele specificate la rularea lui ''gcc'', adică ''main.c'', ''a.c'' și ''b.c''.
+  - Să nu apară probleme de compilare în niciunul dintre aceste fișiere. Dacă apar probleme de acest tip, înseamnă că e o problemă cu codul sursă, nu cu fișierul Makefile. Momentan vrem să ne ocupăm de scrierea corectă a fișierului Makefile.
+
+Pentru a evita prima problemă menționată mai sus, putem adăuga Makefile-ului **dependențe**. Dependențele în Makefile sunt precizate pe 
+aceeași linie cu numele regulii, după '':''. Vom modifica fișierul Makefile de la secțiunea anterioară astfel:
+  - Pentru fiecare fișier cod sursă vom crea o regulă care va opri procesul după etapa de asamblare (adică nu se va executa etapa de linkare).
+  - Vom crea o regulă "mare" numită ''program'' care va depinde de regulile scrise anterior.
+
+Înainte de a trece mai departe ștergeți fișierul Makefile din directorul ''~/uso-lab/04-appdev/support/need-to-know/''.
+
+Căutați în manual opțiunea care oprește procesul de compilare după asamblare și înainte de linkare (hint: man gcc,
+căutați după ''object file''). În urma acestui pas vom obține 3 fișiere obiect (cu extensia ''.o''), unul pentru fiecare cod sursă.
+
+<code bash>
+main.o: main.c
+        gcc <aici intră opțiunea găsită în manual> main.c
+a.o: a.c
+        gcc <aici intră opțiunea găsită în manual> a.c
+b.o: b.c
+        gcc <aici intră opțiunea găsită în manual> b.c
+</code>
+
+Acum vom putea crea o nouă regulă numită ''program'' care să depindă de existența fișierelor obiect. Aceasta va avea rol de a unifica
+toate fișierele obiect într-un obiect executabil cu numele ''program''.
+
+<code bash>
+program: main.o a.o b.o
+        gcc main.o a.o b.o -o program
+main.o: main.c
+        gcc <aici intră opțiunea găsită în manual> main.c
+a.o: a.c
+        gcc <aici intră opțiunea găsită în manual> a.c
+b.o: b.c
+        gcc <aici intră opțiunea găsită în manual> b.c
+</code>
+
+Acum, regula ''main'' va verifica mai întâi dacă fișierele menționate există, dacă nu, va arunca eroare că dependețele nu există. De 
+asemenea, se va verifica dacă dependențele s-au schimbat de la ultima rulare a regulii ''main''. Dacă nu a fost modificat niciun fișier,
+ni se va preciza acest lucru.
+
+  - Adăugați reguli de ''run'' și ''clean'' care să depindă de existența executabilului ''main''.
+
+<code bash>
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ make program # prima oară când se ruleaza comanda totul este ok
+gcc -c main.c
+gcc -c a.c
+gcc -c b.c
+gcc main.o a.o b.o -o program
+student@uso:~/uso-lab/04-appdev/support/need-to-know$ make program # a doua oară se observă că fișierele compilate nu au mai fost modificate
+# nu se va mai compila același lucru din nou pentru că rezultatul produs ar fi identic cu cel vechi -> evită munca în plus
+make: `program' is up to date.
+</code>
+
 ==== GIT ====
 
-Înainte de a începe exercițiile reluați comenziile de bază de git prezentate în
-secțiunea Contents.
+Toate exercițiile legate de git de până acum au fost efectuate pe așa numitul branch ''master'', adică pe ramura principală a proiectului.
+În realitate, lucrurile nu stau chiar așa. În general fiecare persoană care contribuie la un anumit proiect lucrează pe branch-ul propriu, 
+aduce îmbunătățiri acolo și când este gata, le integrează în branch-ul principal. Vom învăța în continuare cum să facem acești pași.
 
-  -Clonați repo-ul de git de la următorul link: https://github.com/dianagrecu/labUSO.
-  -În forma actuală, după câteva commit-uri, programul compilează, dar nu va rula. Găsiți ultimul commit pentru care acesta compila si rula cu succes (HINT: git revert/checkout)
-  -Creați un branch nou și mutați-vă pe acesta.
-  -Creați un program care calculează suma primelor 15 pătrate perfect și creați un commit nou de pe branch-ul de la punctul anterior.
+Înainte de toate, mutați-vă la calea ''~/my-awesome-project'' și rulați comanda ''git status''. Ar trebui să vedeți următorul output:
 
-<note tip>
-Useful resources: https://dont-be-afraid-to-commit.readthedocs.io/en/latest/git/commandlinegit.html
+<code bash>
+# On branch master
+nothing to commit, working directory clean
+</code>
+
+Mai sus am vrut să ne asigurăm că nu a mai fost făcută nicio modificare a branch-ului ''master'' înainte de a începe.
+Ca să creeăm un nou branch, folosim opțiunea ''checkout'' a git-ului.
+
+<code bash>
+student@uso:~/my-awesome-project$ git checkout -b my-even-awesomer-branch
+Switched to a new branch 'my-even-awesomer-branch'
+student@uso:~/my-awesome-project$ ls
+</code>
+
+În acest moment avem un nou branch numit ''my-even-awesomer-branch'' care conține toate fișierele pe care le conținea și branch-ul ''master''.
+Modificați fișierul ''tom.txt'', salvați-l și dați comanda ''git status''.
+
+<code bash>
+student@uso:~/my-awesome-project$ git status
+# On branch my-even-awesomer-branch
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   tom.txt
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+</code>
+
+Dacă am vrea să ne mutăm acum pe un alt branch (noi mai avem doar branch-ul ''master''), avem 2 variante:
+  - Comitem noile schimbări în cadrul branch-ului ''my-even-awesomer-branch''.
+  - Salvăm modificările făcute (pentru că nu am terminat treaba, nu vrem să comitem).
+
+La secțiunile anterioare am învățat să comitem schimbări. La această secțiune vom vedea cum procedăm atunci când vrem să salvăm modificările.
+
+Pentru a salva (temporar) niște modificări, folosim comanda ''git stash''. Această comandă va reține modificările făcute pe fișiere, însă 
+pentru git va apărea ca și cum nu există modificări făcute. Vrem să facem acest lucru pentru că dacă avem fișiere necomise și vrem să schimbăm 
+branch-ul de lucru, va apărea un conflict.
+
+<note warning>
+NU dați comenzile de mai jos.
 </note>
 
+<code bash>
+student@uso:~/my-awesome-project$ git checkout master # comanda pentru a ne muta pe de branch-ul curent pe branch-ul master
+M	tom.txt
+Switched to branch 'master'
+</code>
+
+<note important>
+Mai sus, ne apare mesajul ''M tom.txt'' care ne sugerează că fișierul ''tom.txt'' a fost modificat și că modificările au fost propagate 
+și în branch-ul ''master''. Urmăream să ne mutăm pe un alt branch fără a lua cu noi toate modificările.
+</note>
+
+
+Corect este să dăm mai întâi comanda ''git stash'' și după să ne mutăm pe un alt branch.
+
+<code bash>
+student@uso:~/my-awesome-project$ git stash
+student@uso:~/my-awesome-project$ git checkout master # comanda pentru a ne muta pe de branch-ul curent pe branch-ul master
+Switched to branch 'master'
+</code>
+
+
+În continuare facem modificări pe fișierul ''tom.txt'', de data asta pe branch-ul ''master''. A se observa faptul că modificările făcute 
+pe branch-ul ''my-even-awesomer-branch'' nu sunt vizibile aici.
+
+<code bash>
+(..) # edit tom.txt
+student@uso:~/my-awesome-project$ cat tom.txt
+The new content for tom.txt.
+student@uso:~/my-awesome-project$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   tom.txt
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+</code>
+
+  - Comiteți modificările pe branch-ul ''master'' înainte de a trece mai departe.
+  - Mutați-vă pe branch-ul ''my-even-awesomer-branch''.
+
+Vrem acum să lucrăm în continuare la ce lucram înainte de a ne muta / face schimbări pe branch-ul ''master''. Trebuie să revenim la starea de atunci.
+Pentru asta vom folosi comanda ''git stash pop''.
+
+<code bash>
+student@uso:~/my-awesome-project$ git stash pop
+On branch my-even-awesomer-branch
+Changes not staged for commit:
+modified: tom.txt
+Dropped refs/stash@{0} (32b3aa1d185dfe6d57b3c3cc3b32cbf3e380cc6a)
+student@uso:~/my-awesome-project$ git status
+# On branch master
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   tom.txt
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+</code>
+
+  - Comiteți schimbarea făcută pe fișierul ''tom.txt''.
