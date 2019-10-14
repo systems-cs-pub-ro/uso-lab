@@ -1,7 +1,7 @@
 ===== Nice to know =====
 
 Înainte de a începe această secțiune trebuie să vă asigurați că sunteți în directorul potrivit.
-Rulați comanda ''cd ~/uso.git/labs/03-user/support/nice-to-know/''.
+Rulați comanda ''cd ~/uso.git/03-user/support/nice-to-know/''.
 
 **1. Schimbarea homedir-ului unui utilizator**
 
