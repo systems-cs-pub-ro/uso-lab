@@ -113,7 +113,7 @@ externă pe care putem să o folosim. Putem să creăm noi o bibliotecă și să
 existentă cum ar fi biblioteca ce conține funcții matematice''math''.
 
 Pentru a folosi biblioteca ''math'' în programul nostru, trebuie să facem 2 lucruri.
-	- Să includem headerul ''math.h'' în program, pentru a putea preciză că se vor folosi funcții definite acolo.
+	- Să includem headerul ''math.h'' în program, pentru a putea preciză că se vor folosi funcții declarate acolo.
 	- În momentul în care compilăm programul nostru, trebuie să-i precizăm compilatorului că noi folosim funcții din biblioteca ''math.h'' și că vrem ca binarul nostru să fie linkat cu biblioteca ''math''.
 
 Urmăriți tutorialul de mai jos.
@@ -198,7 +198,7 @@ când regula ''clean'' va fi folosită pentru a șterge toate fișierele generat
 <note warning>
 Atenție! Regulile în Makefile trebuie scrise la stânga de tot (fără spații la începutul rândului), iar comenzile aferente fiecărei reguli
 trebuie să se afle pe linia următoare, iar linia să înceapă cu <TAB>, **nu** spații.
-<note>
+</note>
 
 	- Creați fișierul Makefile de mai sus la calea ''~/uso-lab/04-appdev/support/need-to-know/''. Denumiți fișierul ''Makefile''.
 
