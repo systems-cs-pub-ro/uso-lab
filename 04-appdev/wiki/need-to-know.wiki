@@ -143,7 +143,7 @@ int main(void) {
 </code>
 
 <note>
-Observați faptul că am include biblioteca ''math.h'' pentru a putea folosi funcția ''sqrt'' pentru calcularea radicalului unui număr.
+Observați faptul că am inclus biblioteca ''math.h'' pentru a putea folosi funcția ''sqrt'' pentru calcularea radicalului unui număr.
 </note>
 
 Compilați programul folosind ''gcc'' astfel încât executabilul obținut să se numeasca ''main''.
