@@ -57,11 +57,11 @@ b.o: b.c
         gcc <aici intră opțiunea găsită în manual> b.c
 </code>
 
-Acum, regula ''main'' va verifica mai întâi dacă fișierele menționate există, dacă nu, va arunca eroare că dependețele nu există. De 
-asemenea, se va verifica dacă dependențele s-au schimbat de la ultima rulare a regulii ''main''. Dacă nu a fost modificat niciun fișier,
+Acum, regula ''program'' va verifica mai întâi dacă fișierele menționate există, dacă nu, va arunca eroare că dependețele nu există. De 
+asemenea, se va verifica dacă dependențele s-au schimbat de la ultima rulare a regulii ''program''. Dacă nu a fost modificat niciun fișier,
 ni se va preciza acest lucru.
 
-  - Adăugați reguli de ''run'' și ''clean'' care să depindă de existența executabilului ''main''.
+  - Adăugați reguli de ''run'' și ''clean'' care să depindă de existența executabilului ''program''.
 
 <code bash>
 student@uso:~/uso-lab/04-appdev/support/need-to-know$ make program # prima oară când se ruleaza comanda totul este ok
