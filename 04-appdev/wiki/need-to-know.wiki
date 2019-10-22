@@ -110,7 +110,7 @@ fișier cod sursă, altfel programul nu este complet și nici corect!
 Există câteva biblioteci care sunt linkate automat atunci când compilăm un program C. Una dintre acestea este ''libc''. Majoritatea
 programelor C folosesc funcții din aceastea bibliotecă și s-a hotărât să fie linkată întotdeauna, însă aceasta nu este singura bibliotecă
 externă pe care putem să o folosim. Putem să creăm noi o bibliotecă și să o linkăm programului nostru sau să folosim o bibliotecă deja
-existentă cum ar fi biblioteca ce conține funcții matematice''math''.
+existentă cum ar fi biblioteca ce conține funcții matematice ''math''.
 
 Pentru a folosi biblioteca ''math'' în programul nostru, trebuie să facem 2 lucruri.
 	- Să includem headerul ''math.h'' în program, pentru a putea preciză că se vor folosi funcții declarate acolo.
