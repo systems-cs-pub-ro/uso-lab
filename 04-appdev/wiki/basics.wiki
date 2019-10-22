@@ -5,7 +5,7 @@
 
 ==== Scrierea unui program C ====
 
-La calea ''~/uso-labs/04-appdev/support/basics/simple.c'' un program simplu C care afișează bine-cunoscutul mesaj "Hello, World!".
+La calea ''~/uso-labs/04-appdev/support/basics/simple.c'' se află un program simplu C care afișează bine-cunoscutul mesaj "Hello, World!".
 
 <note>
 Nu uita să folosești <TAB> pentru auto-completare, nu scrie de mână toată calea!
