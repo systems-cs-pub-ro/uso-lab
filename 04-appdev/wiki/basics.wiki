@@ -50,7 +50,7 @@ să avem o modalitate prin care să revenim la o versiune anterioară a codului.
 o modalitate de versionare este dat de situația în care 2 sau mai mulți oameni lucrează la același proiect, dezvoltă două 
 funcționalități diferite și nu vor să aibă probleme atunci când vor imbina cele 2 funcționalități în produsul mare.
 
-Vom trece prin examplele de mai sus în secțiunile următoare. Acum, ne vom concentra de inițializarea proiectului.
+Vom trece prin examplele de mai sus în secțiunile următoare. Acum, ne vom concentra pe inițializarea proiectului.
 
   - Înainte de toate, intrați pe [[https://github.com|Github]] sau pe [[https://bitbucket.org/|Bitbucket]] și creați-vă un cont. Vom folosi mai târziu acest cont pentru a ține reposiory-urile pentru proiectele la care lucrăm. 
 
