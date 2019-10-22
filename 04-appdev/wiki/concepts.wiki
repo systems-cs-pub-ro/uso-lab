@@ -160,11 +160,11 @@ Fiecare lucrează la o versiune proprie a programului pe care o urcă apoi onlin
 și este integrată automat în proiect.
 
 Operațiile de bază ce pot fi efectuate asupra unui repository sunt:
-  * init: pentru a inițializa un repo de git local.
-  * clone: se copiază local întreg repository-ul; practic se creează pe sistemul vostru un director cu toate fișierele puse online la momentul clonării.
-  * commit:se salvează toate modificările aduse proiectului; starea actuală este salvată local. Dacă modificările nu sunt făcute publice, atunci ceilalți colaboratori nu le vor putea vedea.
-  * push: pentru publicarea modificărilor salvate prin commit.
-  * pull: se descarcă local ultimele modificări aduse de colaboratori în cadrul proiectului.
+  * init: inițializează un repository de git local.
+  * clone: copiază local un întreg repository deja existent; practic se creează pe sistemul vostru un director cu toate fișierele puse online la momentul clonării.
+  * commit: salvează toate modificările aduse proiectului; starea actuală este salvată local. Dacă modificările nu sunt făcute publice, atunci ceilalți colaboratori nu le vor putea vedea.
+  * push: publică modificările salvate prin commit.
+  * pull: descarcă local ultimele modificări aduse de colaboratori în cadrul proiectului.
  
 <note>
 Mai multe detaliu despre operațiile git veți afla în secțiunile următoare.
