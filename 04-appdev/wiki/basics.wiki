@@ -1,45 +1,3 @@
-===== Basics =====
-
-Înainte de a începe să rezolvați laboratorul asigurați-vă că ați parcurs și
-înțeles noțiunile prezentate în sectiuniile ''Concepte'' și ''Demo''.
-
-==== Scrierea unui program C ====
-
-La calea ''~/uso-labs/04-appdev/support/basics/simple.c'' se află un program simplu C care afișează bine-cunoscutul mesaj "Hello, World!".
-
-<note>
-Nu uita să folosești <TAB> pentru auto-completare, nu scrie de mână toată calea!
-</note>
-
-<code>
-#include <stdio.h>
-
-int main(void) {
-  puts("Hello, World!");
-  
-  return 0;
-}
-</code>
-
-==== Compilarea unui fișier C ====
-
-Cel mai folosit compilator de C folosit pe Ubuntu este ''gcc''. Asta vom folosi și noi la laborator să compilăm fișiere scrise în limbajul C.
-Pentru a compila un fișier, rulăm comanda ''gcc'' urmată de numele fișierului pe care vrem să-l compilăm. 
-
-<code bash>
-student@uso:~/uso-labs/04-appdev/support/basics/$ gcc simple.c
-student@uso:~/uso-labs/04-appdev/support/basics/$ ls
-a.out   simple.c
-student@uso:~/uso-labs/04-appdev/support/basics/$ file a.out
-a.out: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked (uses shared libs), for GNU/Linux 2.6.32, BuildID[sha1]=c5ad78cfc1de12b9bb6829207cececb990b3e987, not stripped
-</code>
-
-Outputul produs de această comandă este un fișier executabil cu numele ''a.out''. Comanda ''file'' ne ajută să inspectăm tipul fișierului dat ca argument. În acest caz, ne spune că fișierul ''a.out''
-este de tip ELF pe 64 de biți.
-
-  - De multe ori nu vrem ca executabilul rezultat să se numească a.out, ci vrem să aibă un nume mai intuitiv, spre exemplu ''simple''. Compilați programul ''simple.c'' astfel încât fișierul rezultat să se numească ''simple'' (hint: man gcc, căutați după cuvântul cheie ''outfile'').
-  - Folosind comanda ''file'', verificați că fișierul ''simple'' este într-adevăr un fișier executabil.
-  
 ==== Primii pași în lumea git-ului ====
 
 Așa cum a fost precizat și la secțiunea ''Concepte'', **git** ne ajută la versionarea codului. Versionarea codului este un pas
@@ -166,7 +124,7 @@ nothing to commit, working directory clean
 
 La o nouă rulare a comenzii ''git status'' vedem că schimbările au fost efectuate cu succes. Pentru a vedea istoricul commiturilor
 făcute pentru acest repository rulăm comanda ''git log''. Acum trebuie să vedem că a fost efectuat un singur commit de-a lungul timpului
-și anume cel cu identificatorul ''64bccb03c2f3a8e76730582676bd944902a0c1eb''.
+și anume cel cu identificatorul ''64bccb03c2f3a8e76730582676bd944902a0c1eb''. Acest șir de caractere în hexazecimal este generat aleator și este unic pentru fiecare commit, ajutându-ne astfel să identificăm commit-urile în cazul în care ar exista mai multe cu același nume.
 
 <code bash>
 student@uso:~/my-awesome-project$ git log
@@ -178,5 +136,16 @@ Date:   Mon Oct 7 15:49:20 2019 +0300
 </code>
 
   - Creați un program C cu numele ''main.c'' în directorul ''~/my-awesome-project/'' care să afișeze mesajul "Hello, World!".
-  - Verificați faptul că ''git'' vede această schimbare folosind comanda ''git status''.
-  - Comiteți noile schimbări și asigurați-vă că totul este în regulă. Puteți folosi orice mesaj de commit vreți. Nu treceți mai departe dacă vreo comandă pe care ați dat-o nu funcționează. Chemați asistentul pentru a verifica faptul că totul este în regulă.
+  - Verificați faptul că ''git'' vede această schimbare folosind comanda ''git status''. Ar trebui să vedeți următorul output:
+  <code bash>
+  # On branch master
+  #
+  # Initial commit
+  #
+  # Untracked files:
+  #   (use "git add <file>..." to include in what will be committed)
+  #
+  #	main.c
+  </code>
+  - Comiteți noile schimbări și asigurați-vă că totul este în regulă. Nu treceți mai departe dacă vreo comandă pe care ați dat-o nu funcționează. La final, ''git status'' nu ar trebui să mai găsească niciun fișier ca 'tracked'. Verificați folosind ''git log'' sau chemând asistentul. 
+
