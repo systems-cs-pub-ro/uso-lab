@@ -216,7 +216,7 @@ a.c     a.h     b.c     b.h     main		main.c    Makefile
 
 Vedem acum că a fost creat executabilul ''main'' pe care putem să-l rulăm în continuare.
 
-	- Rulați exetuabilul ''main'' și asigurați-vă că funcționează.
+	- Rulați executabilul ''main'' și asigurați-vă că funcționează.
 	- Adăugați o regulă numită ''run'' în Makefile care să aibă drept comandă asociată chiar comanda cu care rulăm programul ''main''. Nu treceți mai departe până când partea aceasta nu este clară.
 	- Ștergeți executabilul ''main'' folosind una dintre regulile definite în Makefile.
 
