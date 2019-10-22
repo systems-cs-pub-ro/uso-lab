@@ -95,7 +95,7 @@ care trebuie să conțină implementarea.
 
   - Rulați programul ''main'' și asigurați-vă că rularea lui se termină cu succes.
 	- Urmăriți pașii de mai jos:
-		- Declarați o funcție cu numele ''bad'' fără parametri care nu întoarce nimic în fișierul ''a.h'' (Atenție: doar declarația!).
+		- Declarați o funcție cu numele ''bad'' fără parametri care nu întoarce nimic, în fișierul ''a.h'' (Atenție: doar declarația!).
 		- În fișierul ''main.c'', înainte de linia ''return 0'', apelați această funcție (''bad()'').
 		- Compilați din nou acest program (cu aceeași comandă pe care ați văzut-o mai sus). Ce s-a întâmplat? Care este motivul? Discutați cu asistentul.
 		- Rezolvați problema apărută **fără** a șterge apelul de funcție ''bad()'' din funcția ''main'' din fișierul ''main.c''.
