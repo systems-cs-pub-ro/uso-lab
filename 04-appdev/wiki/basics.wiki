@@ -59,7 +59,7 @@ laboratoarele anterioare cum se creează un director în Linux. Să presupunem c
 ''student''. Dacă nu vă aflați acolo, rulați comanda ''cd ~''.
 
 <code bash>
-student@uso:~$mkdir my-awesome-project
+student@uso:~$ mkdir my-awesome-project
 student@uso:~$ cd my-awesome-project
 student@uso:~/my-awesome-project$
 </code>
