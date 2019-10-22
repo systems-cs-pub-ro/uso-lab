@@ -88,7 +88,7 @@ student@uso:~/my-awesome-project$
 </code>
 
 Dat fiind faptul că nu am create/șters/modificat niciun fișier din directorul ''my-awesome-project'', comanda ''git status'' ne spune că nu avem 
-nicio schimbare pe care să o "comitem", adică nu avem nicio schimbare în directorul current pe care ar trebui să o anunțăm.
+nicio schimbare pe care să o "comitem", adică nu avem nicio schimbare în directorul curent pe care ar trebui să o anunțăm.
 
 === README și .gitignore ===
 
