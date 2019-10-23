@@ -134,7 +134,7 @@ Creați aici un fișier simplu numit ''main.c'' cu următorul conținut:
 #include <math.h>
 
 int main(void) {
-	int x;
+	float x;
 	printf("Give me a number: ");
 	scanf("%f", &x);
 	printf("The square root for it is: %f\n", sqrt(x));
