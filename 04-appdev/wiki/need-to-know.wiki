@@ -168,7 +168,7 @@ main.c
 student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ gcc main.c -o main -lm
 student@uso:~/uso-lab/04-appdev/support/need-to-know/using-math$ ./main
 Give me a number: 1234
-The square root for it is: 33925.795731
+The square root for it is: 35.128336
 </code>
 
 Acum programul a compilat cu succes și am putut să-l și rulăm.
