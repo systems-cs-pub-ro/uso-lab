@@ -103,16 +103,6 @@ submite în repository-ul local.
 student@uso:~/my-awesome-project$ git commit -m "Initial commit"
 [master (root-commit) 64bccb0] Initial commit
  Committer: student <student@uso>
-Your name and email address were configured automatically based
-on your username and hostname. Please check that they are accurate.
-You can suppress this message by setting them explicitly:
-
-    git config --global user.name "Your Name"
-    git config --global user.email you@example.com
-
-After doing this, you may fix the identity used for this commit with:
-
-    git commit --amend --reset-author
 
  2 files changed, 2 insertions(+)
  create mode 100644 .gitignore
