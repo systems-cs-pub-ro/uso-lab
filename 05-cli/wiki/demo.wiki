@@ -223,11 +223,10 @@ De exemplu dorim să reținem output-ul a două comenzi într-un fișier. La o r
 jos nu funcționează:
 
 <code bash>
-student@uso:~/uso-lab/$ cd labs/
-student@uso:~/uso-lab/labs/$ ls ; ps > out
+student@uso:~/uso-lab$ ls ; ps > out
 00-intro  02-process  04-appdev  06-hw-boot  08-net  10-sec
 01-fs     03-user     05-cli     07-storage  09-vm   11-ctf
-student@uso:~/uso-lab/labs/$ cat out
+student@uso:~/uso-lab$ cat out
   PID TTY          TIME CMD
 13052 pts/2    00:00:00 ps
 22346 pts/2    00:00:00 bash
@@ -239,8 +238,8 @@ transfera rezultatul amândurora în fișier. Un subshell este creat cu ajutorul
 mai jos:
 
 <code bash>
-student@uso:~/uso-lab/labs/$ ( ls ; ps ) > out2
-student@uso:~/uso-lab/labs/$ cat out2
+student@uso:~/uso-lab$ ( ls ; ps ) > out2
+student@uso:~/uso-lab$ cat out2
 00-intro
 01-fs
 02-process
@@ -269,7 +268,7 @@ out2
 de oricâte ori**.
 
 <code bash>
-student@uso:~/uso-lab/labs/$ cd ~/uso-lab/05-cli/support/demo/
+student@uso:~/uso-lab/$ cd ~/uso-lab/05-cli/support/demo/
 student@uso:~/.../05-cli/support/demo/$ ls a*.txt
 a1.txt  a3.txt  a5.txt  a7.txt  a9.txt
 </code>
