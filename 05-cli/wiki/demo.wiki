@@ -4,9 +4,9 @@ Atunci când executăm comenzi în terminal, shell-ul creează câte un proces p
 executată, proces care va fi copilul procesului curent (adică procesul aferent terminalului curent). 
 
 <code bash>
-student@uso:/uso.git/$ sleep 100 &
+student@uso:/uso-lab/$ sleep 100 &
 [1] 12822
-student@uso:/uso.git/$ ps -o pid,ppid,cmd
+student@uso:/uso-lab/$ ps -o pid,ppid,cmd
   PID  PPID CMD
 22346 22345 bash
 12822 22346 sleep 100
@@ -25,15 +25,10 @@ ce înseamnă comunicarea interprocese. Vrem ca rezultatele primei comenzi (date
 rolul de date de intrare pentru o a doua comandă. Pentru a realiza acest lucru folosim operatorul ''|''.
 
 <code bash>
-student@uso:/uso.git/$ ls | grep "lab"
-lab02
-lab03
-lab04
-lab05
-lab09
-lab10
-lab12
-labs
+student@uso:~/uso-lab$ ls /dev | grep "std"
+stderr
+stdin
+stdout
 </code>
 
 Aici, outputul comenzii ''ls'' va fi folosit ca intrare pentru [[https://linux.die.net/man/1/grep|grep]].
