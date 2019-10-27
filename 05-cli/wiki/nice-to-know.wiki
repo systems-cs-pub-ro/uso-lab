@@ -41,7 +41,7 @@ fi
 </code>
 
 <code bash>
-student@uso:~/uso.git/$ cat ~/.bash_aliases
+student@uso:~/uso-lab$ cat ~/.bash_aliases
 alias go='gnome-open'
 alias grep='grep --color=auto'
 alias grpe='grep'
@@ -71,7 +71,7 @@ săgeată-stânga și săgeată-dreapta pentru a corecta. Urmăriți tutorialul 
 a vedea cum putem opera cu terminalul mai rapid și eficient folosind câteva combinații de 
 taste.
 
-Mutați-vă la calea ''~/uso.git/labs/05-cli/support/nice-to-know/editare-comenzi'' înainte de a începe acest 
+Mutați-vă la calea ''~/uso-lab/05-cli/support/nice-to-know/editare-comenzi'' înainte de a începe acest 
 tutorial. Încercați să scrieți voi comenzile fără a copia din laborator fiecare comandă.
 
 <code bash>
@@ -113,7 +113,7 @@ Pentru mai multe exemple de acest gen puteți consula website-ul de
 Pentru a afișa variabilele de mediu din sistem, folosiți comanda ''env''.
 
 <code>
-student@uso:~/uso.git/$ env
+student@uso:~/uso-lab$ env
 (...)
 LESSOPEN=| /usr/bin/lesspipe %s
 LC_TIME=ro_RO.UTF-8
@@ -126,16 +126,16 @@ care ne-am aflat înainte să ne mutăm în cel care suntem în acest moment. Un
 folosește această variabilă este ''cd -'' care ne mută chiar în directorul anterior.
 
 <code bash>
-student@uso:~/uso.git/$ pwd 
-/home/student/uso.git
-student@uso:~/uso.git/$ cd labs/
-student@uso:~/uso.git/labs/$ pwd 
-/home/student/uso.git/labs
-student@uso:~/uso.git/labs/$ echo $OLDPWD
-/home/student/uso.git
+student@uso:~/uso-lab$ pwd 
+/home/student/uso-lab
+student@uso:~/uso-lab$ cd 05-cli/
+student@uso:~/uso-lab/05-cli$ pwd 
+/home/student/uso-lab/05-cli
+student@uso:~/uso-lab$ echo $OLDPWD
+/home/student/uso-lab
 </code>
 
-    - Completați fișierul ''~/uso.git/labs/05-cli/support/nice-to-know/env/print_env.c'' pentru a afișa variabilele de mediu. Folosiți al treilea argument al funcției ''main''. (Hint: urmăriți explicațiile de [[https://www.sanfoundry.com/c-program-environment-variable/|aici]])
+    - Completați fișierul ''~/uso-lab/05-cli/support/nice-to-know/env/print_env.c'' pentru a afișa variabilele de mediu. Folosiți al treilea argument al funcției ''main''. (Hint: urmăriți explicațiile de [[https://www.sanfoundry.com/c-program-environment-variable/|aici]])
 
 ==== Variabila de mediu PATH ====
 
