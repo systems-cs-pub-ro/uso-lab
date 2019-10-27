@@ -110,9 +110,8 @@ manual din interfață grafică, ar dura foarte mult. Să zicem că vrem să cre
 unde ''X'' ia valori între ''1'' și ''10''. Dacă alegem să facem asta din linia de comandă, am face în felul următor:
 
 <code bash>
-student@uso:/uso.git/$ cd labs/
-student@uso:/uso.git/labs/$ touch my_file{1..10}
-student@uso:/uso.git/$ ls
+student@uso:~/uso-lab/$ touch my_file{1..10}
+student@uso:~/uso-lab/$ ls
 00-intro    03-user    06-hw-boot  09-vm   my_file1   my_file3  my_file6  my_file9
 01-fs       04-appdev  07-storage  10-sec  my_file10  my_file4  my_file7
 02-process  05-cli     08-net      11-ctf  my_file2   my_file5  my_file8
