@@ -7,7 +7,7 @@ scop binedefinit, însă ele nu vor putea face absolut orice operație am vrea n
 Pentru asta au fost inventate câteva filtre de text mai avansate precum ''sed'' și ''awk''.
 
 === sed ===
-Înainte să începeți acest tutorial, navigați către calea ''/home/student/uso/labs/05-cli/support/get-a-life/tutorial-sed''.
+Înainte să începeți acest tutorial, navigați către calea ''/home/student/uso-lab/05-cli/support/get-a-life/tutorial-sed''.
 
 În acest director avem fișierul ''songs.txt'' cu următorul conținut:
 
@@ -69,9 +69,9 @@ despre ''sed'', ''awk'' și multe altele [[http://coewww.rutgers.edu/linux/lesso
 
 ==== Exerciții ====
   - Scrieți un script care trebuie să schimbe directorul de lucru în ''~''. De ce nu ar merge dacă am scrie pur și simplu ''cd ~'' în script? (Hint: ''source'')
-  - Mutați-vă la calea ''~/uso.git/labs/05-cli/support/get-a-life/ex2/'' și rulați scriptul ''just_regular_updates_here.sh''. După rularea scriptului închideți terminalul curent și deschideți unul nou. Continuați să folosiți comenzile de bază (ls, cat). Observați ce se întâmplă și rezolvați problema.
-  - La calea ''~/uso.git/labs/05-cli/support/get-a-life/ex3/'' se află fișierul ''image.png''. Inspectați tipul fișierului. Scopul acestui exercițiu este să aflați un mesaj secret. (Hint: ''file'')
-  - În directorul ''~/uso.git/labs/05-cli/support/get-a-life/ex4/'' se află numeroase fișiere. Să se creeze o arhivă cu fișierele ce au o dimensiune mai mare de 10MB.
+  - Mutați-vă la calea ''~/uso-lab/05-cli/support/get-a-life/ex2/'' și rulați scriptul ''just_regular_updates_here.sh''. După rularea scriptului închideți terminalul curent și deschideți unul nou. Continuați să folosiți comenzile de bază (ls, cat). Observați ce se întâmplă și rezolvați problema.
+  - La calea ''~/uso-lab/05-cli/support/get-a-life/ex3/'' se află fișierul ''image.png''. Inspectați tipul fișierului. Scopul acestui exercițiu este să aflați un mesaj secret. (Hint: ''file'')
+  - În directorul ''~/uso-lab/05-cli/support/get-a-life/ex4/'' se află numeroase fișiere. Să se creeze o arhivă cu fișierele ce au o dimensiune mai mare de 10MB.
   - Să se creeze un script care pornește programul ''firefox'' doar dacă acesta nu rulează deja. Altfel, nu-l pornește, ci doar afișează informații despre el. Configurați acest script să ruleze din ''cron'' la fiecare 5 minute. (Hint:  [[https://www.thegeekstuff.com/2011/07/cron-every-5-minutes|cron]])
   - Realizați un script care să creeze câte o arhivă pentru fiecare branch al repository-ului. (Hint: ''man git'', [[https://www.cyberciti.biz/faq/bash-for-loop/|for]]) 
   - Folosind tot website-ul de [[http://ezprompt.net|aici]], modificați prompt-ul astfel încât să vă arate și branch-ul curent Git pe care vă aflați.
