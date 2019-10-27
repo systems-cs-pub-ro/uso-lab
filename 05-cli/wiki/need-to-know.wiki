@@ -5,7 +5,7 @@ observăm că nu avem dreptul să vedem aceste informații dacă nu suntem loga�
 sau dacă nu folosim construcția ''sudo''.
 
 <code bash>
-student@uso:~/uso.git/$ fdisk -l
+student@uso:~/uso-lab$ fdisk -l
 fdisk: cannot open /dev/loop0: Permission denied
 fdisk: cannot open /dev/loop1: Permission denied
 fdisk: cannot open /dev/loop2: Permission denied
@@ -27,7 +27,7 @@ am dat-o, în cazul nostru ''sudo !!'' expandat înseamnă ''sudo fdisk -l''.
 </note>
 
 <code bash>
-student@uso:~/uso.git/$ sudo !!
+student@uso:~/uso-lab$ sudo !!
 sudo fdisk -l
 [sudo] password for student:
 Disk /dev/loop0: 2.3 MiB, 2433024 bytes, 4752 sectors
@@ -54,8 +54,8 @@ posibilitatea să ne definim propriile variabile în shell. Pentru a defini o no
 următor:
 
 <code bash>
-student@uso:~/uso.git/$ x=4
-student@uso:~/uso.git/$ echo $x
+student@uso:~/uso-lab$ x=4
+student@uso:~/uso-lab$ echo $x
 4
 </code>
 
@@ -63,9 +63,9 @@ Pentru a inspecta valoarea variabilei ''x'' folosim comanda ''echo''. Deschideț
 și rulați comanda ''echo $x''.
 
 <code bash>
-student@uso:~/uso.git/$ echo $x
+student@uso:~/uso-lab$ echo $x
 
-student@uso:~/uso.git/$
+student@uso:~/uso-lab$
 </code>
 
 <note>
@@ -86,9 +86,9 @@ acest script folosind comanda ''chmod'' și asigurați-vă că aveți drept să 
 script folosim comanda ''./script.sh''.
 
 <code bash>
-student@uso:~/uso.git/$ ./script.sh
+student@uso:~/uso-lab$ ./script.sh
 
-student@uso:~/uso.git/$
+student@uso:~/uso-lab$
 </code>
 
 Observăm că deși variabila ''x'' este definită din acest terminal, la rulare nu obținem nicio valoare. Acest 
@@ -96,19 +96,19 @@ lucru nu se întâmplă deoarece variabila ''x'', așa cum a fost deinită, nu e
 din cadrul acestui terminal. Pentru a face acest lucru posibil, trebuie să o exportăm.
 
 <code bash>
-student@uso:~/uso.git/$ export x=4
+student@uso:~/uso-lab$ export x=4
 </code>
 
 Rulați din nou scriptul și observați diferențele.
 
 <code bash>
-student@uso:~/uso.git/$ ./script.sh
+student@uso:~/uso-lab/$ ./script.sh
 4
 </code>
 
 ==== Redirectarea datelor de intrare, ieșire și erorile ====
 
-Pentru a urmări acest tutorial, mutați-vă în directorul ''~/uso.git/labs/05-cli/support/need-to-know''. 
+Pentru a urmări acest tutorial, mutați-vă în directorul ''~/uso-lab/05-cli/support/need-to-know''. 
 Listăm conținutul directorul și observăm că avem un program C și un Makefile. Compilăm programul 
 folosind comanda ''make''. Folosiți comanda ''make run'' pentru a rula program și introduceți inputul 
 care vi se cere.
@@ -162,8 +162,8 @@ primului proces este servită drept **intrare** pentru ce de-al doilea.
 Să ne amintim de fișierul ''/etc/passwd'' conține informații despre toți utilizatorii din sistem. 
 
 <code bash>
-student@uso:~/.../05-cli/support/need-to-know$ cd ~/uso.git/
-student@uso:~/uso.git/$ cat /etc/passwd
+student@uso:~/.../05-cli/support/need-to-know$ cd ~/uso-lab
+student@uso:~/uso-lab$ cat /etc/passwd
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -217,7 +217,7 @@ Să zicem că vrem să extragem doar numele utilizatorilor, fără informațiile
 
 
 <code bash>
-student@uso:~/uso.git/$ cat /etc/passwd | cut -f1 -d:
+student@uso:~/uso-lab$ cat /etc/passwd | cut -f1 -d:
 root
 daemon
 bin
@@ -280,7 +280,7 @@ acestei comenzi doar data ultimei modificări. Vom folosi utilitaturl grep pentr
 află informațiile despre data ultimei modificări.
 
 <code bash>
-student@uso:~/uso.git/$ cd ~/uso.git/labs/05-cli/support/need-to-know
+student@uso:~/uso-lab$ cd ~/uso-lab/05-cli/support/need-to-know
 student@uso:~/.../05-cli/support/need-to-know$ stat Makefile | grep "Modify"
 Modify: 2018-10-29 23:40:49.942659138 +0200
 </code>
@@ -291,11 +291,11 @@ Fișierul special ''/dev/urandom'' conține bytes aleatori. Listați conținutul
 combinația de taste ''CTRL + C'' pentru a opri acest proces.
 
 <code bash>
-student@uso:~/uso.git/$ cat /dev/urandom
+student@uso:~/uso-lab$ cat /dev/urandom
 (...)
 
 ^C
-student@uso:~/uso.git/$
+student@uso:~/uso-lab$
 </code>
 
     - Folosindu-vă de fișierul ''/dev/random'', generați o parolă aleatoare de 32 de caractere. Vă 
@@ -308,7 +308,7 @@ Pentru a înlănțui 2 sau mai multe comenzi folosim operatorul '';''. Cele de p
 independente și se vor executa indiferent de finalitatea celei care se execută prima.
 
 <code bash>
-student@uso:~/uso.git/$ cd ~/uso/labs/05-cli/support/need-to-know; ls -l
+student@uso:~/uso-lab$ cd ~/uso-lab/05-cli/support/need-to-know; ls -l
 total 8
 -rw-rw-r-- 1 student student  122 Oct 29 23:40 Makefile
 -rw-rw-r-- 1 student student 1463 Oct 29 23:39 dummy_check.c
@@ -323,10 +323,10 @@ Internet. În cazul în care avem, vrem să deschidem un browser pe pagina ''www
 operatorul ''&&''.
 
 <code bash>
-student@uso:~/uso.git/$ ping -c 1 www.google.com && firefox www.google.com
+student@uso:~/uso-lab$ ping -c 1 www.google.com && firefox www.google.com
 </code>
 
 Acum încercați să înlocuiți ''www.google.com'' cu ''www.random-webiste.xyz'' și ''&&'' cu ''||''. 
 Observați ce se întâmplă.
 
-    - Mutați-vă la calea ''~/uso.git/labs/05-cli/support/need-to-know/err-file'' și, folosind o singură comandă, compilați și rulați programul ''simple_pow.c''. În cazul în care apar erori de compilare, vrem să nu rulăm executabilul. Rezolvați eroarea astfel încât programul să compileze cu succes și rulați-l. (Hint: ce bibliotecă folosește programul ''simple_pow.c''?)
+    - Mutați-vă la calea ''~/uso-lab/05-cli/support/need-to-know/err-file'' și, folosind o singură comandă, compilați și rulați programul ''simple_pow.c''. În cazul în care apar erori de compilare, vrem să nu rulăm executabilul. Rezolvați eroarea astfel încât programul să compileze cu succes și rulați-l. (Hint: ce bibliotecă folosește programul ''simple_pow.c''?)
