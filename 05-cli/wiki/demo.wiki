@@ -38,7 +38,7 @@ Orice proces care rulează în sistem se poate termina fie cu ''SUCCES'', fie cu
 dacă un proces s-a terminat sau nu cu succes, putem inspecta valoarea variabilei speciale ''$?''.
 
 <code bash>
-student@uso:/uso.git/$ ping -c 1 8.8.8.8
+student@uso:/uso-lab/$ ping -c 1 8.8.8.8
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=245 ms
 
@@ -46,17 +46,17 @@ PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 1 packets transmitted, 1 received, 0% packet loss, time 0ms
 rtt min/avg/max/mdev = 245.160/245.160/245.160/0.000 ms
 [1]+  Done                    sleep 100
-student@uso:/uso.git/$ echo $?
+student@uso:/uso-lab/$ echo $?
 0
 </code>
 <code bash>
-student@uso:/uso.git/$ ping 192.12.12.1
+student@uso:/uso-lab/$ ping 192.12.12.1
 PING 192.12.12.1 (192.12.12.1) 56(84) bytes of data.
 ^C
 --- 192.12.12.1 ping statistics ---
 5 packets transmitted, 0 received, 100% packet loss, time 4100ms
 
-student@uso:/uso.git/$ echo $?
+student@uso:/uso-lab/$ echo $?
 1
 </code>
 
@@ -71,7 +71,7 @@ procese unul după altul, indepenedente unul față de celelalte. Folosim operat
 2 comenzi.
 
 <code bash>
-student@uso:/uso.git/$ sudo apt-get install sl; ps
+student@uso:/uso-lab/$ sudo apt-get install sl; ps
 [sudo] password for student: 
 Reading package lists... Done
 Building dependency tree       
@@ -125,9 +125,9 @@ lucru folosim operatorul ''&&'' care ne asigură faptul că a doua comandă se v
 care prima se execută cu succes.
 
 <code bash>
-student@uso:/uso.git/$ cat my_nonexisting_file.txt && ls
+student@uso:/uso-lab/$ cat my_nonexisting_file.txt && ls
 cat: my_nonexisting_file.txt: No such file or directory
-student@uso:/uso.git/$ echo $?
+student@uso:/uso-lab/$ echo $?
 1
 </code>
 
@@ -138,7 +138,7 @@ terminat cu succes.
 Schimbăm puțin abordarea astfel încât ambele comenzi să fie executate.
 
 <code bash>
-student@uso:/uso.git/$ ping -c 1 8.8.8.8 && finger student
+student@uso:/uso-lab/$ ping -c 1 8.8.8.8 && finger student
 PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.
 64 bytes from 8.8.8.8: icmp_seq=1 ttl=128 time=32.4 ms
 
@@ -152,7 +152,7 @@ On since Mon Oct 29 21:39 (EET) on pts/2 from 192.168.27.1
    7 seconds idle
 No mail.
 No Plan.
-student@uso:/uso.git/$ echo $?
+student@uso:/uso-lab/$ echo $?
 0
 </code>
 
@@ -160,7 +160,7 @@ Situația opusă pe care o putem întâlni este să vrem să executăm o a doua 
 terminat cu succes. Pentru a face acest lucru folosim operatorul ''||'' (sau logic). 
 
 <code bash>
-student@uso:/uso.git/$ cat my_nonexisting_file.txt || id root
+student@uso:/uso-lab/$ cat my_nonexisting_file.txt || id root
 cat: my_nonexisting_file.txt: No such file or directory
 uid=0(root) gid=0(root) groups=0(root)
 </code>
@@ -168,7 +168,7 @@ uid=0(root) gid=0(root) groups=0(root)
 În cazul operatorului ''||'', a doua comandă nu se va executa dacă prima se termină cu succes.
 
 <code bash>
-student@uso:/uso.git/$ cat /etc/passwd || ls
+student@uso:/uso-lab/$ cat /etc/passwd || ls
 root:x:0:0:root:/root:/bin/bash
 daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
 bin:x:2:2:bin:/bin:/usr/sbin/nologin
@@ -223,11 +223,11 @@ De exemplu dorim să reținem output-ul a două comenzi într-un fișier. La o r
 jos nu funcționează:
 
 <code bash>
-student@uso:~/uso.git/$ cd labs/
-student@uso:~/uso.git/labs/$ ls ; ps > out
+student@uso:~/uso-lab/$ cd labs/
+student@uso:~/uso-lab/labs/$ ls ; ps > out
 00-intro  02-process  04-appdev  06-hw-boot  08-net  10-sec
 01-fs     03-user     05-cli     07-storage  09-vm   11-ctf
-student@uso:~/uso.git/labs/$ cat out
+student@uso:~/uso-lab/labs/$ cat out
   PID TTY          TIME CMD
 13052 pts/2    00:00:00 ps
 22346 pts/2    00:00:00 bash
@@ -239,8 +239,8 @@ transfera rezultatul amândurora în fișier. Un subshell este creat cu ajutorul
 mai jos:
 
 <code bash>
-student@uso:~/uso.git/labs/$ ( ls ; ps ) > out2
-student@uso:~/uso.git/labs/$ cat out2
+student@uso:~/uso-lab/labs/$ ( ls ; ps ) > out2
+student@uso:~/uso-lab/labs/$ cat out2
 00-intro
 01-fs
 02-process
@@ -269,7 +269,7 @@ out2
 de oricâte ori**.
 
 <code bash>
-student@uso:~/uso.git/labs/$ cd ~/uso.git/labs/05-cli/support/demo/
+student@uso:~/uso-lab/labs/$ cd ~/uso-lab/05-cli/support/demo/
 student@uso:~/.../05-cli/support/demo/$ ls a*.txt
 a1.txt  a3.txt  a5.txt  a7.txt  a9.txt
 </code>
@@ -299,9 +299,9 @@ Expandarea parametrică se referă la construcții care încep cu ''${''. Cea ma
 expandarea valorii unei variabile:
 
 <code bash>
-student@uso:~$ cd uso.git/
-student@uso:~/uso.git/$ mouse="Jerry"
-student@uso:~/uso.git/$ echo ${mouse}
+student@uso:~$ cd uso-lab/
+student@uso:~/uso-lab/$ mouse="Jerry"
+student@uso:~/uso-lab/$ echo ${mouse}
 Jerry
 </code>
 
@@ -309,10 +309,10 @@ Comanda de mai sus este echivalentă cu ''echo $mouse'', însă alcoladele devin
 care vrem să afișăm valoarea unei variabile urmate de un șir.
 
 <code bash>
-student@uso:~/uso.git/$ mouse="Jerry"
-student@uso:~/uso.git/$ echo $mouse_the_best
+student@uso:~/uso-lab/$ mouse="Jerry"
+student@uso:~/uso-lab/$ echo $mouse_the_best
 
-student@uso:~/uso.git/$
+student@uso:~/uso-lab/$
 </code>
 
 Shell-ul va încerca în acest caz să afișeze valoare variabilei ''mouse_the_best'' care, în cazul nostru, 
@@ -320,8 +320,8 @@ nu există. Pentru a rezolva această problemă, folosim acoladele să specfică
 la un nume de variabilă.
 
 <code bash>
-student@uso:~/uso.git/$ mouse="Jerry"
-student@uso:~/uso.git/$ echo ${mouse}_the_best
+student@uso:~/uso-lab/$ mouse="Jerry"
+student@uso:~/uso-lab/$ echo ${mouse}_the_best
 Jerry_the_best
 </code>
 
@@ -329,9 +329,9 @@ Un alt caz în care expandarea este utilă este evaluarea expresiilor aritmetice
 variabile în shell:
 
 <code bash>
-student@uso:~/uso.git/$ a=3
-student@uso:~/uso.git/$ b=4
-student@uso:~/uso.git/$ echo $a && echo $b
+student@uso:~/uso-lab/$ a=3
+student@uso:~/uso-lab/$ b=4
+student@uso:~/uso-lab/$ echo $a && echo $b
 3
 4
 </code>
@@ -339,7 +339,7 @@ student@uso:~/uso.git/$ echo $a && echo $b
 Dacă vrem să evaluam valoarea expresiei ''a+b'', trebuie să folosim următoarea construcție:
 
 <code bash>
-student@uso:~/uso.git/$ echo $((a+b))
+student@uso:~/uso-lab/$ echo $((a+b))
 7
 </code>
 
@@ -353,7 +353,7 @@ nu ''7'' așa cum ne-am fi așteptat.
 Pentru a lista toate variabilele de mediu folosite de terminalul curent, folosim comanda ''env''.
 
 <code bash>
-student@uso:/uso.git/$ env
+student@uso:/uso-lab/$ env
 LS_COLORS=rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:
 LC_MEASUREMENT=ro_RO.UTF-8
 SSH_CONNECTION=192.168.27.1 49613 192.168.27.217 22
