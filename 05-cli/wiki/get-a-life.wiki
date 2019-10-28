@@ -26,7 +26,7 @@ Vrem să înlocuim toate aparițiile prețului ''$6.30'' cu ''$7.30''. Vom folos
 lucru.
 
 <code bash>
-student@uso:~/.../support/get-a-life/tutorial-sed$ sed 's/6.30/7.30/' songs.txt > songs2.txt
+student@uso:~/.../support/get-a-life/tutorial-sed$ sed 's/6\.30/7.30/' songs.txt > songs2.txt
 student@uso:~/.../support/get-a-life/tutorial-sed$ cat songs2.txt 
 1, Justin Timberlake, Title 545, Price $7.30
 2, Taylor Swift, Title 723, Price $7.90
