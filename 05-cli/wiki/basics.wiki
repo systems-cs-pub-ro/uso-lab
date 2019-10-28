@@ -43,7 +43,7 @@ student@uso:~$ ps
 1. Logați-vă ca utilizatorul ''root'' și porniți un proces cu comanda ''sleep 100 &''. Deconectați-vă 
 și apoi afișați procesele pornite doar din terminalul curent. Ce observați?
 
-Comanda ''ps - e'' ne afișează 4 atribute despre toate procesele din sistem: PID, TTY, TIME și CMD.
+Comanda ''ps -e'' ne afișează 4 atribute despre toate procesele din sistem: PID, TTY, TIME și CMD.
 
 <code bash>
 student@uso:~$ ps -e
