@@ -1,4 +1,4 @@
-build: dummy_check.c
+out: dummy_check.c
 	gcc dummy_check.c -o out
 run: out
 	./out
