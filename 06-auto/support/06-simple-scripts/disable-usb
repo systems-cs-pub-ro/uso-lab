@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo rmmod uas
+sudo rmmod usb_storage

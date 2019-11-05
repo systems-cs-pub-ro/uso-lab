@@ -1,0 +1,19 @@
+===== Demo =====
+
+În continuare, împreună cu asistentul veți parcurge câteva exerciții de tip demo/tutorial.
+
+<hidden>
+Amintiți-le de utilitarele de parsare dar și cele precedente (sed, stat, find, grep, tr, etc). 
+  
+Insistați pe faptul că există în shell multe utilitare și moduri de face parsare și prelucrare și îl folosești pe cel mai potrivit la un moment dat, fiecare cu atu-urile sale: ''tr'', ''cut'', ''grep'', ''sed'', ''awk'', ''sort'', ''uniq'' (așa cum am discutat și la curs). 
+  
+Expresiile regulate sunt foarte puternice și sunt folosite în multe situații (căutare, verificare/potrivire/validare, înlocuire, parsare); dar că sunt și cazuri în care sunt folosite necorespunzător și să aibă grijă la asta (așa cum am discutat și la curs). Le puteți arată [[http://xkcd.com/1171/|comic-ul XKCD]], [[http://regex.info/blog/2006-09-15/247|citatul lui JWZ]] sau site-ul [[http://www.twoproblems.com/|two problems]].
+
+Ca un fel de "lecții" pentru studenți care să reiasă din laborator:
+  * There's more than one way to skin the cat.
+  * Use the best tool for the job. A tool for each task, a task for each tool. ("best" e relativ aici, poate însemna altceva pentru fiecare: eficient, accesibil, portabil, reliable, cunoscut)
+  * Don't use a tank where a sling would suffice.
+  * Regular expressions are one solution, not a panacea.
+  * Focus on the ends, then choose the means. Always know what you are trying to achieve and why are you trying to achieve it. "Why" and "what" come first, then comes the "how".
+
+</hidden>

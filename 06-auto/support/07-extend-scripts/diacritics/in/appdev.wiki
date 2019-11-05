@@ -1,0 +1,196 @@
+===== Concepte =====
+
+
+==== Intro ====
+Toate dispozitivele electronice pe care le folosim în viaţa de zi cu zi, de la
+latopuri sau calculatoare personale, până la telefoane mobile sau smart watch-uri,
+toate au în comun un lucru: rulează **software**. Având în vedere cât de variate
+sunt sistemele pe care rulează aplicaţiile, este important să se cunoască principalii
+factori care influenţează deciziile luate în vederea creării uneia.
+De exemplu, dacă aplicaţia noastră este gândită pentru un ceas inteligent, atunci
+trebuie avut în vedere faptul că resursele vor fi limitate; apare astfel o constrângere
+din punctul de vedere al memoriei disponibile.
+Este important de reţinut că atunci când scriem o aplicaţie trebuie luată în
+considerarea atât partea software cât şi hardware. Cea din urmă depăşeşte scopul
+laboratorului curent şi va fi reluată în cursurile viitoare.
+
+Astfel, principalele elemente pe care le vom analiza în continuare sunt:
+  * alegerea limbajului de programare potrivit
+  * scrierea şi compilarea codului sursă
+  * depanarea programelor
+  * versionarea codului
+
+==== Limbaje de programare ====
+
+Bazat pe modul în care codul de nivel înalt este transformat şi rulat pe procesor,
+putem clasifica limbajele de programare în două categorii:
+  * limbaje **compilate**
+  * limbaje **interpretate**
+  * limbaje **hibride**
+
+Fiecare tip de limbaj vine cu propriile avantaje şi dezavantaje. Limbajele compilate
+sunt mai stricte, deci există şanse mai mici să greşesti, dar au
+dezavantajul că nu sunt [[https://www.techopedia.com/definition/8921/portability|portabile]].
+În cazul limbajelor compilate codul sursă este întâi transformat în limbaj maşină,
+rezultând un fişier executabil, care apoi poate fi rulat oricând.
+Codul sursă scris într-un limbaj interpretat este executat direct, prin intermediul
+unui interpretor. Interpretorul este cel care ia fiecare instrucţiune, o transformă
+în cod maşină iar aceasta este executată imediat. Limbajele interpretate sunt portabile,
+însă greşelile de programare pot fi văzute doar în timpul rulării, niciodată de dinainte.
+
+În funcţie de scopul aplicaţiei noastre, trebuie să ştim să alegem limbajul de
+programare adecvat. De exemplu, limbajele compilate (precum C/C++) au avantajul
+timpului de execuţie mai rapid, pe când cele interpretate (PHP/Perl) au mai multă
+portabilitate, interpretorul fiind cel care transformă codul sursă în cod maşină
+specific procesorului.
+
+A treia categorie de limbaje şi anume limbajele hibride, sunt cele care încapsulează
+elemente de compilare cu elemente de interpretare.
+Pentru că principalul dezavantaj al programelor interpretate este timpul mare de execuţie,
+una din îmbunătăţirile aduse interpretoarelor este posibilitatea de a transforma
+codul sursă într-un cod intermediar, care se numeşte bytecode, care va fi apoi interpretat.
+Bytecode-ul este practic codul maşină al interpretorului, deci transformarea acestuia
+în cod maşină este mult mai rapidă. Practic, la rularea unui program, este generat un
+fişier intermediar care conţine bytecode, iar interpretorul ia apoi instrucţiuni
+din bytecode şi le transformă în cod maşină. Putem deci considera că avem două etape
+în procesul de rulare: compilare către bytecode şi apoi interpretare.
+Exemple de astfel de limbaje sunt Python/Java/C#.
+
+==== Scrierea şi compilarea codului sursa ====
+
+=== Scrierea codului ===
+
+Dezvoltarea unei aplicaţii constă în scrierea efectivă a codului sursă, adică în
+crearea şi editarea fişierelor.
+Există o mare varietate de editoare de text, de la unele foarte simple, până la
+unele foarte complexe, care oferă o multitudine de funcţionalităţi precum:
+indentarea automată a codului, syntax-highlighting, semnalarea erorilor etc.
+Ţinând cont de numărul mare de limbaje de programare existente, fiecare cu
+particularităţile sale, este imposibil ca un editor să cuprindă toate aspectele
+fiecărui limbaj. De aceea, majoritatea acestor editoare permit instalarea de extensii
+care aduc functionalităti în plus, sau aduc functionalităti specifice pentru un anumit limbaj.
+Printre cele mai populare editoare de text se numără Vim, Sublime, Atom, Visual Studio Code.
+Pe lângă editoare de text avansate putem utiliza un mediu integrat de dezvoltare (IDE).
+IDE-urile au anumite funcţionalităţi  avansate, multe dintre ele fiind adaptate
+unui singur limbaj de programare, iar în plus ele au integrat un compilator/interpretor
+pentru limbajul suportat. Astfel, la o simplă apăsare de buton programul este rulat.
+Printre IDE-urile preferate se număra: Microsoft Visual Studio, Eclipse, IntelliJ, XCode.
+
+=== Compilarea ===
+
+Procesul de compilare presupune obţinerea unui executabil din codul sursă.
+Acesta are următoarele etape intermediare:
+  - Preprocesare: operaţiile care au loc în această fază sunt prelucrarea directivelor de preprocesare (liniile care încep cu caracterul #): expandarea macrodefiniţiilor şi includerea fişierelor. Rezultatul este un fişier cu extensia .i.
+  - Compilare: codul preprocesat este transformat în cod limbaj de asamblare. Rezultatul este un fişier cu extensia .s.
+  - Asamblare: codul din limbaj de asamblare este transformat în cod obiect. Rezultatul este un fişier cu extensia .o.
+  - Link-editare: "leagă" între ele mai multe fişiere obiect şi creează fişierul executabil.
+
+<note>
+Secţiunea următoare se referă la dezvoltarea în C/C++, acestea fiind limbajele
+pe care le veţi utiliza cel mai mult pentru cursurile din facultate.
+</note>
+
+Compilatorul cel mai folosit pentru C/C++ este **gcc/g++**.
+La simpla rulare a comenzii gcc, se trece prin toate etapele menţionate,
+obţinându-se la final executabilul, însă există opţiuni pentru a întrerupe procesul
+după un anumit pas al compilării.
+
+<note>
+Pentru a vedea rapid ce opţiuni pune gcc la dispoziţie, puteţi consulta pagina de manual al
+acestuia. Pentru a face asta, rulaţi comanda ''man gcc''.
+</note>
+
+Să prespunem că avem un fişier ''main.c'' ce conţine cod C (corect). Următoarea comandă va
+genera executabilul ''main''.
+
+<code bash>
+gcc main.c -o main
+</code>
+
+La fiecare modificare adusă programului sursă, toate comenzile de compilare trebuie
+rulate din nou, lucru ce poate să devină obositor/problematic atunci când este
+vorba de un proiect complex. Astfel, au apărut fişierele ''Makefile'', fişiere care
+conţin aceste comenzi şi le pot rula pe toate printr-un singur apel.
+În concluzie, scopul acestor fişiere este de a automatiza procesul de compilare.
+
+<note>
+Mai multe informaţii despre fişiere ''Makefile'' vor fi prezentate în secţiunile următoare.
+</note>
+
+=== Depanarea programelor ===
+
+Foarte rar se va întâmpla să compilaţi codul cu succes din prima sau, în cazul fericit
+în care reuşiţi asta, în urma rulării acesta să funcţioneze aşa cum vă doriţi.
+De cele mai multe ori vă veţi lovi de warning-uri sau erori de compilare, iar atunci
+când reuşiţi să le rezolvaţi pe acestea, şirul nefericit al evenimentelor va continuă
+şi veţi obţine rezultate eronate sau şi mai rău, erori de rulare (ex: [[https://stackoverflow.com/questions/2346806/what-is-a-segmentation-fault|Segmentation fault]]).
+Este important să fim conştienţi că o mare parte din timpul dezvoltării unei aplicaţii
+va fi dedicată depanării programului, de aceea este important să fim eficienţi în
+descoperirea erorilor.
+
+Cea mai simplă metodă pentru a depana un program este aceea de a afişa mesaje pe
+parcursul execuţiei, astfel putem să urmărim exact rezultatele intermediare obţinute
+sau putem să descoperim partea din cod ce creează probleme.
+Aceasta este cea mai uşoară şi intuitivă metodă, însă pentru un program cu sute/mii
+de linii de cod este foarte ineficientă.
+Astfel au apărut **debuggerele**, programe speciale cu o varietate de funcţionalităţi;
+  * îţi permit să opreşti programul în anumite puncte ale execuţiei şi să analizezi valorile variabilelor.
+  * rularea programului pas cu pas
+  * modificarea stării programului în timpul rulării
+
+Unul dintre cele mai cunoscute utilitare pentru depanare este ''gdb''. El suportă
+toate operaţiile menţionate mai sus.
+
+Good practice este să nu scrieţi blocuri mari de cod fără a le verifica pe parcurs.
+Testaţi funcţionarea corectă a programului pe parcursul dezvoltării acestuia, altfel
+vă va fi mult mai dificil să detetctaţi erorile.
+
+=== Managementul şi versionarea codului ===
+
+În cadrul unui proiect complex o să lucraţi într-o echipă şi veţi ajuta
+la dezvoltarea doar a anumitor părţi din programul final. În această situaţie
+fiecare membru o să creeze/va modifica fişiere cu cod sursă în paralel cu alte persoane.
+Apare astfel necesitatea unei modalităţi de a împarţi codul şi de a urmări în acelaşi
+timp cine ce modificări a adus programului.
+
+**Git** este un sistem de management şi versionare a codului sursă care permite această
+partajare dorită. Proiectul este stocat într-un repository. Repository-ul conţine
+fişierele efective ale proiectului şi informaţii despre acesta.
+Fiecare lucrează la o versiune proprie a programului pe care o urcă apoi online
+şi este integrată automat în proiect.
+
+Operaţiile de bază ce pot fi efectuate asupra unui repository sunt:
+  * init: pentru a iniţializa un repo de git local.
+  * clone: se copiază local întreg repository-ul; practic se creează pe sistemul vostru un director cu toate fişierele puse online la momentul clonării.
+  * commit:se salvează toate modificările aduse proiectului; starea actuală este salvată local. Dacă modificările nu sunt făcute publice, atunci ceilalţi colaboratori nu le vor putea vedea.
+  * push: pentru publicarea modificărilor salvate prin commit.
+  * pull: se descarcă local ultimele modificări aduse de colaboratori în cadrul proiectului.
+ 
+<note>
+Mai multe detaliu despre operaţiile git veţi afla în secţiunile următoare.
+</note>
+
+====Biblioteci=====
+
+<note>
+Termenii de ''librărie'' şi ''bibliotecă'' **NU** sunt interschimbabili.
+</note>
+
+O bibliotecă este o colecţie de funcţii precompilate. În momentul în care un program are nevoie de o funcţie neinclusă în fişiere sursă proprii, linker-ul va apela respectiva funcţie din bibliotecă. Numele fişierului reprezentând biblioteca trebuie să aibă prefixul **lib**: 
+
+<code bash>
+student@midgard$ ls -l /usr/lib/libm.*
+-rw-r--r-- 1 root root 496218 2010-01-03 15:19 /usr/lib/libm.a
+lrwxrwxrwx 1 root root     14 2010-01-14 12:17 /usr/lib/libm.so -> /lib/libm.so.6
+</code>
+
+Biblioteca matematică este denumită ''libm.a'' sau ''libm.so''. În Linux bibliotecile sunt de două tipuri:
+    * **statice** - au, de obicei, extensia ''.a'' sub Linux (''.lib'' în Windows)
+    * **partajate** - au extensia ''.so'' sub Linux (''.dll'' în Windows) 
+
+Pentru a putea lega un program cu o bibliotecă, aceasta trebuie să fie prezentă în sistem. Pe sistemele Linux (şi nu numai) sunt două modalităţi de a realizarea legarea unei biblioteci la un set de module obiect.
+  * Prima metodă este denumită legare statică (static linking). Când se foloseşte legarea statică, codul obiect al funcţiilor folosite este ''cuplat'' în fişierul executabil al aplicaţiei. Acest lucru generează programe executabile de dimensiune mare şi iroseşte memoria dacă mai multe instanţe ale aceluiaşi program sunt rulate în acelaşi timp (fiecare are o copie proprie a funcţiilor utilizate). 
+  * Cealaltă metodă este legarea dinamică (dynamic linking). Legarea dinamică utilizează biblioteci care permit programatorului să refere funcţii din cadrul aplicaţiei, fără însă a lega codul funcţiilor în fişierul executabil. Bibliotecile dinamice sunt apelate de sistemul de operare şi pot fi partajate de mai multe programe. În sistemele Linux acestea sunt biblioteci shared-object (cu extensia .so).
+
+Legarea se face folosind opţiunea ''-l'' transmisă comenzii ''gcc''. Astfel, dacă se doreşte folosirea unor funcţii din ''math.h'', trebuie legată biblioteca matematică.
+

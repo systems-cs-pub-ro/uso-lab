@@ -1,0 +1,25 @@
+#!/bin/bash
+
+secret=$(cat in)
+
+declare -a output
+for i in $(seq 1 $((${#secret}))); do
+    output[$i]="a"
+done
+
+seq 1 ${#secret} | shuf > indexes
+for i in $(seq 0 $((${#secret}-1))); do
+    c=${secret:$i:1}
+    idx=$(($i+1)) 
+    echo "character $c is at index $idx in message"
+    pos=$(grep -n '^'"$idx"'$' indexes | cut -d ':' -f 1)
+    echo "shuffled position is $pos"
+    output[$pos]="$c"
+done
+
+outm=""
+for i in $(seq 1 ${#output[@]}); do
+    outm="$outm"${output[$i]}
+done
+echo "output: $outm"
+echo "$outm" > out

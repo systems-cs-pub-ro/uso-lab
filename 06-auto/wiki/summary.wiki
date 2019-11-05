@@ -1,0 +1,11 @@
+===== Sumar =====
+
+Automatizarea poate presupune alias-uri pentru viteză, one linere sau scripturi. Nu este obligatoriu să fie doar scripturi.
+
+În general pentru automatizare folosim limbaje de scripting care permit dezvoltare și depanare rapidă.
+
+Shell-ul are facilități de automatizare precum filtrarea textului, înlănțuirea comenzilor, variabile, comenzi de decizie sau ciclare. Cel mai important este folosirea comenzilor și utilitarelor deja existente.
+
+Folosim shell scripting ca să automatizăm o sarcină complexă compusă din mai multe comenzi sau pentru a prelucra text folosind comenzi de tipul filtre de text.
+
+Există mai multe moduri de automatizare. Cel mai important este să identificăm zona în care avem consum mare de timp pe care îl putem reduce prin automatizare.

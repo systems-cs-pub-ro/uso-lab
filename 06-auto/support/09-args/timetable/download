@@ -1,0 +1,3 @@
+#!/bin/bash
+
+wget -r -L -nH -nd --cut-dirs=1 -A .xls http://acs.pub.ro/~cpop/orare_sem1/

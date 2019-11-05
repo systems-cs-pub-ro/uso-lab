@@ -1,0 +1,6 @@
+#!/bin/bash
+
+sum=$(cut -d ',' -f 4 ../../04-regex/students.csv  | paste -s -d'+' | bc)
+count=$(wc -l < ../../04-regex/students.csv)
+average=$(echo "scale=2; $sum / $count" | bc)
+echo "Average: $average"

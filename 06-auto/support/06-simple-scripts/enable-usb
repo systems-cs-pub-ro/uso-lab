@@ -1,0 +1,4 @@
+#!/bin/bash
+
+sudo modprobe usb_storage
+sudo modprobe uas

@@ -1,0 +1,13 @@
+#!/bin/bash
+
+secret=$(cat in)
+
+output=""
+for i in $(seq 0 $((${#secret}-1))); do
+    c=${secret:$i:1}
+    echo "current char: $c"
+    start=$(tr -d -c 'a-zA-Z0-9_' < /dev/urandom | head -c 99)
+    output="$output""$start""$c"
+done
+echo "output: $output"
+echo "$output" > out

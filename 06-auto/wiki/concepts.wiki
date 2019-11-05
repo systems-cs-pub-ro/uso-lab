@@ -1,0 +1,55 @@
+===== Concepte =====
+
+Pentru acest laborator vom folosi comenzi și noțiuni prezentate în laboratoarele de până acum în special laboratorul trecut ([[:uso:laboratoare:new:05-cli]]). Vor fi puține comenzi nou introduse; cel mai mult ne va interesa cum dându-se o situație practică vom putea folosi shell-ul pentru automatizare.
+
+**Automatizarea sarcinilor** se referă la delegarea / degrevarea acțiunilor utilizatorilor către programe în sistemul de calcul. Un program va face automat, de sine stătător, acțiuni pe care le-ar face utilizatorul, rezultând în timp mai puțin consumat de utilizator.
+
+Acțiunile care sunt candidate pentru automatizare sunt în general acțiuni repetitive, nu foarte simple și neinteractive. Automatizarea acestora va elibera utilizator de la executarea repetată, plictisitoare, manuală a acestora.
+
+==== Perspective pentru automatizare ====
+
+eficiență, să facem rapid acțiuni repetitive
+
+automatizare, executare cu minimă interacțiune din partea utilizatorului
+
+nu reinventăm roata, folosim componente deja existente
+
+eficiență:
+* keyboard shortcuts
+* TAB, history search
+* alias-uri
+* globbing
+* expresii regulate
+
+folosire componente existente
+* pipe-uri
+* shell expansion
+* one-linere
+* more than one way to skin the cat
+* unele comenzi au parametri, nu e nevoie de pipe-uri
+
+eficiență și automatizare:
+* scripturi simple, Makefile-uri
+* două cazuri: înlănțuire și prelucrare
+
+==== Scripting ====
+
+în general NU folosim shell scripting pentru: prelucrări numerice, prelucrări de șiruri (poate bonus ceva cu Python)
+
+==== Funcționalități shell ====
+
+reamintim: pipe-uri, filtre de text, variabile shell
+
+ce acoperim NOU în acest laborator: expresii regulate, argumente în linia de comandă, for, while, if
+
+==== Automatizarea prin shell scripting ====
+
+înlănțuire de comenzi
+
+configurare scripturi: variabile, argumente în linia de comandă
+
+condiții
+
+bucle, parcurgere liste de elemente
+
+înlănțuire fluxuri text: pipe, command expansion, redirectări

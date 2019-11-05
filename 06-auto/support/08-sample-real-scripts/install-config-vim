@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Clone Razvan's scripts and configs in utils/ folder.
+mkdir -p utils
+cd utils
+git clone https://github.com/razvand/snippets snippets.git
+cd ..
+
+# Install and configure Vim.
+sudo apt install -y vim
+sudo cp /usr/share/vim/vim*/vimrc_example.vim /etc/vim/vimrc
+mkdir -p ~/.vim/bkup
+cp ~/utils/snippets.git/config/vim/vimrc_no_cscope ~/.vimrc
+cp -r ~/utils/snippets.git/config/vim/ftplugin/ ~/.vim/
+sudo mkdir -p /root/.vim/bkup
+sudo cp ~/utils/snippets.git/config/vim/vimrc_no_cscope /root/.vimrc
+sudo cp -r ~/utils/snippets.git/config/vim/ftplugin/ /root/.vim/

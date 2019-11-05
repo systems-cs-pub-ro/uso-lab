@@ -1,0 +1,6 @@
+#!/bin/bash
+
+cp in/process.wiki process.wiki
+
+# ș
+sed -i 's/\xc5\x9f/\xc8\x99/g' process.wiki

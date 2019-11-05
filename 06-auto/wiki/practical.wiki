@@ -1,0 +1,404 @@
+===== Exerciții =====
+
+Accesați subdirectorul ''~/uso-lab/06-auto/support/'' pentru exercițiile de laborator. Sunt și tutoriale (deja făcute / rezolvate) și exerciții. Tutorialele au rolul de a vă acomoda cu diferitele comenzi iar exercițiile sunt parte practică efectivă.
+
+Realizați exercițiile în ordine. De la secțiunea 7 faceți echipe de 2-3 persoane, sub coordonarea asistentului și lucrați împreună la rezolvarea exercițiilor.
+
+==== 01. Alias-uri ====
+
+Accesați subdirectorul ''01-alias/''. Nu există fișiere de suport pentru aceste exerciții.
+
+În acest set de exerciții / tutoriale vom vedea cum folosim alias-uri pentru eficientizarea acțiunilor.
+
+Pentru început să folosim comanda ''xdg-open'' în formele de mai jos:
+
+<code>
+xdg-open .
+xdg-open http://google.com
+xdg-open ../07-extend-scripts/convert/Orar1CA.xls 
+</code>
+
+Aceste comenzi deschid respectiv, un file browser, un web browser și LibreOffice.
+
+Pentru a realiza mai rapid acțiunile, folosim un alias. Facem alias-urile ''open'' și ''go'' pentru ''xdg-open'' ca mai jos:
+
+<code>
+alias open='xdg-open'
+alias go='xdg-open'
+</code>
+
+**Exercițiu**: Acum folosiți comanda ''open'' sau comanda ''go'' pentru cele trei acțiuni de mai sus. Am simplificat comanda ''xdg-open'' (mai greu de scris și mai greu de reținut).
+
+==== 02. One liners ====
+
+Accesați subdirectorul ''02-one-liners/'' din directorul laboratorului.
+
+=== convert ===
+
+În cadrul subdirectorului ''convert/'' avem mai multe fișiere ''.svg''. Dorim să le convertim în fișiere PNG. Pentru aceasta folosim comanda ''inkscape''.
+
+<note important>
+Dacă nu este disponibilă comanda ''inkscape'' va trebui să o instalați folosind comanda:
+<code>
+sudo apt install inkscape
+</code>
+</note>
+
+Pentru a converti fișierul ''acl.svg'' în fișierul ''acl.png'' folosim comanda:
+<code>
+inkscape --export-png=acl.png acl.svg
+</code>
+În urma comenzii a apărut fișierul ''acl.png''. Verificăm conversia corectă folosind alias-ul ''go'' creat anterior:
+<code>
+go acl.png
+</code>
+
+Pentru a realiza conversia **tuturor** fișiereleor din directorul curent folosim one liner-ul:
+<code>
+for i in *.svg; do inkscape --export-png=$(basename "$i" .svg).png "$i"; done
+</code>
+
+În urma rulării acestui one liner, toate fișierele ''.svg'' au fost convertite în fișiere PNG păstrându-se numele și adăugându-se extensia ''.png''.
+
+=== Indexed Names ===
+
+Intrați în subdirectorul ''indexed-names/''. Dorim să realizăm operații automate în sistemul de fișiere, folosind ''for'' și one linere.
+
+Rulăm cele două comenzi de mai jos:
+<code>
+for i in $(seq -f "%02g" 1 3); do touch test-"$i".txt; done
+for i in $(seq -f "%02g" 0 12); do mkdir uso-curs-"$i"; done
+</code>
+La sfârșitul rulării acestor comenzi obținem 3 fișiere text (pentru cele 3 lucrări/teste) si 13 directoare, pentru cele 13 directoare. Am folosit ''for'' pentru parcurgerea unei liste și ''seq'' pentru crearea unei liste numerice.
+
+**Exercițiu**: Realizați un one liner care creează cele 13 directoare și în cadrul fiecărui director creează un subdirector numit ''slides/'', un fișier numit ''note.txt'' și un fișier numit ''resurse.txt''.
+
+=== Rename ===
+
+Intrați în subdirectorul ''rename/''. Copiați fișierele din subdirectorul ''src/'' în directorul curent:
+<code>
+cp src/* .
+</code>
+
+Vrem să redenumim toate fișierele cu extensia ''.c'' ca să avem prefixul ''uso_'' în nume. Pentru aceasta folosim one liner-ul:
+<code>
+for i in *.c; do mv "$i" uso_"$i".c; done
+</code>
+După această comandă, vor apărea fișiere redenumite.
+
+Apoi ștergeți fișierele nou generate și recopiați-le din directorul ''src/'':
+<code>
+rm *.c
+cp src/*.c
+</code>
+
+**Exercițiu**: Realizați un one liner care redenumește toate fișierele cu extensia ''.c'' și adaugă sufixul ''_uso'' în nume. Adică fișierul ''ptr.c'' devine ''ptr_uso.c''.
+
+==== 03. One liners vs commands ====
+
+Accesați subdirectorul ''03-one-liners-vs-commands/'' din directorul laboratorului. Vom compara one linere cu comenzi mai simple.
+
+Rulăm următoarele comenzi pentru a genera o parolă de 16 caractere și pentru a afișa PID-urile proceselor utilizatorului ''student'':
+<code>
+tr -dc 'a-zA-Z0-9~!@#$%^&*_()+}{?></";.,[]=-' < /dev/urandom | fold -w 32 | head -n 1
+ps -ef | grep student | tr -s ' ' | cut -d ' ' -f 2
+</code>
+
+Aceste acțiuni le putem realiza și folosind comenzi dedicate și opțiunile lor, fără a fi nevoie de trecerea prin operatorul ''|'' (//pipe//):
+<code>
+pwgen -y 16 1
+ps -u student -o pid --no-header
+</code>
+
+<note important>
+În general, acolo unde o comandă oferă opțiuni, este de preferat, fiind mai robust, să folosim comandă în loc de înlănțuirea mai multor comenzi prin operatorul ''|'' (//pipe//).
+</note>
+
+=== Indexed Names ===
+
+Intrați în subdirectorul ''indexed-names/''. Vrem să realizăm operații similare exercițiului ''indexed-names/'' de la punctul anterior.
+
+Astfel că, putem realiza același lucru precum comenzile de mai jos:
+<code>
+for i in $(seq -f "%02g" 1 3); do touch test-"$i".txt; done
+for i in $(seq -f "%02g" 0 12); do mkdir uso-curs-"$i"; done
+</code>
+folosind comenzile:
+<code>
+touch $(seq -f "test-%02g.txt" 1 3)
+mkdir $(seq -f "uso-curs-%02g" 0 12)
+</code>
+
+Avantajul celui de-al doilea set de comenzi este că vor crea un singur proces (''touch'' sau ''mkdir''). Avantajul primului set de comenzi este că putem adăuga mai multe (și mai diferite) comenzi care să fie executate pe fiecare element din bucla for.
+
+==== 04. Expresii regulate ====
+
+Accesați subdirectorul ''04-regex/'' din directorul laboratorului. Vrem să folosim expresii regulate pentru a prelucra fișierele ''students.csv'' și ''students.txt''.
+
+**Exerciții**: Folosiți ''grep'' pentru a extrage, respectiv, din fișierul ''students.csv'':
+  * studenții de la grupa ''315CC''
+  * studenții de la grupa ''315CC'' și care au luat prima notă ''9'' (din cele 3 coloane)
+  * studenții de la grupa ''315CC'' și care au luat a doua notă care începe cu cifra ''7'' (din cele 3 coloane)
+  * studenții de la grupa ''315CC'' și care au luat a treia notă care începe cu cifra ''6'' (din cele 3 coloane)
+
+Mai jos sunt rezultatele așteptate pentru cele patru comenzi de mai sus:
+<code>
+$ grep TODO students.csv 
+ȚIFREA C. Alexandru-Nicolae,315CC,7,7,6.25
+BOGDAN O.Gh. Ana,315CC,5,4.5,1.89
+COSTEA I. Florin Traian,315CC,4,3.5,3.7
+OLTEANU Ș. Ionuț-Mihăiță,315CC,7,4.25,4.7
+FULGER P. Alexandru-Gabriel,315CC,7,4.25,5
+DUȘE-VASILIU V. Andra,315CC,8,7,6.4
+CHIȚESCU E. Bogdan-Florentin,315CC,9,7.75,6.89
+MAVRODIN I. Andrei,315CC,9,7,6.4
+DRĂGOI M. Ovidiu-Alexandru,315CC,8,8,3.44
+MANEA A. Mihail-Alin,315CC,7,6.75,6.22
+TRACHE M. Ana-Maria,315CC,7,4.75,4.9
+IORDACHE M. Tiberiu-Constantin,315CC,8,8.25,4.56
+BARBU I. Ștefan,315CC,10,10,7.56
+MĂNOIU I. Ioana-Veronica,315CC,10,10,8.6
+STOICA I.D. Aurel-Octavian,315CC,7,3.75,5.4
+IUȘAN V. Bogdan-Cosmin,315CC,9,7.25,8
+BURCEANU D.N. Radu-Gabriel,315CC,8,8.75,7
+ASĂVOAEI P. Cătălin,315CC,8,6.75,7
+ȘTIRBĂȚ A. Steliana,315CC,10,10,10
+
+$ grep TODO students.csv 
+CHIȚESCU E. Bogdan-Florentin,315CC,9,7.75,6.89
+MAVRODIN I. Andrei,315CC,9,7,6.4
+IUȘAN V. Bogdan-Cosmin,315CC,9,7.25,8
+
+$ grep TODO students.csv 
+ȚIFREA C. Alexandru-Nicolae,315CC,7,7,6.25
+DUȘE-VASILIU V. Andra,315CC,8,7,6.4
+CHIȚESCU E. Bogdan-Florentin,315CC,9,7.75,6.89
+MAVRODIN I. Andrei,315CC,9,7,6.4
+IUȘAN V. Bogdan-Cosmin,315CC,9,7.25,8
+
+$ grep TODO students.csv 
+ȚIFREA C. Alexandru-Nicolae,315CC,7,7,6.25
+DUȘE-VASILIU V. Andra,315CC,8,7,6.4
+CHIȚESCU E. Bogdan-Florentin,315CC,9,7.75,6.89
+MAVRODIN I. Andrei,315CC,9,7,6.4
+MANEA A. Mihail-Alin,315CC,7,6.75,6.22
+ASĂVOAEI P. Cătălin,315CC,8,6.75,7
+</code>
+
+==== 05. find ====
+
+Accesați subdirectorul ''05-find/'' din directorul laboratorului.
+
+Pentru început vom crea o ierarhie de fișiere pe care să o folosim în continuare folosind comanda:
+<code>
+tar xf etc.tar.gz
+</code>
+În urma rulării acestei comenzi obținem un subdirector ''etc/''. Folosim comanda ''find'' pentru a parcurge fișiere din ierarhia de fișiere ''etc/''.
+
+Pentru început rulăm comenzile de mai jos pentru a afișa anumite intrări:
+<code>
+find etc/
+find etc/ -type f
+find etc/ -type f -name 'a*'
+find etc/ -type f -name 'a*.*'
+</code>
+
+**Exercițiu**: Afișați intrările de tip link simbolic din ieraria ''etc/''. Apoi afișați intrările de tip link simbolic care încep cu litera ''a''.
+
+Dacă dorim să rulăm anumite informații despre un fișier dat, precum dimensiunea sa, putem folosi comenzi precum cele de mai jos:
+<code>
+find etc/ -type f -exec stat -c "%s" {} \;
+find etc/ -type f -exec stat -c "%s,%n" {} \;
+find etc/ -type f -exec stat -c "%s,%n" {} \; | sort -n
+find etc/ -type f -exec stat -c "%s,%n" {} \; | sort -n | tail -10
+</code>
+
+**Exercițiu**: Ștergeți toate intrările de tip link simbolic din ierarhia ''etc/'' al căror nume începe cu litera ''a''.
+
+Putem selecta anumite fișiere după permisiunile prezente. De exemplu, pentru a afișa fișierele care au permisiuni de execuție pentru toți utilizatorii (adică bitul ''x'' este prezent pentru ''user'', ''group'' și ''others'') folosim comanda:
+<code>
+find etc/ -type f -perm /111
+find etc/ -type f -perm /111 -exec ls -l {} \;
+</code>
+
+**Exercițiu**: Scoațeți permisiunile de execuție de pe toate fișierele care au permisiuni de execuție pentru toți utilizatorii.
+
+Putem selecta fișiere după timpul de access, precum comenzile de mai jos:
+<code>
+find etc/ -type f -mtime -25
+find etc/ -type f -newer etc/apt/trusted.gpg
+</code>
+
+**Exercițiu**: Afișați toate fișierele cu dimensiune ''0''. Apoi toate fișierele cu dimensiune mai mare de ''20'' kiloocteți. Folosiți opțiunea ''-size'' a comenzii ''find'' (puteți vedea detalii în pagina de manual).
+
+==== 06. Scripturi simple ====
+
+Accesați subdirectorul ''06-simple-scripts/'' din directorul laboratorului. În acest director avem exemple de scripturi practice. Urmăriți toate scripturile din acest director (nu e nevoie să le rulați) și vedeți ce face fiecare.
+
+**Exercițiu**: Pentru dezactivarea montării stick-urilor USB pe sistem putem folosi comenzile:
+<code>
+sudo rmmod uas
+sudo rmmod usb_storage
+</code>
+
+Apoi, pentru a reactiva, folosim comenzile:
+<code>
+sudo modprobe usb_storage
+sudo modprobe uas
+</code>
+
+Creați, respectiv, scripturile ''disable-usb'' și ''enable-usb'' care să dezactiveze și reactiveze montarea stick-urilor USB. Rulați-le pentru verificare.
+
+**Exercițiu**: Creați un script numit ''system-info'' care afișează informații despre sistem pe modelul de mai jos:
+<code>
+date: 2019-11-05
+kernel: 5.0.0-32-generic
+version: Ubuntu 18.04.3 LTS
+num_processes: 336
+</code>
+
+==== 07. Extindere scripturi ====
+
+Accesați subdirectorul ''07-extend-scripts/'' din directorul laboratorului.
+
+=== convert ===
+
+Intrați în subdirectorul ''convert/''. Avem 4 fișiere ''.xls'' reprezentând orarele de anul 1. Convertim aceste fișiere în format PDF folosind scriptul ''solution'':
+<code>
+./solution
+</code>
+
+Vom obține câte un fișier PDF. Putem folosi aliasul ''go'' pentru a deschide un fișier:
+<code>
+go Orar1CA.pdf
+</code>
+
+=== PDF Stitching ===
+
+Intrați în directorul ''pdf-stitch/''. Vrem să obținem fișierele de tip orar; pentru aceasta folosim scriptul ''download'':
+<code>
+./download
+</code>
+
+Apoi rulați scriptul anterior pentru a converti fișierele ''.xls'' descărcate în fișiere PDF:
+<code>
+../convert/solution
+</code>
+
+Ca să unim mai multe fișiere PDF folosim comanda ''pdftk''. De exemplu, dacă vrem să unim fișierele de anul 1 CTI folosim comanda:
+<code>
+mkdir out
+pdftk Orar1*.pdf cat output out/Orar1.pdf
+</code>
+Acum în fișierul ''out/Orar1.pdf'' avem toate orarele unificate și e mai ușor de printat. Putem verifica folosind aliasul ''go'':
+<code>
+go out/Orar1.pdf
+</code>
+
+**Exercițiu**: Creați un script ''solution'' care generează 6 fișiere PDF pentru orarele pentru fiecare dintre cei 6 ani (4 licență și 2 master).
+
+=== Wiki Concatenate ===
+
+Intrați în directorul ''wiki-cat/''. Avem mai multe directoare cu fișiere de tip wiki pe care dorim să le concatenăm.
+
+Ca să obținem un fișier de tip wiki pentru laboratorul 1, folosim comanda:
+<code>
+cat 01-fs/{concepts,demo,recap,basics,need-to-know,nice-to-know,get-a-life,summary}.wiki > 01-fs.wiki
+</code>
+
+**Exercițiu**: Creați un script ''do-all'' care generează fișiere de tip wiki pentru toate cele 4 laboratoare din director. Folosiți ''for'' pentru a parcurge toate 4 directoarele.
+
+=== Diacritice ===
+
+Intrați în directorul ''diacritics/''. În directorul ''in/'' avem fișiere care conțin diacritice în format necorespunzător (//cedilla below//); vrem să fie în format corespunzător (//comma below//), așa cum sunt în directorul ''expected/''. Lista completă de diacritice este în fișierul ''diacritice_ro.txt''.
+
+Dacă doriți să vedeți codul UTF-8 pentru diacritice folosiți comanda:
+<code>
+xxd diacritice_ro.txt
+</code>
+
+În scriptul ''solution'' aveți comanda ''sed'' pentru a converti diacritica ''ş'' (//cedilla below//) în diacritice ''ș'' (//comma below//).
+
+**Exercițiu**: Extindenți scriptul ''solution'' pentru a converti și celelalte trei diacritice: ''ţ'', ''Ş'' și ''Ţ''.
+
+**Exercițiu**: Creați un script ''do-all'' care convertește toate fișierele din directorul ''in/'' în diacriticele de tip //comma below//. Folosiți ''for'' pentru a parcurge toate fișierele. Pentru verificare folosiți comanda ''cmp'' și comparați fișierele obținute cu cele din directorul ''expected/''.
+
+==== 08. Exemple de scripturi ====
+
+Accesați subdirectorul ''08-sample-real-scripts/'' din directorul laboratorului. Aici sunt exemple de scripturi pe care le folosim în practică. Parcurgeți scripturile și înțelegeți-le. Acolo unde sunt lucruri neclare, apelați la asistent.
+
+==== 09. Argumente pentru scripturi ====
+
+Accesați subdirectorul ''09-args/'' din directorul laboratorului.
+
+=== Orar ===
+
+Intrați în directorul ''timetable/''. Scriptul ''download'' descarcă orarele din anul universitar curent semestrul 1. Rulați scriptul pentru a-l testa:
+<code>
+./download
+</code>
+Va descărca fișierele pentru orar în format ''.xls''.
+
+**Exercițiu**: Creați un script numit ''solution'' care primește două argumente: primul este anul universitar, altul este semestrul și descarcă orarele pentru acel an universitar și pentru acel semestru de pe site-ul de orare: http://acs.pub.ro/~cpop/
+
+Rularea fără argumente a scriptului ''solution'' ar trebui să afișeze un mesaj de forma:
+<code>
+$ ./solution
+Usage: ./solution <academic-year> <semester>
+  Example: ./solution 2017_2018 sem1
+</code>
+
+=== Medie ===
+
+Intrați în directorul ''average/''.
+
+Scriptul ''compute'' calculează media la a doua notă pentru **toți** studenții din fișierul ''../../04-regex/students.csv'':
+<code>
+$ ./compute
+Average: 6.72
+</code>
+
+**Exercițiu**: Creați un script numit ''solution'' care primește ca argument un nume de grupă și calculează media doar pentru aceștia. Un exemplu de rulare este
+<code>
+$ ./solution 314CC
+Average: 7.56
+</code>
+
+==== 10. Înlocuiri de șiruri ====
+
+Accesați subdirectorul ''10-replace/'' din directorul laboratorului.
+
+Fișierul ''template_reader.c'' conține template-ul unui fișier C. În acest fișier construcția ''__TEMPLATE__'' trebuie înlocuită cu un "mesaj secret". Acest mesaj este generat dintr-un șir în care fiecare literă este înlocuită cu valoarea sa ASCII din care scădem valoarea ''0x41'' (în hexazecimal). Pentru a face înlocuirea folosim scriptul ''generate'':
+<code>
+./generate
+</code>
+În urma rulării scriptului ''generate'' a fost creat fișierul ''reader.c'' pornind de la fișierul ''template_reader.c''. Acum putem compila fișierul folosind fișierul ''Makefile'' cu ajutorul comenzii:
+<code>
+make
+</code>
+În urma rulării comenzii ''make'' a rezultat executabilul ''reader'' pe care îl putem acum lansa:
+<code>
+./reader
+</code>
+
+Parcurgeți scriptul ''generate'' și înțelegeți-l. Acolo unde aveți nelămuriri, adresați-vă asistentului.
+
+==== 11. Dezvoltare de exerciții cu scripting ====
+
+Accesați subdirectorul ''11-practical/'' din directorul laboratorului.
+
+În fiecare dintre cele 3 subdirectoare aveți niște provocări. Fiecare provocare are un fișier ''flag'' care conține un mesaj ascuns. Va trebuie să "descifrați" acel mesaj. Ca să întelegeți cum a fost generat acel mesaj ascuns, vedeți scriptul ''encode''. Scriptul encode este scriptul folosit pentru generarea fișierului ''flag'' pornind de la un mesaj inițial (pe care trebuie să îl aflați).
+
+**Exercițiu**: Alegeți o provocare (sau mai multe) și creați un script ''decode'' care decodifică mesajul ascuns în fișierul ''flag'' și afișează mesajul inițial.
+
+**Exercițiu**: Gândiți-vă voi la o provocare și creați pentru aceasta scriptul ''encode'' și ''decode'' și fișierele auxiliare.
+
+==== 12. Shell vs Python ====
+
+Accesați subdirectorul ''12-shell-vs-python/'' din directorul laboratorului. Vrem să vedem cum se compară scripturi scrise în shell față de scripturi scrise în Python.
+
+Scriptul ''generate'' este un script shell pe care l-am folosit în secțiunea 10. Scriptul ''generate.py'' are aceeași funcționalitate, dar scris în Python, iar mesajul inițial este citit din fișieru ''in''.
+
+<note important>
+În general, pentru acțiuni simple, folosim shell scripting. Pentru prelucrări de date și acțiuni mai complexe, este recomandat să folosim un limbaj de scripting mai puternic, precum Python.
+</note>

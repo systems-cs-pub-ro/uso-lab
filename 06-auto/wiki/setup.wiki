@@ -1,0 +1,50 @@
+===== Înainte de laborator =====
+
+^ Comandă  ^ Descriere scurtă       ^
+| **''cat''** | afișare conținut fișier |
+| **''seq''** | generare secvență de numere |
+| **''grep''** | extrage linii care conțin o anumită expresie regulată |
+| **''cut''** | extragere anumite coloane |
+| **''sed''** | filtru de text avansat, folosit pentru substituții |
+| **''wc''** | contorizare număr de linii, cuvinte sau caractere |
+| **''head''** | afișare a primelor linii sau caractere |
+| **''tail''** | afișare a ultimelor linii sau caractere |
+| **''for''** | parcurgere listă de elemente pentru aplicarea de comenzi pentru fiecare element în parte |
+| **''if''** | condiție de execuție a unor comenzi |
+| **''$(comm)''** | expandarea unei comenzi (//command expansion//) - înlocuirea cu output-ul comenzii |
+| **''comm1 | comm2''** | legarea a două comenzi: output-ul primei comenzi devine input pentru cea de-a doua comandă |
+| **''$var'' sau ''${var}''** | valoarea variabilei ''var'' |
+| **''${#var}''** | lungimea valorii variabilei ''var'' (în caractere) |
+| **''${var:2:3}''** | un subșir al valorii variabilei ''var'': de la indexul ''2'' se extrag ''3'' caractere |
+
+==== Obiective ====
+
+  * Automatizarea sarcinilor repetitive
+  * Folosirea expresiilor regulate pentru prelucrarea informațiilor
+  * Folosirea celei mai bune abordări și a celor mai potrivite comenzi pentru a rezolva o sarcina dată
+  * Îmbunătățirea abilităților de utilizarea a comenzilor și funcționalităților shell
+
+==== Folosire Git pentru laborator ====
+
+Pe parcursul laboratoarelor, pentru descărcarea fișierelor necesare laboratorului, vom folosi Git. Git este un sistem de controlul versiunii și e folosit pentru versionarea codului în proiectele software mari. Celor interesați să aprofundeze conceptele din spatele comenzii ''git'', precum și utilizări avansate, le recomandăm cursul practic online de pe [[http://gitimmersion.com/|gitimmersion]].
+
+Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso-lab|acest repository Git]].
+
+<note important>
+Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați.
+
+<code>
+student@uso:~$ cd ~
+student@uso:~$ git clone https://github.com/systems-cs-pub-ro/uso-lab.git
+</code>
+
+În directorul ''uso-lab/06-auto'' găsim fișierele necesare pentru laboratorul 06. Accesăm acel director folosind comanda:
+<code>
+student@uso:~$ cd uso/06-auto
+student@uso:~/uso-lab/06-auto$ pwd
+/home/student/uso-lab/06-auto
+</code>
+
+</note>
+
+Cam atât cu pregătirea laboratorului. Acum haideți să ne apucăm de treabă! :-)

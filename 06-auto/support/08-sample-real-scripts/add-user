@@ -1,0 +1,73 @@
+#!/bin/bash
+
+#
+# Add a new user; invoke all necesary script and command for adding complete
+# user facilities to anaconda.cs.pub.ro
+#
+
+GROUP_NAME="projects"
+GROUP_DIR="projects"
+QUOTA="256"		# size in megs
+
+#
+# usage function: in case of bad script arguments
+#
+
+function usage ()
+{
+	echo -en "Usage: $0 [username] [e-mail-address] [info]\n"
+	echo -en "\te-mail-address is to be used to send all the necessary\n"
+	echo -en "\tinformation to the new user\n"
+	echo -en "\tif arguments are missing, the script runner will be\n"
+	echo -en "\tprompted for them\n"
+}
+
+#
+# too many arguments
+#
+
+if test $# -gt 3; then
+	usage $0
+	exit 1
+fi
+
+# get username
+if test $# -ge 1; then
+	username="$1"
+else
+	echo -en "Username: "
+	read username
+fi
+
+# get comment
+if test $# -eq 3; then
+	comment="$3"
+else
+	echo -en "Info: "
+	read comment
+fi
+
+# add user
+useradd -m -d /home/$GROUP_DIR/$username -g $GROUP_NAME -c "$comment" -s /bin/bash $username
+
+# create password
+password=$(pwgen -N 1)
+
+# add password - non-interractive mode
+echo "$username:$password" | chpasswd
+
+# set quota
+setquota $username $(($QUOTA * 1024)) $((($QUOTA + 10) * 1024)) $(($QUOTA * 100)) $((($QUOTA + 10) * 100)) -a
+
+# get email adress
+if test $# -ge 2; then
+	email="$2"
+else
+	echo -en "Email address: "
+	read email
+fi
+
+# send e-mail
+cat ./new_user_mail_message.txt | sed "s/username/$username/g" | sed "s/quota/$QUOTA/g" | sed "s/password/$password/g" | mail -s "Cont Koala" $email
+
+exit 0

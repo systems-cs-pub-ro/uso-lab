@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo -n "date: "; date +%Y-%m-%d
+echo -n "kernel: "; uname -r
+echo -n "version: "; lsb_release -d | cut -d ':' -f 2 | sed 's/^[ \t]\+//'
+echo -n "num_processes: "; ps -e --no-header | wc -l

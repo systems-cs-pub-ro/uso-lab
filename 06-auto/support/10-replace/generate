@@ -1,0 +1,17 @@
+#!/bin/bash
+
+secret="anaaremere"
+
+replacer="{"
+for i in $(seq 0 $((${#secret}-1))); do
+    c=${secret:$i:1}
+    echo "current char: $c"
+    hex=$(printf "0x%02x" "'$c")
+    echo "hex: $hex"
+    final=$(($(($hex))-$((0x41))))
+    replacer="$replacer""$final"", "
+done
+replacer="$replacer""}"
+echo "replacer: $replacer"
+
+sed "s/__TEMPLATE__/$replacer/g" < template_reader.c > reader.c

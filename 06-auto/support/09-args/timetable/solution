@@ -1,0 +1,14 @@
+#!/bin/bash
+
+if test $# -ne 2; then
+    echo "Usage: $0 <academic-year> <semester>" 1>&2
+    echo "  Example: $0 2017_2018 sem1" 1>&2
+    exit 1
+fi
+
+year="$1"
+semester="$2"
+mkdir "$year"_"$semester"
+cd "$year"_"$semester"
+wget -r -L -nH -nd --cut-dirs=1 -A .xls http://acs.pub.ro/~cpop/Orare"$year"/Orare"$year""$semester"/
+cd ..

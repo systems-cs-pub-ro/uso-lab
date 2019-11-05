@@ -1,0 +1,58 @@
+===== Concepte =====
+
+==== Utilizatori şi grupuri ====
+
+În Linux există trei tipuri de utilizatori: 
+
+  * administrativ (root)
+  * utilizator obişnuit
+  * utilizatorii creaţi şi folosiţi de servicii
+
+Utilizatorul ''root'' este creat automat la instalarea sistemului de operare Linux şi are drepturi depline asupra tuturor serviciilor şi resurselor din sistem, având şi rolul de a administra şi gestiona ceilalţi utilizatori. Acesta mai poartă şi denumirea de ''super user''.
+
+Utilizatorii obişnuiţi au doar privilegiile necesare pentru a efectua activităţi standard pe un sistem Linux, cum ar fi rularea aplicaţiilor cu interfaţă grafică şi editarea de fişiere. Aceştia pot stoca fişiere în propriile directoare (''home''). Întrucât utilizatorii obişnuiţi nu au, în mod normal, privilegii administrative, nu pot şterge accidental fişierele de configurare critice ale sistemului de operare.
+
+Servicii cum ar fi Apache (server web), server de mail, baze de date, etc. au utilizatori proprii care sunt folosiţi pentru a permite fiecăruia dintre aceste servicii să interacţioneze cu sistemul, fără a avea acces la mai multe resurse decât este necesar.
+
+În acest laborator ne vom axa pe primele două tipuri şi vom împărţi utilizatorii în:
+  * utilizatori privilegiaţi (root)
+  * utilizatori neprivilegiaţi (utilizatori obişnuiţi)
+
+În Linux sunt două moduri de a rula comenzi cu drepturi administrative. Putem să schimbăm utilizatorul curent în ''root'' sau putem folosi funcţionalitatea oferită de comanda ''sudo''.
+Comanda ''sudo'' permite rularea unor comenzi ca un alt utilizator (utilizatorul privilegiat).
+
+<note warning>
+Este recomandat să folosiţi sistemul ca utilizatorul ''root'' doar pentru strictul necesar. De multe ori este suficientă utilizarea comenzii ''sudo''.
+</note>
+
+La crearea unui utilizator, se crează automat şi un grup cu acelaşi nume ce va conţine utilizatorul abia creat. Acesta poartă numele de ''primary group''. De asemenea, utilizatorii pot crea oricâte alte grupuri.
+Un grup poate conţine unul sau mai mulţi utilizatori, iar un utilizator poate să existe în unul sau mai multe grupuri.
+
+==== Permisiuni de acces ====
+
+Atât utilizatorii cât şi grupurile de utilizatori sunt folosiţi în Linux pentru controlul accesului.
+Controlul accesului presupune restricţionarea operaţiilor pe care utilizatorii le pot executa asupra resurselor sistemului (crearea de fişiere şi directoare, modificarea şi ştergerea acestora, execuţia de programe, etc.).
+
+Astfel, nici un utilizator nu poate să modifice/folosească un fişier dacă el, grupul din care face parte sau grupul ''others'' nu au acest drept (vom detalia imediat).
+
+În Linux, exista două concepte ce sunt folosite pentru a oferi securitate la nivelul sistemului de fişiere:
+  * file ownership
+  * permisiuni
+
+Fiecare fişier este deţinut de un singur utilizator şi de un singur grup, şi are anumite permisiuni. Fiecare utilizator sau grup poate să deţină mai multe fişiere.
+
+Fiecare resursă din sistemul de fişiere are permisiuni pentru trei categorii de utilizatori:
+  * utilizator (owner): utilizatorul care este deţinătorul fişierului/directorului
+  * grup (group): grupul de utilizatori care deţine fişierul/directorul
+  * ceilalţi (others): utilizatorii care nu intră în niciuna dintre categoriile anterioare
+
+Pentru fiecare dintre cele trei categorii există trei permisiuni, care oferă următoarele drepturi:
+  * de citire: utilizatorul/grupul poate citi conţinutul fişierului, respectiv poate lista conţinutul directorului
+  * de scriere: utilizatorul/grupul poate modifica/şterge conţinutul fişierului, respectiv poate crea/şterge/redenumi fişiere din director
+  * de execuţie: utilizatorul/grupul poate lansa fişierul în execuţie, respectiv poate parcurge directorul
+
+Ordinea în care se aplică aceste permisiuni este următoarea:
+  - Ordered List Itemdacă utilizatorul este deţinătorul fişierului, atunci se aplică permisiunile pentru owner
+  - dacă face parte din grupul deţinător, atunci se aplică permisiunile pentru grup
+  - dacă niciuna dintre condiţiile precedente nu este adevărată, atunci se aplică permisiunile pentru others
+

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+pulseaudio --kill; sleep 2s; sudo alsa force-reload ; pulseaudio --start

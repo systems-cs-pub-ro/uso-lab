@@ -1,0 +1,408 @@
+===== Basics =====
+
+<note important>
+Nu insistați pe această secțiune. Traversați-o în diagonală și reveniți la ea când aveți nevoie în rezolvarea exercițiilor.
+</note>
+
+==== Expresii regulate ====
+
+Expresiile regulate sunt folosite pentru căutarea/selecția anumitor intrări în fișiere text și pentru parsarea informațiilor din fișiere text. În procesarea expresiilor regulate, matching-ul se face pe fiecare linie din text. Într-o expresie regulată, anumite caractere au rol special precum caracterele de mai jos.
+
+^ Caracter ^ Efect în expresie regulată ^
+| ''%%^%%'' | început de linie |
+| ''%%$%%'' | sfârșit de linie |
+| ''%%.%%'' | orice caracter |
+| ''%%*%%'' | expresia anterioară de oricâte ori, posibil niciodată |
+| ''%%+%%'' | expresia anterioară de oricâte ori, cel puțin o dată |
+| ''%%[ajt]%%'' | orice caracter din setul de caractere ''a'', ''j'', ''t'' |
+| ''%%[^ajt]%%'' | orice caracter **mai puțin** caracterele ''a'', ''j'', ''t'' |
+| ''%%|%%'' | expresia anterioară **sau** expresia de după (una dintre cele două expresii) |
+| ''%%?%%'' | expresia anterioară o dată sau niciodată |
+
+<note tip>
+Găsiți un tool online [[http://regexr.com/|aici]] care va permite să vizualizați efectul expresiilor regulate în mod interactiv. Puteți să îl folosiți pentru a vă obișnui cu scrierea de regexp-uri. 
+</note>
+
+=== Expresii regulate vs globbing ===
+
+|  Construcție  |  RegExp  |  Glob  |
+|  ''%%.%%'' |	 orice caracter  |  caracterul ''.''  | 
+|  ''%%.*%%'' |  orice caracter de oricâte ori, posibil niciodată  |  orice incepe cu ''.''  |
+|  ''%%?%%'' |  expresia anterioară o dată sau niciodată  |  orice caracter  |
+|  ''%%a+%%'' |  caracterul ''a'' de oricâte ori, cel puțin o dată  |  caracterul ''a'' urmat de ''+''  |
+
+=== Expresii regulate & grep ===
+
+În directorul din repository aferent laboratorului există un fișier ''students.txt'' pe care îl vom folosi ca suport pentru comenzi cu expresii regulate. Acest fișier conține o listă de studenți cu numele complet al studenților (prima coloană), grupa din care fac parte (a doua coloană) și diverse note la USO (nota finală - a treia coloană, nota la testul grilă - a patra coloană - și nota la testul practic - a cincea coloană), câmpuri separate prin caracterul tab.
+
+Pentru căutarea și selectarea de linii din fișiere text folosim comanda ''grep'' care folosește, la rândul ei, expresii regulate. Astfel, dacă dorim să selectăm studenții care au litera ''z'' în numele lor, folosim comanda
+<code bash>
+student@uso:~/uso-lab/06-auto/00-basics$ grep 'z' students.txt 
+GHECENCO F. Răzvan	312CC	8	8.75	4.67
+MARIN N. Răzvan	312CC	5	3.5	4.2
+</code>
+
+<note important>
+Este recomandat ca argumentul de tip expresie regulată transmis comenzii ''grep'' să fie plasat între apostrofuri (''%%'%%'') pentru a fi escapat. În felul acesta caracterele din expresia regulată vor fi transmise întocmai comenzii ''grep'' și nu vor fi interpretate de shell.
+</note>
+
+<spoiler Click pentru detalii legate de apostrofuri și ghilimele>
+În shell este recomandată folosirea ghilimelelor (''"'', //(double) quotes//) și a apostrofurilor (''%%'%%'', //single quotes//) pentru escapare. **Escapare** înseamnă că nu vor fi interpretate special caracterele speciale din shell; adică vor fi interpretate drept caractere obișnuite. Exemple de caractere speciale în shell sunt:
+  * ''$'': folosit pentru expandare: expandarea valorii unei variabile, expandarea unei comenzi, substituție aritmetică
+  * ''*'': folosit în globbing: înseamnă orice caracter de oricâte ori
+  * ''>'', ''<'': folosite pentru redirectare
+  * ''&'', ''|'': folosite pentru trimiterea unei comenzi în background sau pentru înlănțuirea unei comenzi; sau ca parte a operatorilor de secvențiere condiționată (''||'' și ''&&'')
+  * '';'': folosit pentru secvențierea comenzilor
+  * ''('', '')'': folosite pentru crearea de subshell-uri
+  * ''"'', ''%%'%%'', ''\'': folosite pentru escapare
+
+Diferența dintre ghilimele și apostrofuri constă în interpretarea caracterului dolar (''$'', //dollar//). Între ghilimele, caracterul dolar își păstrează rolul special, pe când între apostrofuri este considerat un caracter ca oricare altul.
+
+De exemplu, dacă dorim să afișăm valoarea variabilei ''USER'', vom folosi construcția
+<code bash>
+student@uso.local:~$ echo "$USER"
+student
+</code>
+Va fi afișată valoarea variabilei ''USER'' întrucât am folosit construcția ''$USER'' între ghilimele.
+
+Dacă însă folosim construcția ''$USER'' între apostrofuri, ca în continuare
+<code bash>
+student@uso.local:~$ echo '$USER'
+$USER
+</code>
+atunci va fi afișat chiar șirul ''$USER''. Asta pentru că apostrofurile, spre deosebire de ghilimele, escapează inclusiv caracterul dolar.
+</spoiler>
+
+Doar că expresia ''z'' nu se potrivește (nu face //match//) pe litera ''Z'' (majusculă). Pentru a selecta studenții al cărore nume conține atât litera ''z'' cât și ''Z'' (majusculă) folosim expresia regulată ''%%[zZ]%%'' și comanda
+<code bash>
+student@uso:~/uso-lab/06-auto/00-basics$ grep '[zZ]' students.txt 
+PAJARCU Z.P. Raul-Constantin	312CC	2	0.5	1.7
+GHECENCO F. Răzvan	312CC	8	8.75	4.67
+MARIN N. Răzvan	312CC	5	3.5	4.2
+ZINCULESCU C. Marius-Valentin	313CC	7	4.75	5.7
+</code>
+Expresia regulată ''%%[zZ]%%'' se potrivește pe setul de caractere compus din litera ''z'' cât și ''Z'' (majusculă). Cu aceasta au apărut două linii noi: o linie conține studentul cu numele de familie ''ZINCULESCU'' iar cealaltă linie conține ințialele ''Z.P.'' ambele cu litera ''Z'' (majusculă).
+
+Dacă vrem să selectăm studenții al căror nume de familie începe cu litera ''F'', atunci vom folosi expresia regulată ''%%^F%%'' denotând litera ''F'' (majusculă) la început de rând. Vom folosi, așadar, comanda de mai jos:
+<code bash>
+student@uso:~/uso-lab/06-auto/00-basics$ grep '^F' students.txt 
+FLOREA N. Monica-Andreea	313CC	9	7.5	8.5
+FULGER P. Alexandru-Gabriel	315CC	7	4.25	5
+</code>
+
+Dacă vrem în schimb să selectăm studenții al căror prenume începe cu litera ''F'' trebuie să privim lucrurile altfel. Urmărind textul putem observa că prenumele sunt precedate fie de caracterul spațiu (//blank//) fie de caracterul minus (''-''). Pentru început vom folosi expresia regulată ''%%[ -]F%%'' care face match pe caracterul spațiu sau minus urmat de caracterul ''F'' majusculă. Comanda aferentă este:
+<code bash>
+student@uso:~/uso-lab/06-auto/00-basics$ grep '[ -]F' students.txt 
+ONEA I. Flavia-Katilina	311CC	7	6.5	4.33
+PLEȘEA Fl. Alexandru	311CC	9	9.25	7.9
+GHECENCO F. Răzvan	312CC	8	8.75	4.67
+EPURE P. Andi-Florin	314CC	8	9.5	3.67
+NEACȘU C. Florin-Mărgărit	314CC	10	9	9
+COSTEA I. Florin Traian	315CC	4	3.5	3.7
+CHIȚESCU E. Bogdan-Florentin	315CC	9	7.75	6.89
+</code>
+Observăm, însă, că se face match și pe șirul ''Fl.'' și pe șirul ''F.'' reprezentând inițiale. Știm că un prenume conține doar litere mici și că **nu** se încheie cu punct (''.'', //dot//). Atunci extindem expresia regulată de mai sus la expresia ''%%[ -]F[a-z]+[^\.]%%''. Expresia regulată face match pe un șir care:
+  * începe cu unul dintre caracterele spațiu (//blank//) sau minus (''-'');
+  * continuă cu litera ''F'' (majusculă)
+  * continuă cu litere mici (folosind setul ''%%[a-z]%%'')
+  * literele mici de oricâte ori cel puțin o dată (folosind caracterul plus (''+''))
+  * continuă cu orice caracter diferit de punct (''.'', //dot//), folosind expresia ''%%[^\.]%%''. Folosim backslash (''\'') pentru a escapa caracterul punct (''.'', //dot//); altfel ar fi însemnat orice caracter, așa cum înseamnă într-o expresie regulată.
+
+<note>
+În expresiile regulate obișnuite (//basic regular expressions//), anumite caractere își pierd rolul lor special. Este cazul caracterului ''+'', dar și al caracterelor ''?'', ''%%{%%'', ''('', '')'' și ''|''. Pentru a-și păstra rolul special, acestea trebuie precedate de backslash în construcții de forma ''\+'', ''\?'', ''%%\{%%'', ''\('', ''\)'' și ''\|''.
+
+Găsiți această precizare în pagina de manual a comenzii ''grep''; căutați șirul ''Basic vs Extended''.
+</note>
+
+
+Astfel, comanda ''grep'' pentru a extrage studenții al căror prenume începe cu litera ''F'' este
+<code bash>
+student@uso:~/uso-lab/06-auto/00-basics$ grep '[ -]F[a-z]\+[^\.]' students.txt 
+ONEA I. Flavia-Katilina	311CC	7	6.5	4.33
+EPURE P. Andi-Florin	314CC	8	9.5	3.67
+NEACȘU C. Florin-Mărgărit	314CC	10	9	9
+COSTEA I. Florin Traian	315CC	4	3.5	3.7
+CHIȚESCU E. Bogdan-Florentin	315CC	9	7.75	6.89
+</code>
+
+<note tip>
+Dacă ați fi dorit să faceți match pe o literă (mică sau mare) ați fi folosit construcția ''[a-zA-Z]''. Dacă ați fi dorit să faceți match pe o literă (mică sau mare) sau pe o cifră, ați fi folosit expresia ''[a-zA-Z0-9]''.
+</note>
+
+==== tr & sed ====
+
+Utilitarul **tr** permite translatarea, ștergerea și manipularea caracterelor primite la intrare.  
+După cum am văzut în [[:uso:laboratoare:new:05-cli|laboratorul precedent]], **sed** este un **stream editor** ce poate efectua transformări la nivel de string asupra unui text primit la intrare. În plus, sed poate primi expresii regulate ca argument de căutare. 
+  
+<note> 
+Diferența dintre tr și sed este că primul efectuează transformări la nivel de caracter, pe când al doilea efectuează transformări la nivel de string. Din acest motiv putem spune că sed este un tr mai avansat, tr++ :). 
+</note> 
+  
+Spre exemplu, folosind atât **tr**, cât și **sed**, să înlocuim caracterul ',' cu ''TAB'' în ''student.csv'': 
+<code Bash>
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat students.csv | tr , "\t" > students.out
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat students.out 
+VLĂDUȚU I. Liviu-Alexandru	311CC	6	3.5	5.22
+GEORGIU V. Alexandra-Maria	311CC	10	10	9.67
+PĂUNOIU N. Gabriel	311CC	7	6.5	3.5
+BĂCÎRCEA A. Andrei	311CC	7	5.5	4.44
+[...]
+
+student@ubuntu:~/uso-lab/06-auto/00-basics$ sed 's/,/\t/g' students.csv > students.out 
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat students.out 
+VLĂDUȚU I. Liviu-Alexandru	311CC	6	3.5	5.22
+GEORGIU V. Alexandra-Maria	311CC	10	10	9.67
+PĂUNOIU N. Gabriel	311CC	7	6.5	3.5
+BĂCÎRCEA A. Andrei	311CC	7	5.5	4.44
+[...]
+</code>
+
+Observăm că cele două comenzi au același efect. Pentru a înlocui șiruri de caractere, tr nu mai oferă funcționalitatea dorită întrucât el face o mapare 1-la-1 între caracterele setul ce trebuie înlocuit și setul ce înlocuiește. În exemplul de mai jos, ''1'' este translatat în ''2'' indiferent unde apare, iar ''C'' în ''A'': 
+<code Bash>
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat students.csv | tr "311CC" "312CA" > students.out
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat students.out 
+VLĂDUȚU I. Liviu-Alexandru,322AA,6,3.5,5.22
+GEORGIU V. Alexandra-Maria,322AA,20,20,9.67
+PĂUNOIU N. Gabriel,322AA,7,6.5,3.5
+BĂAÎRAEA A. Andrei,322AA,7,5.5,4.44
+[...]
+
+student@ubuntu:~/uso-lab/06-auto/00-basics$ sed "s/311CC/312CA/g" students.csv > students.out
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat students.out 
+VLĂDUȚU I. Liviu-Alexandru,312CA,6,3.5,5.22
+GEORGIU V. Alexandra-Maria,312CA,10,10,9.67
+PĂUNOIU N. Gabriel,312CA,7,6.5,3.5
+BĂCÎRCEA A. Andrei,312CA,7,5.5,4.44
+[...]
+</code>
+
+==== cut & awk ====
+
+Am văzut în laboratoarele precedente cum putem extrage informații structurate pe linii și coloane folosind utilitarul **cut**. 
+<code Bash>
+student@ubuntu:~/uso-lab/06-auto/00-basics$ cat /etc/passwd | cut -d':' -f1,6 | head -3
+root:/root
+daemon:/usr/sbin
+bin:/bin
+</code>
+
+Utilitarul [[https://linux.die.net/man/1/awk|awk]] permite aceleași acțiuni ca și **cut**, dar funcționalitatea sa este mai extinsă. Spre exemplu, awk poate folosi o expresie regulată ca delimitator, pe când cut acceptă un singur caracter: 
+
+<code Bash>
+student@ubuntu:~/uso-lab/06-auto/00-basics$ netstat -i
+Kernel Interface table
+Iface   MTU Met   RX-OK RX-ERR RX-DRP RX-OVR    TX-OK TX-ERR TX-DRP TX-OVR Flg
+eth0       1500 0      1955      0      0 0           521      0      0      0 BMRU
+lo        65536 0       359      0      0 0           359      0      0      0 LRU
+
+student@ubuntu:~/uso-lab/06-auto/00-basics$ netstat -i | cut -d' ' -f1,2
+Kernel Interface
+Iface 
+eth0 
+lo 
+
+student@ubuntu:~/uso-lab/06-auto/00-basics$ netstat -i | awk -F' *' '{print $1,$2,$4}'
+Kernel Interface 
+Iface MTU RX-OK
+eth0 1500 2029
+lo 65536 359
+</code>
+
+<note>
+[[https://en.wikipedia.org/wiki/AWK | Awk]] este considerat un fel de limbaj de programare ce vizează procesarea text. Există script-uri awk complexe ce se aseamănă programelor C. Printre altele, awk permite implementarea și apelarea de funcții. 
+</note>
+
+==== sort & uniq ====
+
+Dacă dorim să sortăm studenții din fișier în ordinea numelor vom folosi comanda ''sort'':
+<code Bash>
+student@uso:~/uso-lab/06-auto/00-basics$ sort students.csv 
+ALECU C. Ionuț-Gabriel,312CC,7,4.5,6.4
+ASĂVOAEI P. Cătălin,315CC,8,6.75,7
+BĂCÎRCEA A. Andrei,311CC,7,5.5,4.44
+BADEA P. Bogdan,314CC,4,2.75,1.56
+[...]
+</code>
+
+Cateva optiuni des folosite cu **sort** sunt:
+  * ''-t'' specifica separatorul
+  * ''-k'' specifica index-ul, sau cheia, coloanei dupa care vrem sa sortam intrarile
+  * ''n''  sortare numerică (implicit este alfabetica)
+  * ''-r'' sortare inversa (implicit crescator)
+
+<note important>
+O sursă frecventă de greșeli este folosirea construcției ''-k 3'' în loc de ''-k 3,3'' atunci când folosim mai multe chei de sortare. Dacă folosim ''-k 3'' atunci cheia de sortare este dată de **toate** coloanele începând cu a 3-a coloană. În acest caz viitoare opțiuni de chei de sortare nu mai sunt luate în considerare.
+
+Vezi și discuția de [[http://unix.stackexchange.com/questions/52762/trying-to-sort-on-two-fields-second-then-first|aici]].
+</note>
+
+Dorim sa facem o sortare numerica descrescatoare după notă, urmata de o sortare alfabetică după grupă (adică să fie toate notele de 10 la început dar sortate în ordinea grupelor). Astfel, pentru a sorta intrările în ordinea notei, vom folosi separatorul '','' (virgulă, //comma//) și coloana a 3-a pentru cheie:
+<code Bash>
+student@uso:~/uso-lab/06-auto/00-basics$ sort -t ',' -k 3,3nr -k 2,2 students.csv
+GEORGIU V. Alexandra-Maria,311CC,10,10,9.67
+MUȘATESCU V. Alexandru-Petrișor,311CC,10,8.5,9
+RADU L. Alina,311CC,10,10,7.89
+GONDOȘ I. Gabriel,312CC,10,9,7.33
+[...]
+</code>
+
+În cazul în care există linii duplicate, putem folosi utilitarul **uniq** în conjuncție cu **sort** pentru a le elimina. În acest scop adăugăm o linie duplicata în ''students.csv'': 
+<file>
+VLĂDUȚU I. Liviu-Alexandru,311CC,6,3.5,5.22                                                                                                                                                       
+GEORGIU V. Alexandra-Maria,311CC,10,10,9.67
+[...]
+VLĂDUȚU I. Liviu-Alexandru,311CC,6,3.5,5.22
+BENE D. Adrian,312CC,9,10,5
+[...]
+</file>
+<code Bash>
+student@uso:~/uso-lab/06-auto/00-basics$ sort -t ',' -k 3,3nr -k 2,2 students.csv | wc -l
+93
+student@uso:~/uso-lab/06-auto/00-basics$ sort -t ',' -k 3,3nr -k 2,2 students.csv | uniq | wc -l
+92
+student@uso:~/uso-lab/06-auto/00-basics$ uniq students.csv | wc -l
+93
+</code>
+
+<note>
+Observăm că uniq elimină liniile duplicate adiacente. De aceea, dacă datele nu sunt sortate, comanda nu are nici un efect. 
+</note>
+
+==== Shell scripting ====
+
+Un script shell este un fișier text care conține comenzi și construcții specifice shell-ului. Un script shell începe cu construcția ''#!/bin/bash'', denumită //shebang// care indică interpretorul scriptului; în cazul de față interpretorul este chiar shell-ul Bash. Dacă nu este specificat nici un shell prin shebang atunci implicit va fi luat shell-ul implicit (setat în ''/etc/passwd'') asignat utilizatorului logat.
+
+Spre exemplu, one-liners pe care le-am tot scris până acum ar putea fi puse într-un shell script și, mai mult, dacă sunt comenzi lungi și nu încap pe o linie le putem "sparge" în mai multe linii folosind separatorul ''\'':
+
+<code bash>
+#!/bin/bash
+
+export DATE=$(date +20%y%m%d) && \
+mkdir -p /usr/share/snapshots && \
+tar -cvpzf /usr/share/snapshots/$HOSTNAME_$DATE.tar.gz \
+    --exclude=/proc --exclude=/lost+found \
+    --exclude=/sys --exclude=/mnt \
+    --exclude=/media --exclude=/dev \
+    --exclude=/share/Archive /
+</code>
+
+<note important>
+**ATENȚIE!** În construcția de mai sus după ''\'' trebuie să nu mai existe nici un caracter (nici măcar spațiu alb/trailing whitespaces)
+</note>
+
+Scriptul conține comenzi uzuale folosite în shell și alte comenzi care se regăsesc mai adesea în scripturi: ''while'', ''if'', ''for''. Acestea nu sunt instrucțiuni, ci sunt tot comenzi shell; pot fi folosite, dacă sintaxa este corectă și în linia de comandă.
+
+=== Argumente din linia de comandă ===
+
+Un script moștenește variabilele de mediu ale shell-ului părinte precum ''HOME'', ''BASH'', ''IFS'', ''USER''. În script le putem folosi astfel: 
+<code bash>
+#!/bin/bash
+
+echo $HOME
+</code>
+
+Pe lângă aceste variabile, scriptul poate primi o serie de argumente din linia de comandă. Folosind următoarele variabile, putem referi argumentele primite de script din linia de comandă: 
+
+   * ''$*'' este un string (''$1, $2 ... $n'') format din toate argumentele primite de script 
+   * ''$@'' este o listă formată din argumentele scriptului 
+   * ''$1, $2 ... $n'' reprezintă fiecare parametru din script 
+   * ''$0'' este numele scriptului 
+   * ''$#'' este numărul de argumente primite din linia de comandă 
+
+Spre exemplu, să luăm următorul script ''arguments.sh'':
+<code bash>
+#!/bin/bash
+
+echo There are $# arguments to $0: $*
+echo first argument: $1
+echo second argument: $2
+echo third argument: $3
+echo the list of arguments: $@
+</code>
+
+Să apelăm scriptul cu 4 argumente: 
+<code bash>
+student@uso:~$ ./arguments.sh banane cirese caise castraveti
+   There are 4 arguments to arguments.sh: banane cirese caise castraveti
+   first argument: banane
+   second argument: cirese
+   third argument: caise
+   the list of arguments: banane cirese caise castraveti
+</code>  
+ 
+=== Constructia while read ===
+
+Pentru parsare în shell folosim construcția ''%%while read ...%%''. Construcția este urmată de numele variabilelor în care vom reține câmpurile parsate din cadrul fiecărei linii. Folosim la intrare fișierul ''students.csv'' aflat în directorul părinte; este un fișier în format CSV (//Comma Separated Values//) folosind ca separator caracterul virgulă ('','', //comma//). Pentru a extrage doar numele studenților din fișierul de intrare vom rula scriptul ''extract-name'':<code>
+student@uso:~/uso-lab/06-auto/00-basics$ ./extract-name
+VLĂDUȚU I. Liviu-Alexandru
+GEORGIU V. Alexandra-Maria
+PĂUNOIU N. Gabriel
+BĂCÎRCEA A. Andrei
+[...]
+</code>
+
+Întrucât formatul de intrare folosește virgulă ('','', //comma//) pe post de separator, am definit în script variabila internă ''IFS'' (//Internal Field Separator//) la valoarea ''%%','%%'', așa cum observăm în linia 3 din scriptul ''extract-name'':<code Bash>
+IFS=','
+</code>
+
+<spoiler Click pentru informații despre variabila ''IFS''>
+Variabila internă shell-ului ''IFS'' (//Internal Field Separator//) definește caracterul sau caracterele care vor fi folosite pentru împărțirea unei linii în câmpuri (//splitting//).
+
+Variabila internă este folosită ori de câte ori în shell este nevoie de împărțirea unei linii. Un caz uzual de folosire a variabilei ''IFS'' este în conjuncție cu construcția ''while read'' pentru citirea de linii de la intrarea standard sau dintr-un fișier și împărțirea acestora în câmpuri.
+
+Informații și pe [[http://en.wikipedia.org/wiki/Internal_field_separator|Wikipedia]].
+</spoiler>
+
+Să extindem scriptul pentru a afișa și numele și grupa. Conținutul noului script va fi:
+<file Bash>
+#!/bin/bash
+
+IFS=','
+while read name group final_grade test_grade practical_grade; do
+    echo "$name,$group"
+done < students.csv
+</file>
+
+Pașii de mai sus puteau fi realizați și cu ajutorul comenzii ''cut''. Dar, în cazul parsării folosind construcția ''while read'' avem două avantaje:
+  * putem afișa coloanele în ce ordine dorim; ''cut'' permitea afișarea de coloane doar în ordinea din fișierul de intrare;
+  * putem prelucra în continuare, în cadrul construcției ''while read'' informația parsată. Spre exemplu, afișarea poate avea forma %%"Studentul ... face parte din grupa ..."%%.
+
+=== if statement ===
+
+Putem extinde script-ul de mai sus pentru a afișa doar studenții care au media mai mare decât 5. 
+<code Bash>
+#!/bin/bash
+
+IFS=','
+while read name group final_grade test_grade practical_grade; do
+    if test "$final_grade" -gt 5; then
+        echo "$name,$group,$final_grade"
+    fi
+done < students.csv
+</code>
+
+=== for loop ===
+
+În bash există și construcții de tipul ''for''. Un exemplu comun este acela de a itera prin conținutul unui director și de a face prelucrări asupra fișierelor. Spre exemplu, dorim să facem backup tuturor fișierelor dintr-un director trimis ca parametru în script: 
+<code Bash>
+#!/bin/bash
+
+for file in $1/*
+do
+    if test -f $file; then
+        stat --print="%a %F %n\n" $file
+        cp $file $file.bkp
+    fi
+done
+</code>
+
+Se poate itera și pe output-ul unei comenzi:
+
+<code Bash>
+#!/bin/bash
+
+for file in $(find /usr/share/pixmaps/ -type f -iname '*.jpg')
+do
+    echo $file
+done
+</code>
