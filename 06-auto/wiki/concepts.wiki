@@ -8,48 +8,45 @@ Acțiunile care sunt candidate pentru automatizare sunt în general acțiuni rep
 
 ==== Perspective pentru automatizare ====
 
-eficiență, să facem rapid acțiuni repetitive
+Automatizarea sarcinilor urmărește eficiență, în special temporală. Cu cât face mai rapid acțiuni repetitive, cu atât este mai bine. Acțiunile repetitive necesită interacțiune minimă cu utilizatorul, pentru a eficientiza timpul
 
-automatizare, executare cu minimă interacțiune din partea utilizatorului
+Când automatizăm, folosim scripting și folosim funcționalități existente. Un principiu esențial al automatizării este //don't repeat yourself// (nu reinventăm roata). Dacă există comenzi sau funcționalități existente, le folosim pe acelea. Altfel spus, urmărim atât eficiența execuției cât și eficiența dezvoltării.
 
-nu reinventăm roata, folosim componente deja existente
+Eficiența execuției o putem realiza nu doar prin scripting ci și prin acțiuni precum:
+  * folosirea de scurtături de taste
+  * folosirea funcționalităților de tipul //command completion// sau //history search//
+  * folosirea de alias-uri de comenzi
+  * folosirea de șabloane: //globbing// sau expresii regulate (//regular expressions//)
 
-eficiență:
-* keyboard shortcuts
-* TAB, history search
-* alias-uri
-* globbing
-* expresii regulate
-
-folosire componente existente
-* pipe-uri
-* shell expansion
-* one-linere
-* more than one way to skin the cat
-* unele comenzi au parametri, nu e nevoie de pipe-uri
-
-eficiență și automatizare:
-* scripturi simple, Makefile-uri
-* două cazuri: înlănțuire și prelucrare
+Atunci când folosim scripting în shell, ne folosim de funcțioanlități existente ale shell-ului, pe care le vom descrie mai jos.
 
 ==== Scripting ====
 
-în general NU folosim shell scripting pentru: prelucrări numerice, prelucrări de șiruri (poate bonus ceva cu Python)
+Scripting presupune folosirea unui limbaj interpretat (numit limbaj de scripting). Acesta poate fi un limbaj precum Python sau Perl sau Ruby sau poate fi chiar shell-ul CLI (interpretorul de comenzi). Limbajele de scripting au avantajul **dezvoltării rapide**: adăugăm și testăm rapid funcționalități noi.
+
+Shell scripting are avantajul folosirii comenzilor existente în shell (comenzi de lucru cu fișiere, cu procese, comenzi de filtrare de text). Pentru acțiuni rapide (de tipul //quick'n'dirty//), shell scripting este o soluție foarte bună. Atunci când avem prelucrări numerice sau prelucrări de șiruri, shell scripting poate fi insuficient și este indicat să apelăm la un limbaj de scripting mai complet, precum Python sau Ruby sau Perl.
 
 ==== Funcționalități shell ====
 
-reamintim: pipe-uri, filtre de text, variabile shell
+Funcționalitățile shell-ului sunt folosite în eficiența rulării comenzilor și în automatizare. Le-am folosit și amintit pe parcursul ultimelor laboratoare, în special în [[:uso:laboratoare:new:05-cli]]. Astfel de funcționalități sunt:
+  * redirectarea comenzilor în fișiere, folosind operatorii de redirectare: ''%%>%%'', ''%%<%%'', ''%%>>%%''
+  * redirectarea ieșirii unei comenzi către intrarea altei comenzi: operatorul ''%%|%%'' (//pipe//)
+  * variabile shell
+  * escaping folosind //backslash//, ghilimele sau apostrofuri
 
-ce acoperim NOU în acest laborator: expresii regulate, argumente în linia de comandă, for, while, if
+Pe parcursul acestui laborator vom folosi funcțioalități ale shell-ului care sunt în special folosite în shell scripting:
+  * expresii regulate
+  * argumente în linia de comandă
+  * comenzi interne shell pentru controlul fluxului: ''if'', ''for'', ''while''
 
 ==== Automatizarea prin shell scripting ====
 
-înlănțuire de comenzi
+Automatizarea prin shell scripting presupune în mod uzual **o secvență de comenzi**. Aceste comenzi sunt adăugate într-un script unde vor fi rulate la comun, fără a fi nevoie de rularea manuală a fiecărei comenzi.
 
-configurare scripturi: variabile, argumente în linia de comandă
+Pentru a configura rulare unei secvențe de comenzi putem condiționat rularea scriptului folosind **variabile sau argumente în linia de comandă**. Acestea pot genera un comportament diferit al scriptului în funcție de valorile lor.
 
-condiții
+Pe baza variabilor, argumentelor din linia de comanda sau datelor de intrare, un script poate lua **decizii condiționate**. Verificarea unei condiții poate duce la un comportament sau altul.
 
-bucle, parcurgere liste de elemente
+În rularea unui script adesea vom dorea ca o acțiune să țintească mai multe fișiere sau procese sau șiruri. Pentru aceasta, vom urmări folosirea de **bucle pentru parcurgerea de liste de elemente**.
 
-înlănțuire fluxuri text: pipe, command expansion, redirectări
+Comenzile folosite pot primi ca argument sau la intrarea standard ieșirea altor comenzi. În shell scripting folosim funcționalități de înlănțuire a comenzilor precum **//command expansion// sau //pipe-uri//** ducând la rezultate mai complexe.
