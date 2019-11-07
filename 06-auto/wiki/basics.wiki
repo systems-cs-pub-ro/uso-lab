@@ -332,8 +332,18 @@ student@uso:~$ ./arguments.sh banane cirese caise castraveti
  
 === Constructia while read ===
 
+Creați un nou script  ''extract-name'' cu conținutul de mai jos:
+<file Bash>
+#!/bin/bash
+
+IFS=','
+while read name group final_grade test_grade practical_grade; do
+    echo "$name,$group"
+done < students.csv
+</file>
+
 Pentru parsare în shell folosim construcția ''%%while read ...%%''. Construcția este urmată de numele variabilelor în care vom reține câmpurile parsate din cadrul fiecărei linii. Folosim la intrare fișierul ''students.csv'' aflat în directorul părinte; este un fișier în format CSV (//Comma Separated Values//) folosind ca separator caracterul virgulă ('','', //comma//). Pentru a extrage doar numele studenților din fișierul de intrare vom rula scriptul ''extract-name'':<code>
-student@uso:~/uso-lab/06-auto/00-basics$ ./extract-name
+student@uso:~/uso-lab/06-auto/support/00-basics$ ./extract-name
 VLĂDUȚU I. Liviu-Alexandru
 GEORGIU V. Alexandra-Maria
 PĂUNOIU N. Gabriel
@@ -352,16 +362,6 @@ Variabila internă este folosită ori de câte ori în shell este nevoie de împ
 
 Informații și pe [[http://en.wikipedia.org/wiki/Internal_field_separator|Wikipedia]].
 </spoiler>
-
-Să extindem scriptul pentru a afișa și numele și grupa. Conținutul noului script va fi:
-<file Bash>
-#!/bin/bash
-
-IFS=','
-while read name group final_grade test_grade practical_grade; do
-    echo "$name,$group"
-done < students.csv
-</file>
 
 Pașii de mai sus puteau fi realizați și cu ajutorul comenzii ''cut''. Dar, în cazul parsării folosind construcția ''while read'' avem două avantaje:
   * putem afișa coloanele în ce ordine dorim; ''cut'' permitea afișarea de coloane doar în ordinea din fișierul de intrare;
