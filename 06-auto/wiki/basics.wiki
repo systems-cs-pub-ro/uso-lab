@@ -338,7 +338,7 @@ Creați un nou script  ''extract-name'' cu conținutul de mai jos:
 
 IFS=','
 while read name group final_grade test_grade practical_grade; do
-    echo "$name,$group"
+    echo "$name"
 done < students.csv
 </file>
 
