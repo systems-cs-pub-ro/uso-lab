@@ -61,4 +61,4 @@ student@uso:~$ systemctl status dbus.service
 
 **Exerciții**
   - Afișați statusul serviciului ''network.service''
-  - Afișați toate procesele care se află în starea ''enabled'' folosind doar comanda systemctl (hint: "--state")
+  - Afișați toate procesele care se află în starea ''enabled'' folosind doar comanda systemctl  (hint: ''--state'')
