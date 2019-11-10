@@ -7,7 +7,7 @@ Prima parte a laboratorului își propune să urmărească identificarea compone
 ==== Informații despre procesor și arhitectură (lscpu, arch) ====
 
 ** Exerciții **
-  - Să se afișeze doar frecvența procesorului curent folosind comanda ''lscpu''. (hing: grep)
+  - Să se afișeze doar frecvența procesorului curent folosind comanda ''lscpu''. (hint: ''grep'')
   - Să se afișeze doar arhitectura procesorului curent folosind comanda ''lscpu''. (hint: ''grep'')
   - Să se afișeze numele modelului procesorului curent folosind ''procfs''.
 
