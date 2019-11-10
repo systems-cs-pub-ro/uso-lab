@@ -1,6 +1,6 @@
 ===== Nice to know =====
 Înainte de a începe această secțiune trebuie să vă asigurați că sunteți în directorul potrivit. Rulați comanda
-cd ~/uso.git/labs/06-hw-boot/support/nice-to-know.
+''cd ~/uso-lab/07-inspect/support/nice-to-know''.
 
 ==== Adăugarea unui serviciu nou în sistem ====
 În secțiunea anterioară am învățat cum să afișăm serviciile disponibile în sistem și să aflăm statusul curent al unui serviciu.
@@ -8,7 +8,7 @@ cd ~/uso.git/labs/06-hw-boot/support/nice-to-know.
 Ne propunem să adugăm un serviciu nou în cadrul sistemului. Vom folosi un fișier de configurare deja existent.
 
 <code bash>
-student@uso:~/.../06-hw-boot/support/nice-to-know$ cat example.service
+student@uso:~/.../07-inspect/support/nice-to-know$ cat example.service
 [Unit]
 Description=example
 
@@ -37,23 +37,23 @@ Mai multe informații se pot găsi [[https://www.digitalocean.com/community/tuto
 
 Copiem fișierul de configurare în directorul ''/etc/systemd/system/'' și adăugăm permisiunea de execuție.
 <code bash>
-student@uso:~/.../06-hw-boot/support/nice-to-know$ sudo cp example.service /etc/systemd/system/
-student@uso:~/.../06-hw-boot/support/nice-to-know$ chmod +x /etc/systemd/system/example.service
+student@uso:~/.../07-inspect/support/nice-to-know$ sudo cp example.service /etc/systemd/system/
+student@uso:~/.../07-inspect/support/nice-to-know$ sudo chmod +x /etc/systemd/system/example.service
 </code>
 
 Activăm și pornim serviciul:
 <code bash>
-student@uso:~/.../06-hw-boot/support/nice-to-know$ sudo systemctl enable example
-student@uso:~/.../06-hw-boot/support/nice-to-know$ sudo systemctl start example
+student@uso:~/.../07-inspect/support/nice-to-know$ sudo systemctl enable example
+student@uso:~/.../07-inspect/support/nice-to-know$ sudo systemctl start example
 </code>
 
-Pentru a funcționalitatea serviciului, deschidem un browser și navigăm la URL-ul ''http://localhost:8000''. Observăm că am pornit un server web care afișează conținutul directorului ''/home/student''.
+Pentru a testa funcționalitatea serviciului, deschidem un browser și navigăm la URL-ul ''http://localhost:8000''. Observăm că am pornit un server web care afișează conținutul directorului ''/home/student''.
 
 <note>
 Pentru a pune în aplicare orice modificare adusă fișierului de configurare trebuie rulată următoarea comandă.
 
 <code bash>
-    student@uso:~$ sudo sudo systemctl daemon-reload
+    student@uso:~$ sudo systemctl daemon-reload
 </code>
 </note>
 
@@ -75,7 +75,7 @@ Daemonul ''cron'' poate executa, la anumite momente de timp, programe sau script
 
 Sintaxa folosită pentru a configura daemon-ul ''cron'' urmărește următoarea sintaxă:
 
-**TODO** Cron image here
+{{:uso:laboratoare:new:06-hw-boot:cron-settings.png?400|}}
 
 Pentru a configura un program să se execute la un anumit interval de timp folosim comanda:
 
@@ -91,11 +91,10 @@ Dacă vrem să adăugăm data curentă la sfârșitul fișierului ''date_logs.lo
 
 **Exerciții**
   - Adăugați un job ''cron'' care să înregistreze la fiecare două minute numărul de procese executate de utilizatorul ''student''. Fiecare execuție, va adăuga un număr la sfârșitul fișierului ''n_processes.log'' din directorul ''/var/log/''.
-  - Adăugați un job ''cron'' care să  ...
   - Construți un script care identifică toate job-urile ''cron'' rulate de toți utilizatorii din sistem. Pentru fiecare job se vor afișa: numele utilizatorului și comanda rulată.
 
 
-==== Personalizare shell-ului ====
+==== Personalizarea shell-ului ====
 De fiecare dată când se deschide un nou shell ''bash'' se execută script-ul ''.bashrc'' din directorul ''home'' al utilizatorului curent.
 
 **Exerciții**
