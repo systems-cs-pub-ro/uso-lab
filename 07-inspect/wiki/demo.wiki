@@ -40,7 +40,7 @@ student@uso:~$ arch
 x86_64
 </code>
 
-Alternativ, putem afla detalii despre procesor folosind sistemul de fișiere ''procfs''. Pentru mai multe detalii puteți accesa pagina de [[https://en.wikipedia.org/wiki/Passwd|Wikipedia]].
+Alternativ, putem afla detalii despre procesor folosind sistemul de fișiere ''procfs''. Pentru mai multe detalii puteți accesa pagina de [[https://en.wikipedia.org/wiki/Procfs|Wikipedia]].
 
 <code bash>
 student@uso:~$ cat /proc/cpuinfo 
