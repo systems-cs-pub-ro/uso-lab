@@ -133,7 +133,7 @@ student@uso:~$ ls -lh dump
 Comenzile de mai sus au avut ca efect generarea unui fișier cu conținut aleator (vezi ''/dev/urandom''), însă nu am putut controla dimensiunea noului fișier generat. Dimensiune fișierului generat variază în funcție de mai mulți parametri (ex. timp, viteză de scriere hdd/ssd, etc.).
 
 Pentru a combate acest neajuns putem să folosim comanda ''dd''.
- ''dd'' poate primi un fișier de intrare (''in=<FILE>'') și un fișier de ieșire (''of=<FILE>''). De asemenea putem să controlăm dimensiunea fișierului pe care vrem să îl gemerăm cu ajutorum parametrilor ''bs=<BYTES>'' și ''count=<BLOCKS>''.
+ ''dd'' poate primi un fișier de intrare (''if=<FILE>'') și un fișier de ieșire (''of=<FILE>''). De asemenea putem să controlăm dimensiunea fișierului pe care vrem să îl gemerăm cu ajutorul parametrilor ''bs=<BYTES>'' și ''count=<BLOCKS>''.
   * ''if'' - input file; dacă nu este specificat, se va folosi ''stdin'';
   * ''of'' - output file; dacă nu este specificat, se va folosi ''stdout'';
   * ''count'' - numărul de blocuri din fișierul input ce vor fi copiate;
