@@ -94,11 +94,3 @@ Dacă vrem să adăugăm data curentă la sfârșitul fișierului ''date_logs.lo
   - Construți un script care identifică toate job-urile ''cron'' rulate de toți utilizatorii din sistem. Pentru fiecare job se vor afișa: numele utilizatorului și comanda rulată.
 
 
-==== Personalizarea shell-ului ====
-De fiecare dată când se deschide un nou shell ''bash'' se execută script-ul ''.bashrc'' din directorul ''home'' al utilizatorului curent.
-
-**Exerciții**
-  - Aduceți modificările necesare fișierului ''.bashrc'' pentru a afișa la deschiderea unui nou shell următorul mesaj:
-  <code bash>
-   "Salut, '<user>'. Data curenta este: '<data_curenta>'"
-  </code>
