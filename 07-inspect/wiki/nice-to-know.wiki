@@ -86,7 +86,7 @@ student@uso:~$ crontab -e
 Dacă vrem să adăugăm data curentă la sfârșitul fișierului ''date_logs.log'' din directorul ''/var/log/'' la fiecare 5 minute, introducem următoarea linie:
 
 <code bash>
-5   *   *   *   *   date >> /var/log/date_logs.log
+*/5   *   *   *   *   date >> /var/log/date_logs.log
 </code>
 
 **Exerciții**
