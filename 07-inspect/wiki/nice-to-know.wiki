@@ -60,7 +60,7 @@ Pentru a pune în aplicare orice modificare adusă fișierului de configurare tr
 **Exerciții**
   - Scrieți un script Bash care construiește o arhivă ''.zip'' cu conținutul directorului ''/home/student/''.
   - Adăugați în sistem utilizatorul ''backupuso''. Asigurați-vă că acest utilizator nu are un director home asociat.
-  - Construiți un serviciu care face backup directorului ''/home/student'' la fiecare două minute. Serviciul trebuie să aiba asociat utilizatorul creat la punctul precedent.
+  - Construiți un serviciu care face backup directorului ''/home/student'' la fiecare două minute (citiți secțiunea următoare). Serviciul trebuie să aiba asociat utilizatorul creat la punctul precedent.
 
 ==== Planificarea execuției unui program (cron) ====
 Ne dorim să realizăm diferite acțiuni în cadrul sistemului la anumite momente de timp. Pentru a rezolva această problemă putem să folosim daemonul ''cron''.
