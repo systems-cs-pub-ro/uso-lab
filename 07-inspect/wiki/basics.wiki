@@ -26,6 +26,6 @@ Swap:        777300       34288      743012
 ==== Listare dispozitive disponibile în sistem ====
 
 **Exerciții**
-  - Afișați conțiunutul conținutul fișierului ''/dev/urandom'' în terminal. 
+  - Afișați conținutul fișierului ''/dev/urandom'' în terminal. 
   - Afișați conținutul fișierului ''/dev/zero'' folosind comanda ''cat''. Ce observați? 
   - Afișați, pe rând, conținutul fișierelor de mai sus în format hexazecimal. (hint: ''xxd'' sau ''hexdump'')
