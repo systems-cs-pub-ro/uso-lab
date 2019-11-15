@@ -4,7 +4,7 @@
 **Exerciții**
   - Afișați următoarele atribute ale interfeței de rețea: ''product'', ''vendor'', ''capacity'' folosind comanda ''lshw''.
   - Scrieți un script Bash care culege următoarele informații despre hardware-ul curent:
-     * informații despre procesor (model, frecvență) 
+     * informații despre procesor (model, frecvență)
      * versiunea de sistem de operare/distribuție (hint: ''uname'')
      * versiune de kernel (hint: ''uname'')
      * pachete instalate  (hint: ''dpkg-query'')
@@ -61,4 +61,4 @@ student@uso:~$ systemctl status dbus.service
 
 **Exerciții**
   - Afișați statusul serviciului ''network.service''
-  - Afișați toate procesele care se află în starea ''enabled'' folosind doar comanda systemctl  (hint: ''--state'')
+  - Afișați toate serviciile care se află în starea ''enabled'' folosind doar comanda systemctl  (hint: ''--state'')
