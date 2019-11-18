@@ -1,0 +1,5 @@
+===== Recapitulare =====
+
+**1.** Creați o arhivă ''zip'' și una ''tar'' ce conține toate datele din directorul ''~/uso.git/labs/07-storage''.
+
+**2.** Scrieți un script ce crează un fișier de dimensiunea //file_size// și conținut //file_type//, unde //file-size// și //file-type// sunt primiți ca parametru și reprezintă dimensiunea fișierului creat (ex: 11MB, 32GB, etc), respectiv ce va conține acesta (eg: zerouri, caractere aleatoare, etc). (**hint**: ''dd'')

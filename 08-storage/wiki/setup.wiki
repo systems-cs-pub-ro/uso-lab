@@ -1,0 +1,41 @@
+===== Înainte de laborator =====
+
+^ Comandă  ^ Descriere scurtă       ^
+| **''lsblk''**  | comandă folosită pentru a afisă informații despre device-urile existente în sistem |
+| **''parted''**  | comandă folosită pentru a obține informații despre partițiile din sistem  |
+| **''fdisk''**  | comandă folosită pentru a realiza diverse operații asupra partițiilor |
+| **''gdisk''**    | comandă asemănătoare cu ''fdisk'', dar folosește tabela de partiții //GPT// |
+| **''df''**   | comandă utilă pentru a verifica spațiul de stocare total și liber de pe un dispozitiv sau o partiție |
+| **''du''**  | comandă folosită pentru a afla cât spațiu ocupă pe disc un director sau fișier |
+| **''mount''**  | comandă folosită pentru a monta un sistem de fișiere | 
+| **''umount''**  | comandă folosită pentru a demonta un sistem de fișiere |
+| **''mkfs.ext4''**    | comandă folosită pentru a formata un sistem de fișiere de tip //ext4// |
+
+==== Obiective ====
+
+  * Înțelegerea noțiunii de spațiu de stocare
+  * Înțelegerea diferenței dintre spațiu de stocare și memoria volatilă
+  * Cunoașterea diferenței dintre diferite tehnologii de stocare (HDD vs SSD)
+  * Ce este o partiție și la ce e utilă partiționarea 
+  * Înțelegerea sistemului de fișiere din Linux
+  * Dobândirea de abilități de lucru cu sistemul de fișiere și partițiile
+  * Înțelegerea nevoii de backup
+
+
+==== Folosire Git pentru laborator ====
+
+Pe parcursul laboratoarelor, pentru descărcarea fișierelor necesare laboratorului, vom folosi Git. Git este un sistem de controlul versiunii și e folosit pentru versionarea codului în proiectele software mari. Celor interesați să aprofundeze conceptele din spatele comenzii ''git'', precum și utilizări avansate, le recomandăm cursul practic online de pe [[http://gitimmersion.com/|gitimmersion]].
+
+Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso-lab|acest repository Git]].
+
+<note important>
+Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați.
+
+<code>
+student@uso:~$ cd ~
+student@uso:~$ git clone https://github.com/systems-cs-pub-ro/uso-lab.git
+</code>
+
+</note>
+
+Cam atât cu pregătirea laboratorului. Acum haideți să ne apucăm de treabă! :-)

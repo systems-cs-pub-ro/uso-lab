@@ -1,0 +1,235 @@
+===== Demo =====
+
+Acum că ați aflat cum funcționează spațiul de stocare, trebuie să învățăm și cum să îl folosim.
+
+** Device-uri **
+
+Pentru a afișa informații despre device-urile existente în sistem putem folosi comanda ''lsblk'' sau ''fdisk -l''.
+
+<code>
+student@uso:~$ lsblk -o KNAME,TYPE,SIZE,MODEL
+KNAME  TYPE   SIZE MODEL
+loop0  loop    13M 
+loop1  loop  87,9M 
+[...]
+sda    disk    16G VBOX HARDDISK   
+sda1   part    16G 
+sr0    rom   1024M CD-ROM 
+</code>
+
+Device-urile se găsesc în directorul ''/dev/''. Dacă afișăm câteva device-uri din ''/dev/'' putem observa ce tip de fișiere sunt.
+
+<code>
+student@uso:~$ ls -l /dev/sda*
+brw-rw---- 1 root disk 8, 0 nov  8 00:25 /dev/sda
+brw-rw---- 1 root disk 8, 1 nov  8 00:25 /dev/sda1
+</code>
+
+Caracterul ''b'' vine de la //Block file// și reprezintă fișiere ce corespund device-urilor de stocare.
+În exemplul anterior, fișierul ''/dev/sda'' corespunde unui dispozitiv de stocare, iar ''/dev/sda1'' reprezintă prima partiție de pe acest dispozitiv.
+
+<note important>
+Fișierele din ''/dev/'' nu corespund neapărat unui dispozitiv fizic, pot exista și dispozitive virtuale.
+</note>
+
+** Partiții **
+
+Pentru a obține informații despre partițiile din sistem, folosim comanda ''parted'' (comanda necesită drepturi de root).
+
+<code>
+student@uso:~$ sudo parted -l
+Model: ATA VBOX HARDDISK (scsi)
+Disk /dev/sda: 17,2GB
+Sector size (logical/physical): 512B/512B
+Partition Table: msdos
+Disk Flags: 
+
+Number  Start   End     Size    Type     File system  Flags
+ 1      1049kB  17,2GB  17,2GB  primary  ext4         boot
+</code>
+
+Câmpul ''Partition Table'' ne arată că pe acest sistem se folosește //msdos// - tabela de partiții MBR (cea mai frecvent utilizată pentru Linux și Windows).
+
+Din output-ul de mai sus, vedem că dispozitivul ''/dev/sda'' conține o partiție cu index-ul ''1'', ce este formatată cu sistemul de fișiere ''ext4''. Fișierul din ''/dev/'' corespunzător partiției este ''/dev/sda1''.
+
+** Verificare dispozitive de stocare **
+
+Pentru a obține informații detaliate despre dispozitivele de stocare putem folosi comanda ''fdisk''. Această comandă oferă informații precum: dimensiunea unui sector, numărul total de sectoare, numărul de sectoare libere, tipul tabelei de partiții existentă pe dispozitiv.
+
+<code>
+student@uso:~$ sudo fdisk -l
+[...]
+Disk /dev/sda: 16 GiB, 17179869184 bytes, 33554432 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disklabel type: dos
+Disk identifier: 0xdf4f561b
+
+Device     Boot Start      End  Sectors Size Id Type
+/dev/sda1  *     2048 33552383 33550336  16G 83 Linux
+[...]
+</code>
+
+Dacă dorim să afișăm informații doar despre un anumit device, îl putem specifica ca parametru:
+
+<code>
+student@uso:~$ sudo fdisk -l /dev/sda1
+Disk /dev/sda1: 16 GiB, 17177772032 bytes, 33550336 sectors
+Units: sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+
+</code>
+
+<note important>
+Comanda ''fdisk'' va merge în cazul majorității sistemelor, iar în cazul nostru va merge pentru calculatoarele din sala EG106. Se poate totuși să aveți partiții ce folosesc GPT, cum este cazul stațiilor din sala EG306. În acest caz trebuie să folosiți comanda ''gdisk''.
+</note>
+
+<code>
+student@uso-eg306:~$ sudo fdisk -l /dev/sda
+
+WARNING: GPT (GUID Partition Table) detected on '/dev/sda'! The util fdisk doesn't support GPT. Use GNU Parted.
+
+
+Disk /dev/sda: 500.1 GB, 500107862016 bytes
+255 heads, 63 sectors/track, 60801 cylinders, total 976773168 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 4096 bytes
+Disk identifier: 0xc90ab212
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sda1               1   976773167   488386583+  ee  GPT
+Partition 1 does not start on physical sector boundary.
+</code>
+
+<code>
+student@uso-eg306:~$ sudo gdisk -l /dev/sda
+GPT fdisk (gdisk) version 0.8.8
+
+Partition table scan:
+  MBR: protective
+  BSD: not present
+  APM: not present
+  GPT: present
+
+Found valid GPT with protective MBR; using GPT.
+Disk /dev/sda: 976773168 sectors, 465.8 GiB
+Logical sector size: 512 bytes
+Disk identifier (GUID): ED4BC435-E352-403E-898B-09B7A9BA2F2E
+Partition table holds up to 128 entries
+First usable sector is 34, last usable sector is 976773134
+Partitions will be aligned on 2048-sector boundaries
+Total free space is 139800557 sectors (66.7 GiB)
+
+Number  Start (sector)    End (sector)  Size       Code  Name
+   1            2048       400001023   190.7 GiB   8300  
+   2       400001024       800002047   190.7 GiB   8300  
+   3       800002048       816003071   7.6 GiB     8200  
+   4       816003072       836974591   10.0 GiB    8300  Linux filesystem
+</code>
+
+Cel mai ușor mod de a verifica spațiul de stocare total și liber de pe un dispozitiv sau o partiție este folosind comanda ''df''. Pentru a face rezultatul mai ușor de citit pentru noi, vom folosi argumentul ''-h'' (//human-readable//).
+
+<code>
+student@uso:~$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        16G  7,4G  7,6G  50% /
+</code>
+
+Pentru a afla informații despre cât spațiu ocupă pe disc un director sau fișier folosim comanda ''du''. Din nou vom folosi argumentul ''-h''. Putem folosi și argumentul ''-s'' pentru a primi doar totalul pentru fiecare director primit ca argument.
+
+<code>
+student@uso:~/uso.git/labs$ du -h 03-user/
+48K	03-user/wiki
+8,0K	03-user/support/nice-to-know/executable
+4,0K	03-user/support/nice-to-know/music/ac_dc
+8,0K	03-user/support/nice-to-know/music
+32K	03-user/support/nice-to-know
+36K	03-user/support
+88K	03-user/
+
+student@uso:~/uso.git/labs$ du -hs 03-user/
+88K	03-user/
+</code>
+
+** Sisteme de fișiere **
+
+Pentru a vedea cu ce sisteme de fișiere sunt formatate dispozitivele de stocare din sistem folosim comanda ''mount''.
+
+<code>
+student@uso:~$ mount
+[...]
+sysfs on /sys type sysfs (rw,nosuid,nodev,noexec,relatime)
+proc on /proc type proc (rw,nosuid,nodev,noexec,relatime)
+udev on /dev type devtmpfs (rw,nosuid,relatime,size=990392k,nr_inodes=247598,mode=755)
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000)
+tmpfs on /run type tmpfs (rw,nosuid,noexec,relatime,size=204132k,mode=755)
+/dev/sda1 on / type ext4 (rw,relatime,errors=remount-ro,data=ordered)
+[...]
+</code>
+
+<note info>
+Comanda ''mount'' afișează doar sistemele de fișiere care sunt montate. Pentru a afla sistemul de fișiere cu care este formatat un dispozitiv, putem folosi următoarea comandă:
+
+<code>
+student@uso:~$ sudo blkid /dev/sda1
+/dev/sda1: UUID="a14d0991-a3d8-48d6-ac8c-327d1a524501" TYPE="ext4" PARTUUID="df4f561b-01"
+</code>
+</note>
+==== Montarea și demontarea sistemelor de fișiere ====
+
+Un sistem de fișiere nu poate fi folosit decât dacă este montat. Comanda cu ajutorul căreia putem face asta este ''mount''. Fără niciun argument ne va spune ce sisteme de fișiere sunt montate și în ce directoare sunt montate.
+
+<code>
+student@uso:~$ mount
+[...]
+devpts on /dev/pts type devpts (rw,nosuid,noexec,relatime,gid=5,mode=620,ptmxmode=000)
+tmpfs on /run type tmpfs (rw,nosuid,noexec,relatime,size=204132k,mode=755)
+/dev/sda1 on / type ext4 (rw,relatime,errors=remount-ro,data=ordered)
+securityfs on /sys/kernel/security type securityfs (rw,nosuid,nodev,noexec,relatime)
+[...]
+</code>
+
+Comanda returnează, pe fiecare linie: 
+  * fișierul de tip bloc asociat dispozitivului de stocare
+  * punctul din ierarhia de fișiere unde este montat
+  * tipul sistemului de fișiere și flag-urile cu care a fost montat.
+Să luăm ca exemplu linia:
+<code>
+/dev/sda1 on / type ext4 (rw,relatime,errors=remount-ro,data=ordered)
+</code>
+  * ''/dev/sda1'' este fișierul corespunzător dispozitivului de stocare
+  * ''/'' este punctul în care este montat (chiar în rădăcina sistemului de fișiere)
+  * ''ext4'' este tipul sistemului de fișiere
+  * ''(rw,relatime,errors=remount-ro,data=ordered)'' sunt flag-urile cu care a fost montat (read-write, iar în caz de eroare va fi remontat read-only).
+
+Pentru a se putea monta un sistem de fișiere trebuie să specificăm tipul acestuia, dispozitivul de stocare ce îl conține și directorul în care să fie montat.
+
+<code>
+student@uso:~$ mkdir my-mnt
+student@uso:~$ ls my-mnt
+student@uso:~$ sudo mkfs.ext4 /dev/sda2
+student@uso:~$ sudo mount -t ext4 /dev/sda2 my-mnt
+student@uso:~$ ls my-mnt
+lost+found
+</code>
+
+<note>
+Dacă partiția ''/dev/sda2'' nu există pe sistem, aceasta trebuie creată folosind comanda ''sudo fdisk /dev/sda''.
+</note>
+
+Partiția ''/dev/sda2'' nu conținea niciun sistem de fișiere. Folosind comanda ''sudo mkfs.ext4 /dev/sda2'' am creat un sistem de fișiere de tip //ext4// pe partiția ''/dev/sda2'' (sau am formatat partiția).
+
+Operația opusă montării este demontarea, care se realizează cu ajutorul comenzii ''umount''. Acesteia nu trebuie să îi specificăm decât directorul unde este montat sistemul de fișier ce se dorește a fi demontat sau fișierul bloc.
+
+<code>
+student@uso:~$ sudo umount my-mnt
+student@uso:~$ ls my-mnt
+</code>
+
+<note warning>
+Montarea și demontarea sistemelor de fișiere este o acțiune privilegiată. Dacă dorim să montăm/demontăm un sistem de fișiere ca un utilizator neprivilegiat, trebuie sa prefixăm comanda cu ''sudo''.
+</note>
+

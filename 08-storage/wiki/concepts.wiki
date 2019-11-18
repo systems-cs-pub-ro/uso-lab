@@ -1,0 +1,53 @@
+===== Concepte =====
+
+Pănă în acest moment ați folosit sistemul de operare Linux pentru a realiza diverse operații: ați creat fișiere și directoare, utilizatori și grupuri, ați creat și rulat scripturi, ați realizat diverse operații și procesări, etc.
+Toate informațiile de care vă folosiți pentru a realiza activități în sistem trebuie să fie stocate undeva, persistent sau temporar. Astfel, stocarea este un element central în operațiile cu sistemul de calcul.
+
+Spațiul de stocare de pe orice sistem trebuie să ofere:
+  * eficiență (performanță ridicată)
+  * coerență (să nu se piardă/corupă datele)
+
+În Linux, spațiul de stocare (disk-ul) este administrat prin partiționare și sistemul de fișiere.
+
+Pe scurt, spațiul de stocare disponibil este împărțit în unul sau mai multe partiții, iar pentru a putea fi folosită, fiecare partiție trebuie să aibă asociat un sistem de fișiere. Procesul de alocare a unui sistem de fișiere pe o partiție se numește formatare (''mount'').
+
+** Sistemul de fisiere **
+
+În Linux, există mai multe tipuri de sisteme de fișiere: ''ext4'', ''ext3'', ''ext2'', ''ZFS'', ''XFS''. Acestea specifică modul în care datele sunt stocate și ulterior accesate de pe disk.
+Sistemul de fișiere a fost discutat și în cadrul [[https://ocw.cs.pub.ro/courses/uso/laboratoare/new/01-fs|Laboratorului 1]].
+
+** Partiționarea **
+
+Informațiile despre partiții sunt ținute în //tabela de partiții// (''partition table'') ce se află în general la începutul disk-ului. O tabelă de partiții conține informații cum ar fi: adresa de unde începe partiția pe disc, ce dimensiune are, tip, etc. Tabela poate să aibă una din următoarele două scheme:
+  * Master Boot Record (MBR)
+  * GUID Partition Table (GPT)
+
+MBR-ul este mai folosită, insă a început să fie înlocuit de către GPT din cauza limitărilor acestuia, cum ar fi:
+  * Dimensiunea maximă a unei partiții este de 2TB
+  * Necesitatea unei partiții extinse pentru a crea mai mult de patru partiții
+
+Tabelele de partiție pot fi create și editate folosind tool-uri de partiționare cum ar fi ''fdisk''.
+
+
+** Tipuri de spații de stocare **
+
+După cum știm, datele folosite de un sistem de calcul trebuie să fie stocate undeva și accesate ulterior. Cel mai rapid mediu de stocare a datelor prin operații de scriere/citire sunt cele accesate în mod direct de procesor (memoria RAM, memoria cache). Principalul dezavantaj al acestora este volatilitatea (memoria volatilă nu este persistentă, astfel datele se pierd odată ce sistemul de calcul este repornit sau nu mai este alimentat).
+
+Pentru a preîntâmpina această problemă au fost adăugate dispozitivele de stocare ce oferă perisitența datelor și un spațiu de stocare mult mai mare.
+În zilele noastre există două tipuri de discuri pe sistemele de calcul:
+  * Hard Disk Drive (HDD)
+      * tehnologie cunoscută și testată pe parcurul unei perioade îndelungate
+      * mai ieftină
+      * conține componente mecanice care se pot deteriora în timp
+      * scrierea/citirea necesita operații mecanice, ceea ce limitează viteza
+  * Solid State Drive (SSD)
+      * performanța mai bună
+      * fară vibrații și zgomote
+      * energetic mai economic
+
+Dispozitivele de stocare au și ele unele dezavantaje:
+  * viteza de operare
+      * din cauza aceasta, datele trec prin memoria RAM înainte de a ajunge la procesor
+  * organizarea datelor
+      * nu permit adresare liniară
+

@@ -1,0 +1,33 @@
+===== Basics =====
+
+=== Afișare informații despre partiții ===
+
+**1.** Să se afișeze la consolă numărul de partiții de pe sistem, numele partițiilor, dimensiunea acestora și tipul sistemului de fișiere cu care sunt formatate.
+
+**2.** Să se creeze un script care să afișeze informațiile de la punctul 1.
+
+**3.** Modificați scriptul anterior astfel încât să accepte ca parametru un string ce specifică un tip de sistem de fișiere (ex: ext3, ext4) și să afișeze toate partițiile ce sunt formatate cu tipul respectiv de fișiere. Dacă niciun parametru nu este specificat, se vor afișa doar informațiile de la punctul 1.
+
+=== Montarea sistemului propriu de fișiere ===
+
+**1.** Avem nevoie de un sistem de fișiere propriu pe care să ținem temele de la USO. Vrem să ne alegem singuri dimensiunea și tipul său, dar și locul unde aceasta să fie montată.
+
+Folosiți comenzile necesare pentru a crea un fișier cu dimensiunea de 100MB, plin cu zero-uri (octeți de zero). Apoi avem nevoie să facem un sistem de fișiere de tipul **ext3** peste acest fișier nou (hint: ''dd'').
+
+<note tip>
+Un fișier poate fi formatat exact ca și cum ar fi o partiție. Pentru aceasta folosiți comanda ''mkfs.ext3'' urmată de calea către fișier. Adică ceva de genul
+<code>
+sudo mkfs.ext3 /path/fo/file/to/be/formatted
+</code>
+</note>
+
+Creați directorul **/mnt/myfs** și montați noul sistem de fisiere în el.
+
+<note tip>Pentru verificare folosiți comanda ''**df -hT**''. Să descifrăm parametrii:
+  * ''df'' afișează partițiile montate în acel moment de timp
+  * ''-h'' e folosit pentru //human-readable// size a partițiilor
+  * ''-T'' e folosit pentru a afișa încă o coloană cu tipul sistemului de fișiere (e.g. ''ext3'', ''ext4'', ''nfs'' etc.)
+
+O altă comandă de verificare este ''**mount**'' fără nici un alt parametru. Încercați să descifrați output-ul ei (sau căutați pe google :-P)
+</note>
+

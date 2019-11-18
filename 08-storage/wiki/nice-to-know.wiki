@@ -2,17 +2,29 @@
 
 ==== Adăugarea unui HDD în cadrul unei mașini virtuale ====
 Ne dorim să efectuăm operațiile de partiționare, formatare și montare într-un caz real. 
-Deoarace operațiile amintite mai sus pot duce la pierderea informațiilor utile de pe un disk vom lucra cu o mașina virtuală disponibilă aici.
+Deoarece operațiile amintite mai sus pot duce la pierderea informațiilor utile de pe un disk vom lucra cu o mașina virtuală disponibilă [[https://repository.grid.pub.ro/cs/uso/USO.ova|aici]]. Pentru a face ''import'' mașinii virtuale în VirtualBox urmăriți pașii de [[https://ocw.cs.pub.ro/courses/uso/resurse/mv#procedura_import_fisier_ova_in_virtualbox|aici]].
+
+<note>
+Mașina virtuală se găsește și pe sistemul vostru în directorul ''/mnt/unfrozen''. Dacă acesta nu este montat, rulați următoarea comandă:
+<code>student@uso:~$ sudo mount /dev/sda7 /mnt/unfrozen</code>
+</note>
 
 Vom adăuga un hard disk virtual mașinii virtuale. Mai întâi trebuie să ne asigurăm că
 mașina virtuală este oprită.
 
 Pentru a adăuga un HDD virtual accesăm setările mașinii virtuale ''Settings > Storage > Add new storage attachement > Add Hard disk > Create new disk''.
+{{ :uso:laboratoare:new:07-storage:1.png?400 |}}
+{{ :uso:laboratoare:new:07-storage:2.png?400 |}}
+{{ :uso:laboratoare:new:07-storage:3.png?400 |}}
+
 
 Selectăm VDI (VirtualBox Disk Image) > Fixed size.
 Vom genera un HDD cu dimensiunea totală de 2GB > Create.
+{{ :uso:laboratoare:new:07-storage:4.png?400 |}}
+{{ :uso:laboratoare:new:07-storage:5.png?400 |}}
 
 Observăm că HDD-ul pe care l-am creat a fost atașat cu succes mașinii virtuale.
+{{ :uso:laboratoare:new:07-storage:6.png?400 |}}
 
 Pornim mașina virtuală. Verificăm dacă HDD-ul adăugat anterior are asociat un dispozitiv de tip block la în
 directorul ''/dev/'':
@@ -321,7 +333,7 @@ Fiecare linie conține 6 câmpuri cu următoarea semnificație:
   - Mount point   - calea unde va fi montat sistemul de fișiere (ex. ''/mnt/first_partition'');
   - Tip - tipul sistemului de fișiere (ex. ''ext4'')
   - Opțiuni - mai multe detalii [[https://en.wikipedia.org/wiki/Fstab#Options_common_to_all_filesystems|aici]]
-  - Dump - flag ce deternună dacă este necesar backup;
+  - Dump - flag ce determină dacă este necesar backup;
   - Pass - flag ce determină dacă se va efectua o verificare a sistemului de fișiere la start-up.
 
 **Exerciții**
