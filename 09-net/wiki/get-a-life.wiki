@@ -1,86 +1,102 @@
 ===== Get a Life =====
 
-==== 1. Accesul web în linia de comandă cu autentificare (X Karma points) ====
+
+==== 1. Descărcare web de fișiere multiple ====
+
+**[1a]** Folosiți comanda ''wget'' pentru a descărca dintr-o dată toate capitolele de carte (PDF) de USO de la [[http://elf.cs.pub.ro/uso/res/carte/]] (fără alte fișiere).
+
+**[1b]** Folosiți comanda ''wget'' pentru a descărca dintr-o dată toate orarele (.xls) de la [[http://acs.pub.ro/~cpop/orare_sem1/]].
+
+**[1c]** Puneți cele două comenzi într-un script și faceți ca scriptul să primească ca argument un director unde să descarce capitolele din carte (PDF) și orarele (.xls).
+
+
+==== 2. Accesul web în linia de comandă cu autentificare ====
 
 <note>
-
 Pentru acest exercițiu este nevoie să aveți un cont pe site-ul ''www.github.com''.
-
 </note>
 
-**[1a]** Utilizând una din comenzile ''curl'' sau ''wget'' realizați un
+**[2a]** Utilizând una din comenzile ''curl'' sau ''wget'' realizați un
 request simplu (GET), ''fără autentificare'' folosind următorul URL: ''https://api.github.com/users/<username_github>''.
 
 ''username_github'' reprezintă username-ul contului vostru de GitHub.
 
 Salvați rezultatul comenzii într-un fișier (ex. ''curl_without_auth'').
 
-**[1b]** Utilizând una din comenzile ''curl'' sau ''wget'' realizați un
+**[2b]** Utilizând una din comenzile ''curl'' sau ''wget'' realizați un
 request simplu (GET), ''cu autentificare'' folosind următorul URL: ''https://api.github.com/users/<username_github>''.
 
 ''username_github'' reprezintă username-ul contului vostru de GitHub.
 
 Salvați rezultatul comenzii într-un fișier (ex. ''curl_with_auth'').
 
-**[1c]** Comparați conținutul celor două fișiere utilizând comanda ''diff'', urmărind diferențele.
+**[2c]** Comparați conținutul celor două fișiere utilizând comanda ''diff'', urmărind diferențele.
 
 
-==== 2. Folosirea unui API pentru obținerea de informații ====
+==== 3. Folosirea unui API pentru obținerea de informații ====
 
-**[2a]** Aflați valoarea curentă în ''RON'' a monedei virtuale Bitcoin, utilizând API-ul documentat
+**[3a]** Aflați valoarea curentă în ''RON'' a monedei virtuale Bitcoin, utilizând API-ul documentat
 la această adresă: https://www.coindesk.com/api/.
-(''Hint:'' ''RON'' reprezintă codul valid conform ISO 4217 al monedei naționale)
+
+<note tip>
+''RON'' reprezintă codul valid conform ISO 4217 al monedei naționale.
+</note>
 
 
-==== 3. Montarea/Demontarea unui sistem de fișiere la distanță ====
+==== 4. Montarea/Demontarea unui sistem de fișiere la distanță ====
 
-**[3a]** Instalați pe mașina virtuală ''USO'' utilitarul ''sshfs''.
+**[4a]** Instalați pe sistemul fizici utilitarul ''sshfs''.
 
-**[3b]** Creați un director nou pe mașina virtuală ''USO'' cu denumirea ''tom_fs''.
+**[4b]** Creați un director nou pe sistemul fizic cu denumirea ''tom_fs''.
 
-**[3c]** Montați directorul ''/home/student'' de pe mașina virtuală ''tom'' pe mașina virtuală ''USO'' folosind directorul creat la **[3b]**.
+**[4c]** Montați directorul ''/home/student'' de pe mașina virtuală ''tom'' pe mașina virtuală ''USO'' folosind directorul creat la **[4b]**.
 
-**[3d]** De pe mașina virtuală ''USO'' adăugați un fișier nou în directorul ''tom_fs''. Observați apariția fișierului creat pe mașina virtuală ''tom''.
+**[4d]** Pe sistemul fizic adăugați un fișier nou în directorul ''tom_fs''. Observați apariția fișierului creat pe mașina virtuală ''tom''.
 
-**[3e]** Demontați sistemul de fișiere. (**Hint**: comanda ''umount'')
-
-==== 4. Utilizarea unei cheissh cu passphrase ====
-
-**[4a]** Creați un director nou în directorul ''home'' al utilizatorului ''student'' cu denumirea ''04_key''.
-
-**[4b]** Genenerați o nouă pereche de chei ''rsa'' în directorul pe care l-ați creat la subpunctul anterior..
-Asigurați-vă că folosiți un passphrase nevid. (''Hint: ssh-keygen'')
-
-**[4c]** Faceți modificările necesare pentru a putea folosi această cheie pentru conexiunile viitoare. (''Hint: chmod'')
+**[4e]** Demontați sistemul de fișiere folosind comanda ''umount''.
 
 
 ==== 5. Utilizarea VNC între stații ====
 
-<note>
-La acest exercițiu veți lucra împreună cu un coleg. Veți juca, pe rând, unul
-dintre rolurile server/client.
-</note>
+La acest exercițiu veți lucra împreună cu un coleg. Veți juca, pe rând, unul dintre rolurile server/client. Vă veți conecta prin VNC (//Virtual Network Computing//), serviciu de conexiune grafică la distanță.
 
-**[5a]** Aflați ambele adrese ale stațiilor pe care lucrați și stabiliți rolurile
-inițiale.
+Pentru aceasta aveți nevoie de un server vnc (''x11vnc'') și de un client VNC (''remmina''). Instalați-le pe sistemul fizic folosind comanda:
+<code bash>
+student@uso:~$ sudo apt -y install x11vnc remmina
+</code>
 
-**[5b]** Folosind utilitarul GUI ''Remmina'' din Ubuntu, ''client-ul'' se va
-conecta la ''server''.
+**[5a]** Aflați ambele adrese ale stațiilor pe care lucrați și stabiliți rolurile inițiale.
 
-**[5c]** Inversați rolurile și repetați task-ul **[6b]**. (''Hint:'' Nu rămâneți
-prinși în recursivitate).
+**[5b]** Folosind utilitarul GUI ''Remmina'' din Ubuntu, clientul se va conecta la server.
 
-==== 6. Instalarea unui server web Apache2 ====
+**[5c]** Inversați rolurile și repetați partea de la **[5b]**.
 
-**[6a]** Asigurați-vă că aveți instalat un server web Apache2.
 
-**[6b]** Porniți serverul web.
+==== 6. ping sweep folosind nmap ====
 
-**[6c]** Verificați funcționalitatea serverului web utilizând browserul web
-preferat.
+Utilitarul [[https://nmap.org|nmap]] este folosit pentru inspectarea informațiilor din rețea. Un rol al său este acela de ''ping scan'': listarea stațiilor prezente în rețeaua locală.
 
-==== 7. Instalarea unei aplicații web ====
+Folosiți ''nmap'' și scanați stațiile din rețeaua locală a sistemului local. Să folosiți o adresă de rețea cu masca cel puțin egală cu ''/24''. O mască mai mică înseamnă prea multe stații și durează mult scanarea.
 
-**[7a]** Instalați aplicația web ''DokuWiki''. (''Hint:'' https://www.dokuwiki.org/install)
 
-**[7b]** Testați funcționalitatea.
+==== 7. Captură de trafic de rețea. tcpdump ====
+
+Am folosit în secțiunea anterioară utilitarul grafic Wireshark pentru captură și inspecție de trafic de rețea. Dacă dorim să folosim linia de comandă atunci vom folosi utilitarul [[http://www.tcpdump.org|tcpdump]].
+
+Folosiți utilitarul ''tcpdump'' pentru a captura traficul ''HTTPS'' **către** stația ''ocw.cs.pub.ro'' (și doar acela). Generați din browser trafic către ''ocw.cs.pub.ro'' pentru a vedea captură în ''tcpdump''.
+
+
+==== 8. Instalarea unui server web Apache2 ====
+
+**[8a]** Asigurați-vă că aveți instalat un server web Apache2.
+
+**[8b]** Porniți serverul web.
+
+**[8c]** Verificați funcționalitatea serverului web utilizând browserul web preferat.
+
+
+==== 9. Instalarea unei aplicații web ====
+
+**[9a]** Instalați aplicația web ''DokuWiki''. (''Hint:'' https://www.dokuwiki.org/install)
+
+**[9b]** Testați funcționalitatea.

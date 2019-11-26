@@ -1,30 +1,7 @@
 ===== Recapitulare =====
 
-Facem o recapitulare a principalelor noțiuni și comenzi ce țin de administrarea spațiului de stocare. Să începem.
+**1.** Afişaţi pentru partiţţile din sistem, următoarele informaţii: numele, dimensiunea, unde este montat şi deţinătorul acesteia. (**hint**: ''lsblk -o'')
 
-==== Afișare discuri și partiții ====
+**2.a** În directoul ''home'' al utilizatorului ''student'', creaţi un fişier cu dimensiunea de 10MB, plin cu zerouri (**hint**: ''dd''). Apoi, formataţi-l astfel încât peste acesta să avem o partiţie de tip **ext4** (**hint**: ''mkfs'').
 
-Spațiul de stocare al unui sistem este compus din discuri, acestea sunt partiționate, iar partițiile sunt formatate cu un sistem de fișiere.
-
-Pentru a afișa discurile și partițiile sistemului, folosim comanda ''lsblk'':
-<code>
-</code>
-În ieșirea comenzii observăm discul ''/dev/sda'' care are o singură partiție numită ''/dev/sda1''.
-
-Un alt mod de a afișa discuri și partiții este cu ajutorul comenzii ''fdisk -l'':
-<code>
-</code>
-
-Dacă ne interesează să știm ce sistem de fișiere se găsește pe o partiție dată rulăm comanda de mai jos, cu parametru numele partiției:
-<code>
-</code>
-
-Pentru a vizualiza partițiile folosite curent (adică montate) rulam comanda ''mount'':
-<code>
-</code>
-
-==== Investigare și montare fișier .iso ====
-
-Vrem să investigăm conținutul unui fișier ''.iso''. Pentru aceasta fișierul trebuie descărcat și montat local folosind comanda ''mount'' și opțiunea ''-o loop''.
-
-Descărcați fișierul ''.iso'' de la adresa http://www.udpcast.linux.lu/20120424/udpcd.iso. Investigați tipul său și apoi montați-l local. Vedeți ce fișiere conține și tipul acestora. Demontați fișierul.
+**2.b** Creaţi directoul **/mnt/my-mount** şi montaţi sistemul de fişiere ext4 creat anterior în acest director.

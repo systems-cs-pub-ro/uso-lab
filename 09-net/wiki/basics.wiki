@@ -1,9 +1,12 @@
 ===== Basics =====
 
+Dacă nu se precizează altfel, în această secțiune veți rula comenzile pe **stația fizică** (sau pe mașina virtuală ''uso'' dacă lucrați acasă).
+
 ==== 1. Interfețe de rețea ====
 
 ''ip'' este o comandă de Linux folosită pentru a afișa interfețele de rețea disponibile pe sistemul curent de operare. De aici putem afla informații esențiale legate de conectivitatea la internet.
 
+Pentru a afla adresa IP și masca de rețea a interfețelor sistemului folosim comanda
 <code bash>
 student@uso:~$ ip a s
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
@@ -24,8 +27,9 @@ student@uso:~$ ip a s
 
 Parametrii ''a'' și ''s'' sunt prescurtările de la ''address'' și ''show''. Astfel, semnificația comenzii ''ip a s'' se traduce în ''ip address show''.
 
+Interfața **loopback** (cu numele ''lo'') este o interfață virtuală (**nu** una fizică). Scopul acestei interfețe este de a întoarce pachetele trimise către sistemul local, de obicei cu rol în testare.
 
-Interfața **loopback** este o interfață virtuală (**nu** una fizică). Scopul acestei interfețe este de a întoarce pachetele trimise către ea.
+Putem trimite comenzii ''ip a s'' ca parametru numele unei interfețe de rețea pentru a afișa informații doar despre acea interfață de rețea. Comanda de mai jos afișează informații despre interfața de loopback (''lo''):
 
 <code bash>
 student@uso:~$ ip a s lo
@@ -37,13 +41,15 @@ student@uso:~$ ip a s lo
        valid_lft forever preferred_lft forever
 </code>
 
-La câmpul inet, putem observa adresa IP ''127.0.0.1''. De obicei, aceasta este adresa interfaței de loopback. (De aici și glumele de pe internet cu ''There's no place like 127.0.0.1''. Pentru că fiecare sistem are propria interfață virtuală loopback, pe care o numim "acasă").
+La câmpul ''inet'' din rezultatul rulării comenzii, putem observa adresa IP ''127.0.0.1''. De obicei, aceasta este adresa interfaței de loopback.
 
-Dacă dorim să afișăm informațiile unei singure interfețe de rețea, adăugăm după utilitarul **ip a s**, numele acesteia. Putem observa mai sus interfața **lo** ce succede **ip a s**.
+<note>
+De aici și glumele de pe internet cu ''There's no place like 127.0.0.1''. Pentru că fiecare sistem are propria interfață virtuală loopback, pe care o numim "acasă"
+</note>
 
-=== Conectivitatea la internet ===
+=== Conectivitatea la Internet ===
 
-Putem verifica conectivitatea la internet folosind utilitarul ''ping''. Acesta transmite pachete către o anumită adresa (dată ca parametru). Acest utilitar ne arată dacă pachetele trimise ajung la destinație și în cât timp. O adresă pe care o putem folosi întotdeauna este ''8.8.8.8'' (Google).
+Putem verifica conectivitatea la internet folosind utilitarul ''ping''. Acesta transmite pachete către o anumită adresa (dată ca parametru). Acest utilitar ne arată dacă pachetele trimise ajung la destinație și în cât timp. O adresă pe care o putem folosi întotdeauna este ''8.8.8.8'' (o adresă de la Google).
 
 <code bash>
 student@uso:~$ ping 8.8.8.8
@@ -58,13 +64,14 @@ round-trip min/avg/max/stddev = 17.324/17.919/18.513/0.594 ms
 
 Putem observa ca pachetele noastre au ajuns la destinație în 17ms. De aici putem trage concluzia că avem o conexiune la internet funcțională.
 
-**[1a]** Aflați adresa IP de pe mașina virtuală și dați un ping in ea. Vă răspunde?
+**[1a]** Aflați adresa IP a sistemului fizic (**nu** ''lo'') și dați un ping către adresa IP.
 
-**[1b]** Aflați adresele IP ale colegilor (minim 2) și dați ping in ele. Vă răspund?
+**[1b]** Aflați adresele IP ale colegilor (minim 2) și dați ping către acele adrese IP.
+
 
 ==== 2. Urmărirea pachetelor ====
 
-Atunci când apelăm utilitarul ping cu o anumită adresă din internet, se trimit pachete până la aceasta. Dacă acestea nu ajung la destinație, ce concluzie putem trage? Că nu avem interfața configurată corespunzător? Dar dacă providerul de internet (să spunem RDS) are o problemă sau nu ne-am plătit factura la internet? Trebuie să putem afla unde este problema. Care este punctul în care pachetele noastre se pierd. Putem afla această informație folosind utilitarul ''traceroute''
+Atunci când apelăm utilitarul ''ping'' cu o anumită adresă din internet, se trimit pachete până la aceasta. Dacă acestea nu ajung la destinație, ce concluzie putem trage? Că nu avem interfața configurată corespunzător? Dar dacă furnizorul de Internet (să spunem RDS) are o problemă sau nu ne-am plătit factura la internet? Trebuie să putem afla unde este problema. Care este punctul în care pachetele noastre se pierd. Putem afla această informație folosind utilitarul ''traceroute'', la fel ca mai jos:
 
 <code bash>
 student@uso:~$ traceroute 8.8.8.8
@@ -83,9 +90,9 @@ traceroute to 8.8.8.8 (8.8.8.8), 64 hops max, 52 byte packets
  8  google-public-dns-a.google.com (8.8.8.8)  16.774 ms  16.613 ms  15.950 ms
 </code>
 
-Putem observa calea pachetelor de la routerul unde suntem conectați până la serverele Google.
-Putem apela același utilitar și cu o adresa http:
+Putem observa calea pachetelor de la gateway-ul local (''192.168.255.1'', va fi altul în cazul vostru) până la serverele Google.
 
+Putem apela același utilitar și cu un nume de domeniu:
 <code bash>
 student@uso:~$ traceroute google.com
 traceroute to google.com (216.58.209.174), 64 hops max, 52 byte packets
@@ -102,161 +109,127 @@ traceroute to google.com (216.58.209.174), 64 hops max, 52 byte packets
  8  bud02s21-in-f14.1e100.net (216.58.209.174)  15.921 ms  16.906 ms  16.412 ms
 </code>
 
-Ieșirea comenzii afișează și adresa publică a site-ului google.com.  
+Ieșirea comenzii afișează și adresa publică a site-ului ''google.com''.  
 
+**[2a]** Afișați calea urmată de mașina virtuală către numele de domeniu ''realitatea.net'', către ''gandul.info'' și către ''bbc.com''. Observați care este mai apropiată (către care sunt mai puține //hop//-uri).
 
-**[2a]** Afișați calea urmată de mașina virtuală către un site ales de voi. Prin care interfață ies pachetele?
 
 ==== 3. Default gateway ====
 
-Atunci când pachetele pleacă către Internet, sistemul trebuie să știe cui ii va trimite pachetele în mod implicit. Această configurare se poate vedea folosind utilitarul ''ip'' cu opțiunea ''route''.
-
+Atunci când pachetele pleacă către Internet, sistemul trebuie să știe cui îi va trimite pachetele în mod implicit, adică să știe ''gateway-ul''. Această configurare se poate vedea folosind utilitarul ''ip'' cu opțiunea ''route show'', ca mai jos:
 <code bash>
-student@uso:~$ ip route
+student@uso:~$ ip r s
 default via 10.0.2.1 dev enp0s8 proto dhcp metric 100 
-10.0.2.0/24 dev enp0s8 proto kernel scope link src 10.0.2.4 metric 100 
-169.254.0.0/16 dev enp0s8 scope link metric 1000 
+[...]
 </code>
+Mai sus am folosit forma prescurtată a comenzii ''ip route show'', adică ''ip r s''.
 
 Putem observa că implicit pachetele se duc către adresa IP ''10.0.2.1''.
 
-**[3a]** Afișați ruta implicită de pe mașina virtuală.
+**[3a]** Afișați gateway-ul de pe mașina virtuală ''tom'' și de pe mașina virtuală ''jerry''.
+
 
 ==== 4. DNS ====
 
-Destinațiile din internet sunt întotdeauna IP-uri. Pentru ca ne este greu sa reținem aceste adrese, se face o mapare între un nume și o adresă IP. Putem apela utilitarul ''traceroute'' cu adresa IP afișată mai sus (google.com). 
+Destinațiile din Internet sunt întotdeauna adrese IP. Pentru ca ne este greu sa reținem aceste adrese, se face o mapare între un nume și o adresă IP folosind seviciul DNS (//Domain Name System//). Dacă destinația este un nume, se face o cerere DNS pentru a afla adresa IP.
 
+Putem vedea adresa serverului DNS in ''/etc/resolv.conf'', folosind comanda:
 <code bash>
-student@uso:~$ traceroute 216.58.209.174
-traceroute to 216.58.209.174 (216.58.209.174), 64 hops max, 52 byte packets
- 1  danubiu12.lan (192.168.255.1)  1.147 ms  4.124 ms  0.814 ms
- 2  10.0.0.1 (10.0.0.1)  2.040 ms  2.579 ms  2.006 ms
- 3  10.30.1.209 (10.30.1.209)  2.768 ms  2.651 ms  2.097 ms
- 4  10.220.137.34 (10.220.137.34)  15.924 ms
-    10.220.128.56 (10.220.128.56)  17.283 ms
-    10.220.132.14 (10.220.132.14)  19.323 ms
- 5  213-154-130-234.rdsnet.ro (213.154.130.234)  23.228 ms  15.458 ms  17.341 ms
- 6  74.125.242.225 (74.125.242.225)  16.377 ms  16.215 ms  40.340 ms
- 7  66.249.94.163 (66.249.94.163)  15.995 ms  16.073 ms
-    66.249.94.123 (66.249.94.123)  16.880 ms
- 8  bud02s21-in-f174.1e100.net (216.58.209.174)  16.500 ms  16.222 ms  17.468 ms
+student@uso:~$ cat /etc/resolv.conf
+[...]
+nameserver 127.0.0.53
 </code>
 
-Această translatare se face cu ajutorul DNS (Domain Name Service). Dacă destinația este un nume, se face o cerere DNS pentru a afla adresa IP. La fel pentru fiecare hop din traceroute. Dacă folosim parametrul ''-n'', această translatare nu se mai face, deci comanda se va executa mai repede.
-
+Putem face interogări la serverul DNS folosind utilitarul ''host''. Interogare directă este atunci când folosind numele de domeniu și obținem adresa IP; interogare inversă este atunci când folosim adresa IP ca să aflăm numele de domeniu. Mai jos sunt două exemple de interogare directă urmate de două exemple de interogare inversă:
 <code bash>
-student@uso:~$ traceroute -n google.com
-traceroute to google.com (172.217.20.14), 64 hops max, 52 byte packets
- 1  192.168.255.1  1.192 ms  0.790 ms  0.758 ms
- 2  10.0.0.1  1.951 ms  1.943 ms  1.951 ms
- 3  10.30.1.209  2.159 ms  2.082 ms  2.094 ms
- 4  10.220.128.68  31.860 ms
-    10.220.128.48  40.103 ms
-    10.220.128.62  15.942 ms
- 5  213.154.130.234  17.344 ms  16.432 ms  24.014 ms
- 6  74.125.242.241  18.140 ms
-    74.125.242.225  17.783 ms  18.995 ms
- 7  216.239.35.251  16.408 ms
-    216.239.35.185  14.143 ms  16.104 ms
- 8  172.217.20.14  16.355 ms  15.526 ms  14.035 ms
-</code>
+student@uso:~$ host fsf.org
+fsf.org has address 208.118.235.174
+fsf.org has IPv6 address 2001:4830:134:4::a
+fsf.org mail is handled by 10 mail.fsf.org.
+student@uso:~$ host kernel.org
+kernel.org has address 198.145.29.83
+kernel.org mail is handled by 10 mail.kernel.org.
 
-Putem vedea adresa serverului DNS in ''/etc/resolv.conf'':
-
-<code bash>
-student@uso:~$ cat /etc/resolv.conf | tail -n 3
-#
-domain lan
-nameserver 192.168.255.1
-</code>
-
-Putem face interogări la serverul DNS folosind utilitarul ''nslookup''. Interogare directă este atunci când folosind numele, obținem IP-ul, iar interogare inversă este atunci când folosind IP-ul, aflăm numele.
-
-Direct:
-<code bash>
-student@uso:~$ nslookup www.google.com
-Server:		192.168.255.1
-Address:	192.168.255.1#53
-
-Non-authoritative answer:
-Name:	www.google.com
-Address: 172.217.19.68
-</code>
-
-Invers:
-<code bash>
-student@uso:~$ nslookup 172.217.19.68
-Server:		192.168.255.1
-Address:	192.168.255.1#53
-
-Non-authoritative answer:
-68.19.217.172.in-addr.arpa	name = mil02s05-in-f68.1e100.net.
-68.19.217.172.in-addr.arpa	name = ham02s17-in-f4.1e100.net.
+student@uso:~$ host swarm.cs.pub.ro
+swarm.cs.pub.ro has address 141.85.227.118
+swarm.cs.pub.ro mail is handled by 10 swarm.cs.pub.ro.
+student@uso:~$ host 209.132.180.180
+180.180.132.209.in-addr.arpa domain name pointer proxy01.gnome.org.
 </code>
 
 
-**[4a]** Afișați serverul DNS de pe mașina virtuală.
+**[4a]** Afișați serverul DNS de pe mașina virtuală ''tom''.
 
-**[4b]** Dați ping în google.com folosind numele și adresa IP.
+**[4b]** Dați ping în ''facebook.com'' folosind numele și apoi folosind adresa IP.
 
-**[4c]** Faceți 3 interogări DNS ale unor site-uri(ex: facebook.com, ocw.cs.pub.ro, studenti.pub.ro).
+**[4c]** Aflați adresa IP pentru numele de domeniu ''ocw.cs.pub.ro'', ''studenti.pub.ro'', ''insecure.org'', ''eu.org''.
 
 
 ==== 5. Conexiune SSH ====
 
 Un mod semnificativ mai ușor de a folosi o mașina virtuală este următorul: având un terminal pe mașina fizică ne conectăm prin SSH la mașina virtuală. Astfel, trecerea de la mașina fizică la cea virtuală se reduce la schimbarea de tab-uri in terminal. Un alt avantaj este că putem folosi copy-paste fără probleme din terminal.
-Pentru a ne conecta la mașina virtuală ne trebuiesc 2 informații: user-ul cu care vrem să fim autentificați pe mașina virtuală și adresa mașinii virtuale (putem folosi ''ip a s'' pentru a afla IP). Sintaxa este de forma ssh <user>@<IP>.
 
+Pentru a ne conecta la mașina virtuală avem nevoie de 2 informații:
+  * numele utilizatorului (//username//) cu care vrem să fim autentificați pe mașina virtuală
+  * adresa mașinii virtuale (putem folosi ''ip a s'' pentru a afla adresa IP)
+Sintaxa este de forma ''%%ssh <user>@<IP>%%'', unde ''%%<user>%%'' este numele de utilizator iar ''%%<IP>%%'' este numele de domeniu sau adresa IP corespunzătoare.
+
+Vom face o conexiune SSH între stația fizică și mașina virtuală ''tom''.
+
+<note important>
+Pentru a face o conexiune SSH între stația fizică și mașina virtuală ''tom'' va trebui să avem interfața activată, pe mașina virtuală ''tom''. Pentru aceasta rulați comanda
 <code bash>
-student@uso:~$ ssh student@uso
-The authenticity of host 'uso (127.0.1.1)' can't be established.
-ECDSA key fingerprint is SHA256:EqKvzIRVrt/2T8NqzCiBZI8QkXUnqpP627KkMCqscV0.
+student@tom:~$ sudo dhclient enp0s8
+</code>
+care va asigura obținerea, prin DHCP, a parametrilor de rețea pentru interfața ''enp0s8''.
+
+Folosind comanda
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe71:db21/64 scope link
+       valid_lft forever preferred_lft forever
+</code>
+aflăm adresa IP a mașinii virtuale ''tom''. În cazul de față este vorba de ''192.168.56.101''.
+
+Este posibil ca adresa IP pentru mașina virtuală ''tom'' să fie alta în rularea voastră. Folosiți în continuare adresa IP obținută din rularea voastră.
+</note>
+
+Pentru a ne conecta de pe stația fizică la mașina virtuală ''tom'' folosim comanda:
+<code bash>
+student@uso:~$ ssh student@192.168.56.101
+The authenticity of host '192.168.56.101 (192.168.56.101)' can't be established.
+ECDSA key fingerprint is SHA256:sqi88F/jVZ+RiHMMkLGXidACSAHlfXHos2d+gwWcqoY.
 Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added 'uso' (ECDSA) to the list of known hosts.
-student@uso's password: 
-Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-32-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
- * Read about Ubuntu updates for L1 Terminal Fault Vulnerabilities
-   (L1TF).
-
-   - https://ubu.one/L1TF
-
- * Check out 6 great IDEs now available on Ubuntu. There may even be
-   something worthwhile there for those crazy EMACS fans ;)
-
-   - https://bit.ly/6-cool-IDEs
-
- * Canonical Livepatch is available for installation.
-   - Reduce system reboots and improve kernel security. Activate at:
-     https://ubuntu.com/livepatch
-
-18 packages can be updated.
-0 updates are security updates.
-
-*** System restart required ***
-Last login: Tue Aug 21 14:27:08 2018
+Warning: Permanently added '192.168.56.101' (ECDSA) to the list of known hosts.
+student@192.168.56.101's password:
+[...]
+student@tom:~$
 </code bash>
+Ne-am conectat prin SSH la mașina virtuală ''tom'', lucru pe care îl vedem în prompt.
 
-Pentru a ne deconecta de la mașina virtuală folosim comanda ''exit'':
-
+Pentru a ne deconecta de la mașina virtuală folosim comanda ''exit'' sau comanda ''logout'' sau folosim combinația de taste ''Ctrl+d'':
 <code bash>
-student@uso:~$ exit
-logout
-Connection to uso closed.
+student@tom:~$ logout
+Connection to 192.168.56.101 closed.
+student@uso:~$
 </code>
 
-**[5a]** Adăugați un utilizator nou pe mașina ''tom''. Conectați-vă de pe mașina locală pe mașina ''tom'' cu noul utilizator creat.
+**[5a]** Conectația la stația locală (conexiune pe interfața de loopback). Apoi deconectați-vă,
 
-**[5b]** Conectați-vă la mașina virtuală ''jerry'' de pe mașina virtuală ''tom''.
+**[5b]** Adăugați un utilizator nou pe mașina ''tom''. Conectați-vă de pe mașina locală pe mașina ''tom'' cu noul utilizator creat.
+
+**[5c]** Conectați-vă la mașina virtuală ''jerry'' de pe sistemul fizic.
+
+**[5d]** Conectați-vă de pe mașina virtuală ''tom'' la mașina virtuală ''jerry''.
 
 
 ==== 6. wget ====
 
-Utilitarul ''wget'' descarcă conținutul unei pagini web. Un exemplu de folosire este ''wget http://website.com/files/file.zip''.
+Utilitarul ''wget'' descarcă conținutul unei pagini web. Un exemplu de folosire este:
 
 <code bash>
 student@uso:~$ wget http://ipecho.net/plain
@@ -277,11 +250,14 @@ student@uso:~$ cat plain
 188.26.36.205
 </code>
 
-sau
+
+Dacă vrem să descărcăm direct
 
 <code bash>
 student@uso:~$ wget -qO- http://ipecho.net/plain ; echo
 188.26.36.205
 </code>
 
-**[6a]** Descărcați arhiva folosind wget de la link-ul: wget http://www.openss7.org/repos/tarballs/strx25-0.9.2.1.tar.bz2
+**[6a]** Descărcați arhiva folosind ''wget'' de la link-ul [[http://www.openss7.org/repos/tarballs/strx25-0.9.2.1.tar.bz2]].
+
+**[6b]** Descărcați capitolul 11 din cartea de USO de la link-ul [[http://elf.cs.pub.ro/uso/res/carte/]].

@@ -8,10 +8,8 @@
 | ''ping'' | verificarea conectivității până la o altă stație |
 | ''dhclient'' | configurarea automată a unei interfețe folosind DHCP |
 | ''host'' | interogarea serviciului DNS, aflarea adresei IP pentru un nume din Internet |
-| ''/etc/resolv.conf'' | fișierul unde se configurează serverul DNS |
 | ''traceroute'' | vizualizarea căii în Internet până la o altă stație |
 | ''ip r s'' | vizualizarea tabelei de rutare (și a //default gateway//-ului) |
-| ''netstat'' | vizualizarea serviciilor de rețea locale |
 | ''ssh'' | conexiune la distanță prin SSH |
 | ''scp'' | transfer la distanță |
 | ''ssh-keygen'' | generarea unei perechi de chei (privată și publică) pentru SSH |
@@ -22,40 +20,53 @@
 | ''~/.ssh/config'' | configurarea clientul SSH pentru utilizatorul curent |
 | ''wget'', ''curl'' | accces web la distanță și descărcare de fișiere prin HTTP |
 
+
 ==== Mașini virtuale ====
 
-Pe parcursul laboratorului curent vom folosi două mașini virtuale VirtualBox care pot comunica între ele, numite ''tom'' și ''jerry''. Dacă **nu** aveți un sistem Linux pe care rulați VirtualBox, adică dacă rulați pe Windows sau macOS, aveți nevoie și de mașina virtuală ''uso''.
+Pe parcursul laboratorului curent vom folosi două mașini virtuale VirtualBox care pot comunica între ele, numite ''tom'' și ''jerry''.
 
-Mașinile virtual ''tom'' si ''jerry'' sunt parte din fișierul ''USO_tom_jerry.ova'' pe care îl puteți descărca de la http://titan.cs.pub.ro/~razvan/uso/. Pentru a putea folosi mașinile virtuale va trebui să importați fișierul ''USO_tom_jerry.ova'' în VirtualBox. Pentru aceasta, în fereastra VirtualBox, accesați meniurile și opțiunile ''%%File -> Import Appliace%%'' și apoi alegeți calea către fișierul ''USO_tom_jerry.ova''. După ce ați declansat operația de importare, va dura câteva minute să fie importate mașinile virtuale. După ce ați importat mașinile virtuale, veți vedea în fereastra principală VirtualBox intrările ''USO_tom'' și ''USO_jerry''. Porniți ambele mașini virtuale dând click pe intrări și apoi folosind butonul ''Start''.
+Pe sistemele din sălile de laborator găsiți imaginea OVA a celor două mașini virtuale în directorul ''/mnt/unfrozen/uso/mv/''. De acolo importați în VirtualBox fișierul ''/mnt/unfrozen/uso/mv/USO_tom_jerry.ova''.
+
+Pentru a putea folosi mașinile virtuale va trebui să importați fișierul ''USO_tom_jerry.ova'' în VirtualBox. Pentru aceasta, în fereastra VirtualBox, accesați meniurile și opțiunile ''%%File -> Import Appliace%%'' și apoi alegeți calea către fișierul ''USO_tom_jerry.ova''. După ce ați declansat operația de importare, va dura câteva minute să fie importate mașinile virtuale. După ce ați importat mașinile virtuale, veți vedea în fereastra principală VirtualBox intrările ''USO_tom'' și ''USO_jerry''. Porniți ambele mașini virtuale dând click pe intrări și apoi folosind butonul ''Start''.
 
 După aceasta veți avea două ferestre VirtualBox, câte una pentru fiecare mașină virtuală. Mașinile virtuale ''tom'' și ''jerry'' au doar interfața în linia de comandă, **nu** au interfață grafică. Le veți identifica după prompt-ul de autentificare afișat, respectiv ''tom login:'' și ''jerry login:''. Vă puteți autentifica la mașinile virtuale folosind numele de utilizator ''student'' iar apoi parola ''student''.
 
+<note>
+Dacă **nu** aveți un sistem Linux pe care rulați VirtualBox, adică dacă rulați pe Windows sau macOS, aveți nevoie și de mașina virtuală ''uso''. Pentru a descărca fișierul ''USO_tom_jerry.ova'' care conține mașinile virtuale ''tom'' și ''jerry'' folosiți [[:uso:resurse:mv#masini_virtuale_carte_si_laborator|indicațiile de aici]].
+</note>
+
 <note tip>
-Pe ambele mașini virtuale, contul de utilizator ''student'' are permisiuni de ''sudo''. Dacă doriți accesarea contului de utilizator ''root'' folosiți comanda
+Pe ambele mașini virtuale (''tom'' și ''jerry''), contul de utilizator ''student'' are permisiuni de ''sudo''. Dacă doriți accesarea contului de utilizator ''root'' folosiți comanda
 <code>
 sudo su
 </code>
 iar la prompul de parolă scrieți parola utilizatorului ''student'', adică ''student''.
 </note>
 
-==== Resurse Git ====
+=== Interfețe de rețea în mașinile virtuale ===
 
-Resursele laboratorulului de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso|acest repository Git]].
+Mașinile virtuale ''tom'' și ''jerry'' au interfața de //loopback// ''lo'' și trei interfețe de rețea, cu roluri dedicate:
+  * Interfața ''enp0s3'' este interfața pentru acces la Internet; această adresă este folosită pentru comunicarea mașinii virtuale.
+  * Interfața ''enp0s8'' este o interfață care leagă împreună într-o rețea mașinile virtuale ''tom'' și ''jerry'' cu sistemul gazdă și, dacă este cazul, cu mașina virtuală ''uso''. Această interfață nu are implicit adresă IP, adresa IP o vom configura automat prin DHCP după pornirea mașinii virtuale folosind comanda<code>
+sudo dhclient enp0s8
+</code> Vom face această configurare mai târziu în laborator.
+  * Interfața ''enp0s9'' este o interfață care leagă împreună într-o rețea privată mașinile virtuale ''tom'' și ''jerry''. Această interfață **nu** poate fi fconfigurată prin DHCP. Vom folosi doar configurare statică, la partea [[:uso:laboratoare:new:08-net:get-a-life]].
 
-În laboratorul curent, pe mașina virtuală furnizată, aveți deja clonat repository-ul Git în directorul ''~/uso.git/''. Pe parcursul laboratorului vom folosi fișierele de suport de acolo.
+
+==== Folosire Git pentru laborator ====
+
+Pe parcursul laboratoarelor, pentru descărcarea fișierelor necesare laboratorului, vom folosi Git. Git este un sistem de controlul versiunii și e folosit pentru versionarea codului în proiectele software mari. Celor interesați să aprofundeze conceptele din spatele comenzii ''git'', precum și utilizări avansate, le recomandăm cursul practic online de pe [[http://gitimmersion.com/|gitimmersion]].
+
+Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso-lab|acest repository Git]].
 
 <note important>
-Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal deschis în mașina virtuală. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''.
+Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați.
 
-În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați. Recomandăm să **nu** folosiți //copy-paste// ca să vă acomodați cu linia de comandă. Nu vă bateți capul cu ce fac comenzile de mai jos, pe moment le rulăm mecanic, doar să ne facem treaba. Cei curioși pot consulta documentația Git.
 <code>
-student@uso:~$ cd uso.git/
-student@uso:~/uso.git$ git rm --cached -r .
-student@uso:~/uso.git$ git reset --hard
-student@uso:~/uso.git$ git clean -f -d
-student@uso:~/uso.git$ git fetch origin
-student@uso:~/uso.git$ git checkout -b master
-student@uso:~/uso.git$ git rebase origin/master
+student@uso:~$ cd ~
+student@uso:~$ git clone https://github.com/systems-cs-pub-ro/uso-lab.git
 </code>
+
+</note>
 
 Hai să trecem la treburi de rețelistică!

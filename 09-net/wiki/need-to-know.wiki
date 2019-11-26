@@ -1,280 +1,150 @@
 ===== Need to Know =====
 
-==== ssh ====
+Pe parcursul acestei secțiuni și a următoarelor vom folosi următoarele termene pentru a identifica sistemul pe care rulăm comenzi:
+  * **sistemul fizic** sau **mașina fizică** sau **stația locală** se referă la sistemul din laborator
+  * **sistemul ''tom''** sau **mașina virtuală ''tom''** se referă la mașina virtuală ''tom''
+  * **sistemul ''tom''** sau **mașina virtuală ''jerry''** se referă la mașina virtuală ''jerry''
 
-Având la dispoziție mașinile virtuale ''tom'' și ''jerry'', ne propunem, ca după 
-pornirea amândurora să aflăm adresele IP. Pentru a importa cele două mașini 
-virtuale urmăriți pașii de [[ https://ocw.cs.pub.ro/courses/uso/resurse/mv#procedura_import_fisier_ova_in_virtualbox | aici]].
+==== 1. Dezactivare interfețe. DHCP ====
 
-După importarea mașinilor, deschideți în paralel mașinile virtuale ''tom'' și ''jerry''.
+Sunt situații în care am realizat o configurare greșită și vrem să dezactivăm acea configurare de pe o interfață. În mod normal, resetarea completă a configurației unei interfețe presupune doi pași:
+  * eliberarea (//flush//) configurației acelei interfețe
+  * dezactivarea acelei interfețe
 
-Vrem să aflăm adresele IP ale celor 2 mașini virtuale. Pentru a face acest lucru folosim comanda 
-''ip a s'' sau comanda ''ifconfig''.
-
-<code bash>
-student@tom:~$ ifconfig
-enp0s3: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 192.168.56.101  netmask 255.255.255.0  broadcast 192.168.56.255
-        inet6 fe80::a00:27ff:febf:7477  prefixlen 64  scopeid 0x20<link>
-        ether 08:00:27:bf:74:77  txqueuelen 1000  (Ethernet)
-        RX packets 6284  bytes 8587309 (8.5 MB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 3536  bytes 245502 (245.5 KB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-enp0s8: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet 10.0.2.5  netmask 255.255.255.0  broadcast 10.0.2.255
-        inet6 fe80::a00:27ff:fe84:cd0a  prefixlen 64  scopeid 0x20<link>
-        ether 08:00:27:84:cd:0a  txqueuelen 1000  (Ethernet)
-        RX packets 49745  bytes 74514906 (74.5 MB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 32084  bytes 1935578 (1.9 MB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-enp0s9: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
-        inet6 fe80::a00:27ff:fe94:2ff3  prefixlen 64  scopeid 0x20<link>
-        ether 08:00:27:94:2f:f3  txqueuelen 1000  (Ethernet)
-        RX packets 0  bytes 0 (0.0 B)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 36  bytes 9194 (9.1 KB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-
-lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
-        inet 127.0.0.1  netmask 255.0.0.0
-        inet6 ::1  prefixlen 128  scopeid 0x10<host>
-        loop  txqueuelen 1000  (Local Loopback)
-        RX packets 945  bytes 88159 (88.1 KB)
-        RX errors 0  dropped 0  overruns 0  frame 0
-        TX packets 945  bytes 88159 (88.1 KB)
-        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
-</code>
-
-- Luați adresa IP de pe mașina ''tom'' și dați ping la acea adresă de pe mașina ''jerry''.
-
-Vrem să ne conectăm prin ''ssh'' de pe mașina fizică pe una dintre mașinile virtuale. Primul pas este 
-să aflăm adresa IP a mașinii virtuale.
-
-<code bash>
-student@tom:~$ ip a s
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host 
-       valid_lft forever preferred_lft forever
-2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:bf:74:77 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global dynamic enp0s3
-       valid_lft 962sec preferred_lft 962sec
-    inet6 fe80::a00:27ff:febf:7477/64 scope link 
-       valid_lft forever preferred_lft forever
-3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:84:cd:0a brd ff:ff:ff:ff:ff:ff
-    inet 10.0.2.5/24 brd 10.0.2.255 scope global enp0s8
-       valid_lft forever preferred_lft forever
-    inet6 fe80::a00:27ff:fe84:cd0a/64 scope link 
-       valid_lft forever preferred_lft forever
-4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:94:2f:f3 brd ff:ff:ff:ff:ff:ff
-    inet6 fe80::a00:27ff:fe94:2ff3/64 scope link 
-       valid_lft forever preferred_lft forever
-</code>
-
-<note>
-Observăm faptul că adresa IP a mașinii ''tom'' este ''192.168.56.101''.
+<note important>
+**Nu** rulați comenzile de mai jos pe o conexiune SSH pe mașina virtuală ''tom''. Vă veți dezactiva legătura fizică și veți pierde și conexiune SSH. Rulați comenzile direct în interfața CLI (alb pe negru) a aplicației VirtualBox.
 </note>
 
-După ce am făcut acest lucru, deschidem un terminal pe mașina fizică. Să zicem că vrem să ne conectăm 
-drept utilizatorul ''student'' pe mașina virtuală. Pentru a face acest lucru urmăriți pașii de mai jos. 
-Vi se va cere parola utilizatorului ''student'' de pe mașina virtuală care este ''student''.
+<note tip>
+Dacă vă rămâne o conexiune SSH "agățată" (nu mai primește comenzi) înseamnă că s-a pierdut conexiunea și terminalul rămâne blocat. Pentru a debloca terminalul folosiți secvența ''%%<Enter> ~ .%%'', adică apăsați pe rând tasta //Enter>// apoi tasta //tildă// (''%%~%%'') apoi tasta //punct// (''%%.%%'')
 
-<code bash>
-student@uso:~$ ssh student@192.168.56.101
-The authenticity of host '192.168.56.101 (192.168.56.101)' can't be established.
-ECDSA key fingerprint is SHA256:sqi88F/jVZ+RiHMMkLGXidACSAHlfXHos2d+gwWcqoY.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '192.168.56.101' (ECDSA) to the list of known hosts.
-student@192.168.56.101's password: 
-Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-33-generic x86_64)
-
- * Documentation:  https://help.ubuntu.com
- * Management:     https://landscape.canonical.com
- * Support:        https://ubuntu.com/advantage
-
-  System information as of Tue Nov 20 21:36:36 UTC 2018
-
-  System load:  0.07              Processes:             94
-  Usage of /:   50.4% of 9.78GB   Users logged in:       1
-  Memory usage: 35%               IP address for enp0s3: 192.168.56.101
-  Swap usage:   0%                IP address for enp0s8: 10.0.2.5
-
- * Read about Ubuntu updates for L1 Terminal Fault Vulnerabilities
-   (L1TF).
-
-   - https://ubu.one/L1TF
-
- * Check out 6 great IDEs now available on Ubuntu. There may even be
-   something worthwhile there for those crazy EMACS fans ;)
-
-   - https://bit.ly/6-cool-IDEs
-
-139 packages can be updated.
-40 updates are security updates.
-
-
-Last login: Tue Nov 20 21:28:13 2018
-student@tom:~$ 
-</code>
-
-<note>
-Atenție, adresa IP de mai sus va fi diferită în funcție de rețeaua în care se află vă aflați.
+Vedeți și răspunsul de [[https://askubuntu.com/a/29952|aici]].
 </note>
 
-- Conectați-vă în același fel de pe mașina fizică pe cealaltă mașină virtuală.
-- Conectați-vă de pe mașina ''tom'' pe mașina ''jerry'' folosind ''ssh''.
-
-==== scp ====
-
-Utilitarul ''scp'' (secure copy) este folosit pentru a copia fișiere de pe o stație pe alta. Există și 
-alte utilitare cu care putem face acest lucru, însă aceasta are avantajul că datele sunt transmise sigur, 
-folosind ''ssh''.
-
-''scp'' are o sintaxă asemănătoare cu ''cp'', și anume ''scp sursă destinație''. Folosind ''scp'' putem 
-copia fișiere de pe mașina noastră pe o altă mașină, fie de pe o altă mașină direct în mașina noastră. 
-Urmăriți pașii de mai jos pentru a copia un fișier de pe mașina fizică pe mașina virtuală ''tom''.
-
-Pe mașina ''tom'':
+Mai jos eliberăm și dezactivăm interfața ''enp0s8'' de pe mașina virtuală ''tom'':
 <code bash>
-student@tom:~$: ip a s
-1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    inet 127.0.0.1/8 scope host lo
-       valid_lft forever preferred_lft forever
-    inet6 ::1/128 scope host 
-       valid_lft forever preferred_lft forever
-2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:bf:74:77 brd ff:ff:ff:ff:ff:ff
-    inet 192.168.56.101/24 brd 192.168.56.255 scope global dynamic enp0s3
-       valid_lft 650sec preferred_lft 650sec
-    inet6 fe80::a00:27ff:febf:7477/64 scope link 
-       valid_lft forever preferred_lft forever
+student@tom:~$ ip a s enp0s8
 3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:84:cd:0a brd ff:ff:ff:ff:ff:ff
-    inet 10.0.2.5/24 brd 10.0.2.255 scope global enp0s8
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8
        valid_lft forever preferred_lft forever
-    inet6 fe80::a00:27ff:fe84:cd0a/64 scope link 
+    inet6 fe80::a00:27ff:fe71:db21/64 scope link
        valid_lft forever preferred_lft forever
-4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
-    link/ether 08:00:27:94:2f:f3 brd ff:ff:ff:ff:ff:ff
-    inet6 fe80::a00:27ff:fe94:2ff3/64 scope link 
+student@tom:~$ sudo ip address flush enp0s8
+[sudo] password for student:
+student@tom:~$ sudo ip link set dev enp0s8 down
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel state DOWN group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+</code>
+
+Mai sus am folosit:
+  * comanda ''ip a s enp0s8'' ca să vedem starea interfeței. La început are adresă IP și este activată (''state UP''). La sfârșit nu are adresă IP și este dezactivată (''state DOWN'').
+  * comanda ''ip address flush enp0s8'' ca să eliberăm (//flush//) configurația interfeței
+  * comanda ''ip link set dev enp0s8 down'' ca să dezactivăm interfața
+
+**[1a]** Folosiți comanda ''dhclient'' pentru a reface configurația de rețea pe interfața ''enp0s8'' pe mașina virtuală ''tom''. Verificați folosind ''ping'' de pe sistemul fizic.
+
+**[1b]** Dezactivați configurația interfeței ''enp0s8'' de pe mașina virtuală ''jerry''.
+
+**[1c]** Folosiți comanda ''dhclient'' pentru a reface configurația de rețea pe interfața ''enp0s8'' pe mașina virtuală ''jerry''. Verificați folosind ''ping'' de pe sistemul fizic și de pe mașina virtuală ''tom'',
+
+
+==== 2. SSH ====
+
+<note>
+Această secțiune recapitulează noțiuni și comenzi din secțiunea Basics pe care vrem să le exersăm.
+</note>
+
+Folosim protocolul SSH și comanda ''ssh'' pentru a ne conecta la distanță, folosind o comandă de forma:
+<code>
+ssh <username>@<hostname>
+</code>
+unde ''%%<username>%%'' este numele de utilizator iar ''%%<hostname>%%'' este numele de stație (sau adresa IP) a stației la care vrem să ne conectăm.
+
+**[2a]** Realizați, prin SSH, folosind comanda ''ssh'' toate formele de conexiune (6 în total) între sistemul fizic, mașina virtuală ''tom'' și mașina virtuală ''jerry''.
+
+**[2b]** Conectați-vă la sistemul unui coleg din stânga sau dreapta voastră, după ce îl întrebați de adresa sa IP.
+
+**[2c]** Conectați-va la sistemul ''fep.grid.pub.ro'' folosind numele de utilizator de pe [[http://acs.curs.pub.ro|acs.curs.pub.ro]] și parola de acolo.
+
+
+==== 3. scp ====
+
+Utilitarul ''scp'' (secure copy) este folosit pentru a copia fișiere de pe o stație pe alta în mod sigur folosind protocolul SSH. Există și alte utilitare cu care putem face acest lucru, însă aceasta are avantajul că datele sunt transmise sigur, folosind ''ssh''.
+
+''scp'' are o sintaxă asemănătoare cu ''cp'', și anume ''scp sursă destinație''. Folosind ''scp'' putem copia fișiere de pe mașina noastră pe o altă mașină, fie de pe o altă mașină direct în mașina noastră. Urmăriți pașii de mai jos pentru a copia un fișier de pe mașina fizică pe mașina virtuală ''tom''.
+
+Pe mașina virtuală ''tom'' aflăm adresa IP a interfeței ''enp0s8'' adresa de legătură între sistemul fizic și mașina virtuală ''tom'':
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe71:db21/64 scope link
        valid_lft forever preferred_lft forever
 </code>
 
-Luăm adresa IP a mașinii ''tom'' și apoi pe mașina fizică:
+Folosim apoi adresa IP găsită mai sus a mașinii ''tom'' (în cazul de față ''192.168.56.101'') pe mașina fizică:
 <code bash>
 student@uso:~$ echo "my first scp" > file.txt
 student@uso:~$ cat file.txt
 my first scp
-student@tom:~$ scp file.txt student@TOTO:.
+student@uso:~$ scp file.txt student@192.168.56.101:
 student@192.168.56.101's password: 
 file.txt                                      100%   13     9.1KB/s   00:00 
 </code>
 
-<note>
-Atenție, după construcția ''student@192.168.56.101'' urmează '':.''. Așa specificăm unde pe mașina ''tom'' să fie 
-copiat fișierul ''file.txt''. Dupa '':'' treceți calea din sistemul de fișiere al mașinii ''tom'' la care 
-vreți ca fișierul să fie copiat. În cazul exemplului de mai sus, ''.'' ține loc de **directorul curent** 
-care va fi ''/home/student''.
+<note important>
+După construcția ''student@192.168.56.101'' urmează '':''. Așa specificăm unde pe mașina ''tom'' să fie copiat fișierul ''file.txt''. Dupa '':'' treceți calea din sistemul de fișiere al mașinii ''tom'' la care vreți ca fișierul să fie copiat. În cazul exemplului de mai sus, nu avem nimic, ceea ce înseamnă că se copiază fișierul în **directorul curent** care va fi ''/home/student''.
 </note>
 
-Ca să ne asigurăm că fișierul a fost transmis corect, inspectăm mașina ''tom'':
-
+Apoi pe stația tom verificăm existența fișierului:
 <code bash>
-student@tom:~$ ls
-file.txt  uso.git  utils  vm-actions-log.txt
+student@tom:~$ ls file.txt
+file.txt
 student@tom:~$ cat file.txt
 my first scp
 </code>
 
-- Pe mașina virtuală ''jerry'' creați un fișier la calea ''/home/student''. Fiind pe mașina fizică, copiați acest fișier în directorul ''~/uso/labs/05-cli/support/need-to-know''.(Hint: fiți atenți sintaxa utilitarului ''scp'')
-- Copiați același fișier de mai devreme, ''file.txt'' de pe mașina fizică pe ''fep.grid.pub.ro''. Username-ul și parola sunt cele de pe platforma ''acs.curs.pub.ro''. (Hint: aici nu mai avem nevoie de adresa IP pentru ''fep.grid.pub.ro'')
+**[3a]** Pe mașina virtuală ''jerry'' creați un fișier la calea ''/home/student''. Copiați acest fișier pe mașina virtuală ''tom'' și verificați că a avut loc copierea.
 
-Conectați-vă prin ''ssh'' pe ''fep.grid.pub.ro''. Vrem să aflăm utilizatorii care sunt contectați pe ''fep.grid.pub.ro''. 
-Pentru a face acest lucru vom folosi comanda ''who''.
+**[3b]** Fiind pe sistemul fizic, copiați fișierul de mai sus **de pe** mașina virtuală ''jerry'' în directorul ''~/uso.git/labs/08-net/''.
 
+**[3c]** Fiind pe sistemul fizic, copiați același fișier de mai devreme de pe mașina fizică pe ''fep.grid.pub.ro'', folosind contul vostru de pe [[http://acs.curs.pub.ro|acs.curs.pub.ro]].
+
+
+==== 4. Comenzi prin SSH ====
+
+În mod obișnuit, folosirea comenzii ''ssh'' duce la deschiderea unui shell la distanță (//remote shell//) unde putem rula comenzi. Dacă ne interesează, putem însă rula direct comenzi fără a mai deschide un shell, dând un parametru comenzii ''ssh'', ca în exemplele de mai jos:
 <code bash>
-student@uso:~$ ssh mr_perfect.perfection@fep.grid.pub.ro
-
-* IMPORTANT - PLEASE READ CAREFULLY:
-* Spatiul de stocare a ajuns la limita maxima din cauza neglijentei dvoastra. Acesta nu este un spatiu de stocare personal.
-  In data de 1.08.2018 se vor arhiva toate datele iar pe 1.09.2018 se vor sterge.
-* If you are using GPU computing and TensorFlow technology, please use CUDA_VISIBLE_DEVICES
-  to limit the number of GPUs. Otherwise, you will be banned.
-* Your sessions will be disconnected automatically after 60min on inactivity.
-  You can use "-o ServerAliveInterval 10" option if you need longer sessions.*
-mr_perfect.perfection@fep.grid.pub.ro's password: 
-Last login: Tue Nov 20 22:23:44 2018 from 192.168.6.10
--bash: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
-[mr_perfect.perfection@fep7-1 ~]$ who
-mihai.niculescu1606 pts/0        Nov 20 20:03 (192.168.6.10)
-mihai.niculescu1606 pts/1        Nov 20 20:01 (192.168.6.10)
-george.pirtoaca pts/2        Nov 20 21:20 (192.168.6.10)
-mihai.niculescu1606 pts/3        Nov 20 20:05 (192.168.6.10)
-liviu.muresanu pts/10       Nov 20 22:04 (192.168.6.10)
-mihai.niculescu1606 pts/14       Nov 20 19:05 (192.168.6.10)
-laurentiu.stefan97 pts/15       Nov 20 20:55 (192.168.6.10)
-bianca_mihaela.cauc pts/18       Nov 20 21:47 (192.168.6.10)
-andrei.stancu1608 pts/19       Nov 20 22:05 (192.168.6.10)
-cstaniloiu pts/20       Nov 20 22:14 (192.168.6.10)
-liza_elena.babu pts/21       Nov 20 22:23 (192.168.6.10)
-gheorghe.visinescu pts/23       Nov 20 22:16 (192.168.6.10)
-tudor_antonio.barbu pts/25       Nov 20 22:24 (192.168.6.10)
-root     pts/79       Nov 20 18:19 (192.168.6.41)
+razvan@jotunn:~$ ssh -l student 192.168.56.101 hostname
+student@192.168.56.101's password:
+tom
+razvan@jotunn:~$ ssh -l student 192.168.56.101 df -h
+student@192.168.56.101's password:
+Filesystem      Size  Used Avail Use% Mounted on
+udev            211M     0  211M   0% /dev
+tmpfs            49M  956K   48M   2% /run
+/dev/sda2       9.8G  5.0G  4.4G  54% /
+tmpfs           241M     0  241M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           241M     0  241M   0% /sys/fs/cgroup
+/dev/loop0       88M   88M     0 100% /snap/core/5328
+/dev/loop1       87M   87M     0 100% /snap/core/4917
+/dev/loop2       89M   89M     0 100% /snap/core/5897
+tmpfs            49M     0   49M   0% /run/user/1000
 </code>
+În cele două exemple de mai sus am rulat pe mașina virtuală **tom**, fără a deschide un shell la distanță, comanda ''hostname'' (care afișează numele sistemului) și comanda ''df -h'' (care afișează) un sumar al sistemelor de fișiere montate.
 
-Folosim comanda ''exit'' pentru a ne deconecta.
+**[4a]** Afișați informații despre utilizatorul ''student'' pe mașinile virtuale ''tom'' și ''jerry'' folosind comanda ''finger'' fără a deschide un shell la distanță.
 
- ==== DNS ====
+**[4b]** Creați pe mașina virtuală ''jerry'' un fișier numit ''subzero.txt'' având conținutul ''saibot''. Folosiți conexiune la distanță fără a deschide un shell, comanda ''echo'' și redirectare. Plasați comanda între ghilimele ca să fie transmisă complet la distanță; altfel, redirectarea va fi făcută pe sistemul local. Verificați conținutul fișierului ''subzero.txt'' creat la distanță folosind comanda ''cat'' fără a deschide un shell la distanță.
 
-Ne propunem să aflăm serverul DNS al sistemului fizic. Pentru a obține această informație inspectăm fișierul 
-''/etc/resolv.conf''.
+**[4c]** Porniți câte o sesiune shell la distanță către mașina virtuală ''tom'' și către mașina virtuală ''jerry''. Apoi folosiți în acel shell comanda ''reboot'' pentru a reporni sistemul; este modul de repornire de la distanță.
 
-<code bash>
-student@uso:~$ cat /etc/resolv.conf
-# This file is managed by man:systemd-resolved(8). Do not edit.
-#
-# This is a dynamic resolv.conf file for connecting local clients to the
-# internal DNS stub resolver of systemd-resolved. This file lists all
-# configured search domains.
-#
-# Run "systemd-resolve --status" to see details about the uplink DNS servers
-# currently in use.
-#
-# Third party programs must not access this file directly, but only through the
-# symlink at /etc/resolv.conf. To manage man:resolv.conf(5) in a different way,
-# replace this symlink by a static file or a different symlink.
-#
-# See man:systemd-resolved.service(8) for details about the supported modes of
-# operation for /etc/resolv.conf.
 
-nameserver 192.168.255.1
-search BlinkAP
-</code>
+==== 5. Refacere configurație ====
 
-Intrarea ''nameserver 141.85.0.82'' ne arată ca DNS-ul sistemului nostru are adresa IP ''141.85.0.82''. 
-Putem folosi comanda ''nslookup'' să 
-vedem că adresa este într-adevăr cea din fișierul editat mai devreme.
-
-<code bash>
-student@uso:~ $ nslookup www.google.com
-Server:		192.168.255.1
-Address:	192.168.255.1#53
- 
-Non-authoritative answer:
-Name:	www.google.com
-Address: 172.217.19.68
-</code>
-
-- Aduceți modificări asupra fișierului ''/etc/resolv.conf'' în așa fel încât adresa DNS-ului să fie ''8.8.8.8''. Verificați faptul că adresa serverului DNS a fost modificată. (Hint: aveți nevoie de drepturi privilegiate să modificați fișierul ''/etc/resolv.conf'')
-- Folosind comanda ''host'', aflați adresa IP pentru ''www.facebook.com''.
-- Rulați scriptul ''script.sh'' de la calea ''~/uso/labs/05-cli/support/need-to-know''. Încercați să reluați exercițiul 2. Ce se întâmplă? Inspectați sistemul și rezolvați problema.
+După repornirea celor două sisteme s-a pierdut configurația interfețelor ''enp0s8'' pe mașinile virtuale **tom** și **jerry**. Folosiți ''dhclient'' pentru a reface configurația pentru cele două interfețe. Apoi creați câte o conexiune SSH de pe sistemul fizic către fiecare dintre cele două mașini virtuale.

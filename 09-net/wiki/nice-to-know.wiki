@@ -1,10 +1,121 @@
 ===== Nice to Know =====
 
-==== 1. WHOIS ====
+==== 1. Configurare statică adrese IP ====
+
+Mașinile virtuale ''tom'' și ''jerry'' dispun de o interfață numită ''enp0s9'' care este o legătură doar între cele două sisteme. Vom configura această interfață cu adresele ''1.1.1.1/24'' (''tom'') și ''1.1.1.2/24'' (''jerry'') ca mai jos:
+
+<code bash>
+student@tom:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 08:00:27:f6:24:73 brd ff:ff:ff:ff:ff:ff
+student@tom:~$ sudo ip a a 1.1.1.1/24 dev enp0s9
+[sudo] password for student:
+student@tom:~$ sudo ip link set dev enp0s9 up
+student@tom:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:f6:24:73 brd ff:ff:ff:ff:ff:ff
+    inet 1.1.1.1/24 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fef6:2473/64 scope link
+       valid_lft forever preferred_lft forever
+
+student@jerry:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 08:00:27:e7:a2:26 brd ff:ff:ff:ff:ff:ff
+student@jerry:~$ sudo ip a a 1.1.1.2/24 dev enp0s9
+[sudo] password for student:
+student@jerry:~$ sudo ip l s dev enp0s9 up
+student@jerry:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:e7:a2:26 brd ff:ff:ff:ff:ff:ff
+    inet 1.1.1.2/24 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fee7:a226/64 scope link
+       valid_lft forever preferred_lft forever
+</code>
+
+Mai sus, pentru fiecare stație am văzut că interfața nu are adresă IP și este dezactivată (''state DOWN'') (folosind comanda ''ip a s'' de la ''ip address show''). Apoi am adăugat adresă IP (folosind comanda ''ip a a'' de la ''ip address add'') și apoi am activat interfața (folosind comanda ''ip l s'' de la ''ip link set''). Apoi am afișat din nou parametrii interfeței (folosind tot ''ip a s'') și am văzut că interfața are acum adresă IP și că este activată (''state UP'').
+
+După aceasta verificăm de pe fiecare stație conectivitatea la celelaltă stație folosind comanda ''ping'':
+<code>
+student@tom:~$ ping 1.1.1.2
+PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.
+64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.530 ms
+64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.945 ms
+^C
+--- 1.1.1.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1016ms
+rtt min/avg/max/mdev = 0.530/0.737/0.945/0.209 ms
+
+student@jerry:~$ ping 1.1.1.1
+PING 1.1.1.1 (1.1.1.1) 56(84) bytes of data.
+64 bytes from 1.1.1.1: icmp_seq=1 ttl=64 time=0.737 ms
+64 bytes from 1.1.1.1: icmp_seq=2 ttl=64 time=0.395 ms
+^C
+--- 1.1.1.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.395/0.566/0.737/0.171 ms
+</code>
+
+Pe o interfață pot fi adăugate mai multe adrese IP.
+
+**[1a]** Adăugați pe interfața ''enp0s9'' de pe sistemele ''tom'' și ''jerry'', respectiv adresele IP ''10.11.12.13/16'' și ''10.11.14.15/16''. Folosiți comanda ''ip a s enp0s9'' pentru verificare. Verificați conectivitatea între cele două sisteme folosind cele două adrese IP nou introduse.
+
+**[1b]** Faceți //flush// și dezactivați interfața ''enp0s9'' pe sistemele ''tom'' și ''jerry''. Folosiți comanda ''ip a s enp0s9'' pentru verificare.
+
+**[1c]** Adăugați pe interfața ''enp0s9'' de pe sistemele ''tom'' și ''jerry'', respectiv adresele IP ''192.168.69.42/28'' și ''192.168.69.43/28''. Folosiți comanda ''ip a s enp0s9'' pentru verificare. Verificați conectivitatea între cele două sisteme folosind cele două adrese IP nou introduse.
+
+
+==== 2. Scripturi pentru statistici rețea ====
+
+Vrem să creăm niște scripturi pentru lucrul cu rețeaua.
+
+Pe stația fizică, creați scriptul ''get_ifs_mac'' care să aibă conținutul de mai jos:
+
+<file bash get_ifs_mac>
+#!/bin/bash
+
+interfaces=$(ls /sys/class/net)
+
+echo "interface,mac_address"
+for i in $interfaces; do
+    mac_address=$(cat /sys/class/net/"$i"/address)
+    echo "$i,$mac_address"
+done
+</file>
+Scriptul afișează, pentru toate interfețele sistemului, adresa MAC (numită și adresă hardware sau adresă fizică) în format CSV (numele interfeței și adresa MAC separate prin virgulă).
+
+Urmăriți scriptul de mai sus și înțelegeți ce face.
+
+Creați scriptul ''get_ifs_mac'' folosind conținutul de mai sus (fie îl descărcați, fie dați copy-paste) și acordați-i permisiuni de execuție:
+<code bash>
+student@uso:~$ chmod +x get_ifs_mac
+</code>
+
+Apoi rulați scriptul și veți obține un rezultat de forma:
+<code bash>
+student@tom:~$ ./get_if_mac
+interface,mac_address
+enp0s3,08:00:27:4a:7d:2c
+enp0s8,08:00:27:71:db:21
+enp0s9,08:00:27:f6:24:73
+lo,00:00:00:00:00:00
+</code>
+
+**[2a]** Pornind de la scriptul ''get_ifs_mac'' creați scriptul ''get_ifs_packets'' care afișează în format CSV, pentru fiecare interfață, numărul de pachete primite (''rx'') și numărul de pachete transmise (''tx'')
+
+<note tip>
+Găsiți, de exemplu, numărul de pachete primite, respectiv transmise pe/de pe interfața ''enp0s3'' în fișierele ''/sys/class/net/enp0s3/statistics/rx_packets'' și ''/sys/class/net/enp0s3/statistics/tx_packets''.
+</note>
+
+**[2b]** Actualizați scriptul ''get_ifs_mac'' pentru a afișa informațiile de mai sus sortate **numeric** după numărul de pachete primite.
+
+
+==== 3. whois ====
 
 ''whois'' este o comandă de Linux folosită pentru a afla informați despre orice domeniu sau adresă IP din Internet.
 
-De exemplu dacă vrem să aflăm cine deține adresa IP ''141.85.241.51'', folosim comanda ''whois'' urmată de IP:
+De exemplu dacă vrem să aflăm cine deține adresa IP ''141.85.241.51'', folosim comanda ''whois'' urmată de adresa IP:
 
 <code bash>
 student@uso:~$ whois 141.85.241.51
@@ -18,7 +129,7 @@ org-name:       Politehnica University of Bucharest
 ...
 </code>
 
-Din outputul obținut aflăm că adresa IP aparține Universității Politehnica din București, iar dacă derulați mai jos vedeți și detaliile persoanelor de contact.
+Din outputul obținut aflăm că adresa IP aparține Universității POLITEHNICA din București, iar dacă derulați mai jos vedeți și detaliile persoanelor de contact.
 
 Putem să obține informații și despre domenii, cum ar fi: organizația, datele de contact ale administratorilor, domain server, data la care a fost creat, ultima dată când a fost actualizat, etc.:
 
@@ -35,10 +146,13 @@ source:       IANA
 ...
 </code>
 
-==== 2. Autentificarea fără parolă ====
+
+==== 4. Autentificare SSH fără parolă ====
 
 Până în acest moment ați folosit protocolul ''SSH'' pentru a vă conecta remote de nenumărate ori.
+
 ''SSH'' funcționează în modul ''client-server'', unde mașinile voastre sunt clienții iar pe mașina pe care doriți să vă autentificați există un server SSH (''daemonul sshd'') care acceptă conexiuni pe portul 22.
+
 Modul implicit de autentificare, pe care l-ați folosit până în acest moment, este cu parola utilizatorului cu care vreți să vă conectați la server.
 
 Dezavantajele acestei metode sunt:
@@ -47,9 +161,9 @@ Dezavantajele acestei metode sunt:
 
 Metoda recomandată pentru autentificarea clientului la serverul SSH este folosirea unei perechi de chei publice și private.
 
-Pentru a realiza o conexiune SSH fără parolă de pe mașina locală pe o mașină remote (în cazul nostru mașina ''tom''), trebuie să:
+Pentru a realiza o conexiune SSH fără parolă de pe sistemul fizic pe o mașină remote (în cazul nostru mașina ''tom''), trebuie să urmați pașii de mai jos:
 
-1. Generați o pereche de chei publice și private pe masina locală:
+1. Generați o pereche de chei publice și private pe sistemul fizic:
 
 <code bash>
 student@uso:~$ ssh-keygen -t rsa
@@ -65,7 +179,7 @@ student@uso:~$ ls ~/.ssh/
 id_rsa  id_rsa.pub  known_hosts
 </code>
 
-2. Copiați cheia publică pe server:
+2. Copiați cheia publică pe sistemul ''tom'':
 
 <code bash>
 student@uso:~$ ssh-copy-id -i ~/.ssh/id_rsa.pub student@<IP-tom>
@@ -81,61 +195,63 @@ Citiți întotdeauna rezultatul comenzilor pe care le rulați. În acest exemplu
 student@uso:~$ ssh student@<IP-tom>
 </code>
 
-**[2a]** Acum că ați reușit să vă autentificați fără parolă pe mașina ''tom'', faceți același lucru și pe mașina vituală ''jerry''.
+**[4a]** Acum că ați reușit să vă autentificați fără parolă pe mașina ''tom'', faceți același lucru și pe mașina vituală ''jerry''.
 
-**[2b]** Conectați-vă prin SSH pe mașina ''tom'' de pe mașina ''jerry''. După cum vedeți, se cere parola utilizatorului. Realizați autentificarea fără parolă în ambele direcții pentru cele două mașini virtuale: ''tom'' și ''jerry''.
+**[4b]** Conectați-vă prin SSH pe mașina ''tom'' de pe mașina ''jerry''. După cum vedeți, se cere parola utilizatorului. Realizați autentificarea fără parolă în ambele direcții pentru cele două mașini virtuale: ''tom'' și ''jerry''.
 
-**[2c]** Conectați-vă fără parolă de pe mașina locală pe ''fep.grid.pub.ro''. Dacă ați generat deja o pereche de chei publică și privată pe mașina locală, este nevoie să generați alta?
+**[4c]** Conectați-vă fără parolă de pe sistemul fizic pe contul vostru de pe ''fep.grid.pub.ro''.
 
-==== 3. Hostname ====
 
-După cum știți, hostname-ul unei mașini se poate observa din prompt-ul terminalui. Acesta se mai poate obține folosind comanda ''hostname''.
-Pentru a schimba hostname-ul unei mașini folosiți aceeași comandă, urmată de noul hostname. Pentru a observa modificarea hostname-ului, deschideți alt terminal.
+==== 5. Hostname ====
 
+După cum știți, hostname-ul unei mașini se poate observa din prompt-ul terminalui. Acesta se mai poate obține folosind comanda ''hostnamectl''. După ce modificăm hostname-ului este nevoie de redeschiderea unei noi sesiuni de shell care se încarce noua configurație.
+
+În exemplul de mai jos schimbăm numele stației ''tom'' în ''spike'':
 <code bash>
-student@uso:~$ hostname <new_hostame>
+student@tom:~$ sudo hostnamectl set-hostname spike
+[sudo] password for student:
+student@tom:~$ logout
+
+[...]
+student@spike:~$
 </code>
+După ce ne-am deconectat, ne-am reconectat și acum noul hostname, vizibil în prompt, este ''spike''.
 
-**[3a]** Schimbați hostname-ul celor două mașini virtuale ''tom'' și ''jerry'' în ''cat'' și ''mouse''.
+**[5a]** Schimbați hostname-ul celor două mașini virtuale ''tom'' și ''jerry'' în ''rick'' și ''morty''.
 
-**[3b]** Realizați modificările necesare a.î. hostname-ul să fie persistent (să nu se piardă după repornirea mașinii).
+**[5b]** Dorim să rulăm comanda ''ping'' între mașinile virtuale ''tom'' și ''jerry'' folosind hostname-ul în loc de adresa IP.
+Pentru aceasta trebuie să instalați pachetul ''avahi-daemon''. Dacă ați instalat pachetul și e configurat corespunzător va merge ''ping tom.local'' și ''ping jerry.local'' (sau ''rick.local'' și ''morty.local'' pentru noile nume de stații).
 
-**[3c]** Dorim să rulăm comanda ''ping'' între mașinile virtuale ''tom'' și ''jerry'' folosind hostname-ul în loc de adresa IP.
-Pentru aceasta trebuie să instalați pachetul ''avahi-daemon''.
 
-<note tip>
-HINT: ping <hostname>.local
-</note>
-
-==== 4. SSH X11 forwarding ====
+==== 6. SSH X11 forwarding ====
 
 X11 forwarding este folosit pentru a accesa interfața grafică a unei mașini de la distanță, prin intermediul protocolului SSH.
 Pentru a funcționa, X11 forwarding trebuie să fie activat atât pe client cât și pe server.
 
 Pentru acest exercițiu trebuie să vă grupați în echipe de câte doi. Vă veți conecta la calculatorul colegului și veți rula programe cu interfață grafică (firefox, xeyes, etc.).
 
+Pentru a vă conecta la calculatorul unui coleg a cărui adresă o știți cu activarea X11 forwarding, rulați comanda de forma:
 <code bash>
 student@uso:~$ ssh -X <user>@<IP>
 </code>
 
-==== 5. Alias pentru conectare la un server SSH ====
+Apoi rulați comenzi cu interfață grafică ce vor rula pe sistemul colegului dar vor fi afișate pe sistemul vostru.
 
-Pentru a ușura conectarea prin SSH, se poate defini un alias care să înglobeze username, adresa serverului, port și diverse opțiuni.
-În cadrul aliasului se poate activa și X11 forwarding folosind opțiunea ''ForwardX11 yes''.
 
+==== 7. Captură de trafic de rețea. Wireshark ====
+
+Utilitarul Wireshark este un utilitar grafic pentru captură și inspecție de trafic de rețea. Îl porniți folosind ''sudo wireshark'' fie din linia de comandă fie folosind ''Alt+F2''.
+
+<note>
+Dacă nu există comanda ''wireshark'' va trebui să instalați utilitarul folosind comanda
 <code bash>
-student@uso:~$ cat ~/.ssh/config
-Host coleg
-    HostName <IP-coleg>
-    User student
-    XForward yes
+student@uso:~$ sudo apt install wireshark
 </code>
+</note>
 
-Putem folosi alias-ul ''server'' ca în exemplul următor:
+După ce porniți Wireshark activați, în interfața grafică, captura pe interfața de rețea principală (cea care asigură legătura la Internet). Apoi faceți conexiuni la diferite site-uri folosind un browser, sau folosiți ''ping'' sau folosiți comanda ''host'' pentru a genera trafic. Observați traficul capturat și prezentat grafic de Wireshark la nivel de pachet de date de rețea.
 
-<code bash>
-student@uso:~$ ssh coleg
-</code>
-
-**[5a]** Faceți modificările necesare a.î. să vă conectați prin SSH către cele două mașini virtuale folosind aliasuri în loc de numele de domeniu sau adresa IP.
-Pentru verificare testați folosind ''ssh tom'', respecitv ''ssh jerry''.
+Urmăriți informațiile de [[https://www.wireshark.org/docs/wsug_html_chunked/ChWorkDisplayFilterSection.html|aici]] și filtrați pachetele afișate după diferite metrici:
+  * Filtrați doar pachetele care au ca adresă IP sursă adresa IP a ''ocw.cs.pub.ro''.
+  * Filtrați doar pachetele HTTPS.
+  * Filtrați doar pachetele de tip ICMP (cele folosite de ping).
