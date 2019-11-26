@@ -54,11 +54,8 @@ student@uso:~/uso.git$ git rm --cached -r .
 student@uso:~/uso.git$ git reset --hard
 student@uso:~/uso.git$ git clean -f -d
 student@uso:~/uso.git$ git fetch origin
-student@uso:~/uso.git$ git checkout -b lab-08-net
-student@uso:~/uso.git$ git rebase origin/lab-08-net
+student@uso:~/uso.git$ git checkout -b master
+student@uso:~/uso.git$ git rebase origin/master
 </code>
-
-Dacă la a cincea comandă rulată (''git checkout -b lab-08-net'') primiți o eroare de forma ''fatal: A branch named 'lab-08-net' already exists.'', nu vă îngrijorați, nu e nici o problemă.
-</note>
 
 Hai să trecem la treburi de rețelistică!
