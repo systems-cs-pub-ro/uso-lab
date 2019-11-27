@@ -1,0 +1,1337 @@
+====== Rețelistică și Internet (all) ======
+
+===== Înainte de laborator =====
+
+==== Comenzi și fișiere folosite în laborator ====
+
+^ Comandă/fișier ^ Rol ^
+| ''ip'' | vizualizarea și configurarea parametrilor interfețelor de rețea |
+| ''ip a s'' | vizualizarea parametrilor interfețelor de rețea |
+| ''ping'' | verificarea conectivității până la o altă stație |
+| ''dhclient'' | configurarea automată a unei interfețe folosind DHCP |
+| ''host'' | interogarea serviciului DNS, aflarea adresei IP pentru un nume din Internet |
+| ''traceroute'' | vizualizarea căii în Internet până la o altă stație |
+| ''ip r s'' | vizualizarea tabelei de rutare (și a //default gateway//-ului) |
+| ''ssh'' | conexiune la distanță prin SSH |
+| ''scp'' | transfer la distanță |
+| ''ssh-keygen'' | generarea unei perechi de chei (privată și publică) pentru SSH |
+| ''ssh-copy-id'' | copierea unei chei publice SSH la distanță pentru autentificare |
+| ''~/.ssh/id_rsa'' | în mod uzual, cheia privată SSH (de tip RSA) |
+| ''~/.ssh/id_rsa.pub'' | în mod uzual, cheia publică SSH (de tip RSA) |
+| ''~/.ssh/authorized_keys'' | cheile publice pentru care se permite autentificarea de la distanță prin SSH |
+| ''~/.ssh/config'' | configurarea clientul SSH pentru utilizatorul curent |
+| ''wget'', ''curl'' | accces web la distanță și descărcare de fișiere prin HTTP |
+
+
+==== Mașini virtuale ====
+
+Pe parcursul laboratorului curent vom folosi două mașini virtuale VirtualBox care pot comunica între ele, numite ''tom'' și ''jerry''.
+
+Pe sistemele din sălile de laborator găsiți imaginea OVA a celor două mașini virtuale în directorul ''/mnt/unfrozen/uso/mv/''. De acolo importați în VirtualBox fișierul ''/mnt/unfrozen/uso/mv/USO_tom_jerry.ova''.
+
+Pentru a putea folosi mașinile virtuale va trebui să importați fișierul ''USO_tom_jerry.ova'' în VirtualBox. Pentru aceasta, în fereastra VirtualBox, accesați meniurile și opțiunile ''%%File -> Import Appliace%%'' și apoi alegeți calea către fișierul ''USO_tom_jerry.ova''. După ce ați declansat operația de importare, va dura câteva minute să fie importate mașinile virtuale. După ce ați importat mașinile virtuale, veți vedea în fereastra principală VirtualBox intrările ''USO_tom'' și ''USO_jerry''. Porniți ambele mașini virtuale dând click pe intrări și apoi folosind butonul ''Start''.
+
+După aceasta veți avea două ferestre VirtualBox, câte una pentru fiecare mașină virtuală. Mașinile virtuale ''tom'' și ''jerry'' au doar interfața în linia de comandă, **nu** au interfață grafică. Le veți identifica după prompt-ul de autentificare afișat, respectiv ''tom login:'' și ''jerry login:''. Vă puteți autentifica la mașinile virtuale folosind numele de utilizator ''student'' iar apoi parola ''student''.
+
+<note>
+Dacă **nu** aveți un sistem Linux pe care rulați VirtualBox, adică dacă rulați pe Windows sau macOS, aveți nevoie și de mașina virtuală ''uso''. Pentru a descărca fișierul ''USO_tom_jerry.ova'' care conține mașinile virtuale ''tom'' și ''jerry'' folosiți [[:uso:resurse:mv#masini_virtuale_carte_si_laborator|indicațiile de aici]].
+</note>
+
+<note tip>
+Pe ambele mașini virtuale (''tom'' și ''jerry''), contul de utilizator ''student'' are permisiuni de ''sudo''. Dacă doriți accesarea contului de utilizator ''root'' folosiți comanda
+<code>
+sudo su
+</code>
+iar la prompul de parolă scrieți parola utilizatorului ''student'', adică ''student''.
+</note>
+
+<note warning>
+În cazul în care vă apare eroarea ''Could not start the machine ... because the following physical network interfaces were not found:
+vboxnet0 (adapter 1)
+You can either change the machine's network settings or stop the machine.'', urmați pașii de mai jos:
+  - Accesați ''VirtualBox File'' -> ''Host Network Manager''.
+  - Apăsați butonul ''Create''.
+  - Va apărea opțiunea ''vboxnet0'', alegeți-o.
+  - Reporniți mașina virtuală.
+</note>
+
+=== Interfețe de rețea în mașinile virtuale ===
+
+Mașinile virtuale ''tom'' și ''jerry'' au interfața de //loopback// ''lo'' și trei interfețe de rețea, cu roluri dedicate:
+  * Interfața ''enp0s3'' este interfața pentru acces la Internet; această adresă este folosită pentru comunicarea mașinii virtuale.
+  * Interfața ''enp0s8'' este o interfață care leagă împreună într-o rețea mașinile virtuale ''tom'' și ''jerry'' cu sistemul gazdă și, dacă este cazul, cu mașina virtuală ''uso''. Această interfață nu are implicit adresă IP, adresa IP o vom configura automat prin DHCP după pornirea mașinii virtuale folosind comanda<code>
+sudo dhclient enp0s8
+</code> Vom face această configurare mai târziu în laborator.
+  * Interfața ''enp0s9'' este o interfață care leagă împreună într-o rețea privată mașinile virtuale ''tom'' și ''jerry''. Această interfață **nu** poate fi fconfigurată prin DHCP. Vom folosi doar configurare statică, la partea [[:uso:laboratoare:new:08-net:get-a-life]].
+
+
+==== Folosire Git pentru laborator ====
+
+Pe parcursul laboratoarelor, pentru descărcarea fișierelor necesare laboratorului, vom folosi Git. Git este un sistem de controlul versiunii și e folosit pentru versionarea codului în proiectele software mari. Celor interesați să aprofundeze conceptele din spatele comenzii ''git'', precum și utilizări avansate, le recomandăm cursul practic online de pe [[http://gitimmersion.com/|gitimmersion]].
+
+Informațiile despre laboratorul de USO se găsesc în [[https://github.com/systems-cs-pub-ro/uso-lab|acest repository Git]].
+
+<note important>
+Pentru a pregăti infrastructura de laborator rulați comenzile de mai jos într-un terminal. Deschideți un terminal folosind combinația de taste ''Ctrl+Alt+t''. În listarea de mai jos ''student@uso:~$'' este promptul unde introduceți comenzile, pe acela nu-l tastați.
+
+<code>
+student@uso:~$ cd ~
+student@uso:~$ git clone https://github.com/systems-cs-pub-ro/uso-lab.git
+</code>
+
+</note>
+
+Hai să trecem la treburi de rețelistică!
+
+
+===== Concepte =====
+
+==== Identificarea unei stații în Internet ====
+
+=== Introducere ===
+
+Mai înainte de toate, ca să putem vorbi despre identificarea unei stații în Internet, trebuie să dăm o definiție
+scurtă Internetului. Pentru asta, trebuie să știm ce este o stație, ce este legătura dintre stații și ce este o rețea.
+
+Când ne referim la o ''stație'', ne gândim la un calculator, la un telefon mobil, sau la orice dispozitiv electronic care are
+o placă de rețea și care se poate conecta la Internet.
+
+Dacă vorbim despre legătura dintre 2 stații, ne putem referi la 2 lucruri:
+    - legătura fizică dintre acestea (prin fir, wireless)
+    - legătura logică dintre ele (conexiune)
+
+Știm ce este o stație, știm că se poate conecta la o altă stație, deci știm să definim o ''rețea''. **Rețeaua** reprezintă o mulțime
+de stații (noduri) interconectate. Putem spune că dacă interconectăm 2 rețele formăm o rețea mai mare.
+Mergând pe aceeași logică mai departe, ajungem să definim Internetul (INTERconected NETworks)
+drept totalitatea rețelelor interconectate de pe planetă.
+
+Pe planetă exista miliarde de dispozitive conectate la Internet zi de zi, și, așa cum identificăm un om prin nume, cod numeric
+personal, loc de muncă, putem identifica și stațiile în mod unic. Astfel, un mesaj trimis pe o rețea de socializare către
+un anumit prieten nu va ajunge niciodată unde nu trebuie (cel puțin în teorie :D ).
+
+=== Adresă IP ===
+
+Cea mai simpla modalitate de identificare a unei stații în Internet ar fi să numerotăm fiecare stație începând de la 1. Cu
+siguranță această idee ar putea funcționa (în teorie) însă trebuie să avem în vedere că resursele de care dispunem sunt limitate
+(viteza), iar această alegere este nefavorabilă în cazul comunicării între stații (identificarea unei alte stații ar dura mult prea
+mult).
+
+În anul 1969 a fost inventat IP (protocolul internet), folosit și în ziua de astăzi. Practic, IP-ul unei stații este un număr, pe
+''32 de biți'' în cazul protocolului ''IPv4'' sau pe ''128 de biți'' în cazul protocolului ''IPv6''.
+Uzual, adresele IP sunt scrise sub forma restransă. În cazul IPv4, adresa IP este reprezentată de 4 numere în baza zecimală, cu valori
+între 0 și 255, separate
+prin ''.'', (ex: ''192.168.0.14''), iar în cazul IPv6, adresa IP este reprezentată de 8 grupuri numere în baza hexazecimală, cu valori
+cuprinse între ''0000'' și ''ffff'', separate prin
+'':'' (ex: ''2001:0db8:85a3:0000:0000:8a2e:0370:7334'').
+
+<note tip>
+Pentru IPv4, **range-ul** de IP-uri este ''0.0.0.0 - 255.255.255.255'', iar pentru IPv6 ''0000:0000:0000:0000:0000:0000:0000:0000 -
+fff:ffff:ffff:ffff:ffff:ffff:ffff:ffff''
+</note>
+
+Să luăm drept exemplu protocolul IPv4. Se pune întrebarea, cum putem identifica un număr atât de mare de stații având la dispoziție
+doar 32 de biți. Vom lămuri acest aspect la o secțiune de mai jos. Momentan, trebuie să
+reținem că IP-ul este o formă de a identifica o stație în Internet.
+
+=== Numele de domeniu ===
+
+Știm că o stație se identifică prin IP-ul ''216.58.201.78''. Această formă de adresare nu este întocmai intuitivă, putând asemăna
+această formă de identificare a unei stații cu identificarea un om după codul numeric personal. Pe langă adresa IP a unei stații,
+putem avea un ''nume de domeniu'' pentru aceasta.
+Frecvent, în browser întroducem un URL pentru a deschide o pagină pe Internet, care este "înlocuitor" al IP-ului. Încercați să
+căutați în browser pagina ''http://216.58.201.78'' și observați se întâmplă.
+
+=== DNS ===
+
+DNS-ul (Domain Name Server), așa cum sugerează și numele, este un sistem care se ocupă de translatarea adreselor IP în nume și
+viceversa. Așadar, faptul pentru care ''https://www.google.com'' și ''http://216.58.201.78'' sunt echivalente este existența
+unui server de DNS. Acesta poate răspune la întrebările:
+    - Cine este ''216.58.201.78'' ?
+    - Ce adresă IP are ''www.google.com''?
+
+==== Tipuri de adrese IP ====
+
+Ne-am pus problema mai devreme cum putem folosi numere pe 32 de biți pentru a identifica toate stațiile din Internet. Este evident
+că **pot exista** mai mult de 2^32 stații conectate simultan la Internet, așadar, ne trebuie o modalitate de a le identifica pe toate
+în mod **unic**. Pentru a rezolva această insuficiență, protocolul IP sare în ajutor prin separarea adreselor IP în 2 categorii:
+private și publice.
+
+=== Adrese IP publice ===
+
+Adresele IP publice sunt alocate în general unui server (email, web, you name it) și permit accesarea directă a acestuia în Internet.
+Adresele IP publice sunt unice la nivel global și pot fi alocate unui sigur host care ulterior va fi identificat prin această adresă
+IP.
+
+=== Adrese IP private ===
+
+Adresele private sunt cele care salvează situația. Proprietatea de ''unicitate'' a unei adrese IP private dispare, cel puțin la
+nivel global. Adresele IP private sunt adrese alocate local/privat stațiilor dintr-o rețea (mai mică) și sunt folosite drept identificatori
+unici **doar în cadrul acelei rețele**. În general, dispozitivele pe care le folosim (laptop-uri, telefoane mobile) au alocate o
+adresă IP privată în cadrul rețelei din care face parte. Dacă spre exemplu, un telefon este conectat la o rețea acum, el va avea
+o adresă IP unică alocată în cadrul acelei rețele, iar dacă se deconectează de la această și ulterior se conectează la alta, acesta
+va avea cel mai probabil o adresă IP diferită față de cea anterioară (se poate ca **pur întâmplător** să fie aceeași). Expunerea în
+Internet nu se face prin această adresă IP privată, această problemă fiind rezolvată de router.
+
+<note tip>
+IPv4 începe să devină insuficient și el, așa că ușor, ușor, se face trecerea spre protocolul IPv6.
+</note>
+
+==== Conectarea la Internet ====
+=== Adresă IP ===
+Am văzut mai devreme că identificăm o stație în Internet după adresa IP a acestia. Așadar, ca o stație să poată stabili
+o conexiune la Internet, trebuie să aibă asociată o adresă IP cu care poate fi identificat în cadrul rețelei din care
+face parte.
+=== Mască de rețea ===
+Dacă ne uităm la adresele IP private asociate unor stații din rețea, vom observa că acestea au primii ''N'' biți comuni,
+adică sunt biții identificatori ai rețelei, iar restul până la 32 sunt specifici stației. Acest număr ''N'' este variabil
+în funcție de dimensiunea rețelei, iar pentru a identifica rapid care este adresa de rețea avem nevoie de o **mască de
+rețea**. Așa cum sugerează și numele, masca de rețea nu este altceva decât o mască de biți cu proprietatea că primii ''N''
+biți au valoarea 1, iar restul 0. Vom folosi această mască de rețea pentru a identifica adresa de rețea făcând operația
+de ''și logic'' între ea și o adresă IP din rețea.
+Putem întâlni masca de rețea sub 2 forme, fie reprezentată sub forma unei adrese IP (de exemplu, masca de rețea
+''255.255.255.0'' este una validă, pe când ''255.255.255.1'' nu), fie sub forma ''/N'', unde ''N'' reprezintă numărul de
+biți care sunt specifici rețelei (de exemplu, putem întâlni ''192.168.0.14/16'', iar în acest caz ne este sugerat faptul că primii
+16 biți sunt ''biții de rețea'').
+=== Default Gateway ===
+De cele mai multe ori vrem ca o stație să comunice cu o altă stație aflată într-o altă rețea. Pentru a face posibil acest
+lucru, avem nevoie să setăm un ''default gateway'' pentru fiecare stație. Într-o explicație largă, default gateway-ul este
+adresa IP a interfeței routerului la care este conectată respectiva stație. Astfel, comunicarea către exteriorul rețelei de
+la această stație va merge pe acea cale. Default gateway-ul trebuie să fie o adresă IP din cadrul aceleiași rețele.
+=== DHCP ===
+Adresă IP, mască de rețea, default gateway. Acestea sunt informațiile necesare pentru ca o stație să poată stabili conexiuni
+cu orice altă stație din Internet. Această configurație poate fi făcută manual, de către un utilizator, dar de cele mai multe
+ori se preferă o configurație automată cu ajutorul protocolului ''DHCP (Dynamic Host Configuration Protocol)''. Configurările
+obișnuite care se obțin prin DHCP sunt: adresa IP și masca de rețea, default gateway, precum și server DNS.
+
+==== Probleme de conectivitate ====
+Cea mai frecventă problemă care apare în cadrul Internetului este, evident, lipsa de conectivitate la Internet. Pentru a testa
+conectivitatea la Internet
+a unei stații folosim comanda ''ping''. Comanda primește ca argument un IP sau un nume de domeniu. Dacă vrem să verificăm dacă
+avem conexiune
+la Internet putem da comanda ''ping 8.8.8.8'' (adresa IP ''8.8.8.8'' este una dintre adresele IP folosite de Google).
+''ping'' ne poate spune doar dacă avem sau nu conexiune la Internet, dar nu și care este motivul pentru care nu avem conexiune.
+În continuare, vom prezenta cele mai frecvente greșeli care duc la lipsa de conectivitate.
+
+=== Gateway picat sau greșit ===
+Așa cum am văzut mai devreme, default gateway-ul este punctul prin care o stație stabilește conexiuni cu exteriorul rețelei din
+care face parte. Se poate întâmpla ca interfața de rețea a routerului să nu fie ridicată,
+caz în care nu exista o cale de ieșire în Internet.
+
+O altă problemă care poate apărea în această zona este configurarea greșită a default gateway-ului, fie adresa IP a interfeței
+este incorectă (nu face parte din rețea), fie o stație are o configurație greșită în ceea ce privește default gateway-ului.
+
+=== Firewall ===
+Firewall-ul este o modalitate de a securiza o stație din rețea. Mai exact, firewall-ul are rolul de a ține evidența conexiunii
+calculatorului, analizează conexiunea și decide dacă va permite conexiunea sau nu în funcție de filtrele care sunt setate.
+Așadar, firewall-ul poate bloca traficul de date spre si dinspre rețea, acest lucru putând duce la lipsa de conexiune.
+
+=== Adresă IP configurată greșit ===
+Atunci când o stație vrea să stabilească o conexiune, fie în cadrul rețelei, fie cu o altă stație din exterior, aceasta trebuie
+să aibă o configurație corectă în ceea ce privește adresa IP. Dacă din greșeală unei stații îi este setată o adresă IP care nu
+face parte din range-ul de adrese IP al rețele coordonate de router, atunci nu va putea crea o conexiune cu niciuna dintre
+stațiile din cadrul rețelei.
+
+=== DNS picat sau greșit ===
+Am observat mai devreme că serverul de DNS are rolul de a asocia adrese IP cu nume pentru identificare mai intuitivă a stațiilor.
+O configurație greșită a acestuia este un indicator al unei probleme. Se poate întâmpla ca ''ping 216.58.201.78'' să funcționeze,
+dar ''ping www.google.com'' să nu funcționeze, caz în care știm că există o problemă cu serverul de DNS.
+
+==== Servicii de rețea ====
+=== Modelul client-server ===
+În general, orice serviciu de rețea se bazează pe modelul client-server.
+În cea mai simplă definiție, un server este un program capabil să primească cereri de la alte stații din rețea și oferă acestora
+un serviciu.
+
+Clientul este un program care este capabil să efectueze cereri către un server și care știe să interpreteze răspunsul
+primit de la acesta.
+
+=== Tipuri de servicii ===
+Există mai multe tipuri de servicii de rețea, cele mai importante fiind cele enumerate mai jos.
+=== Conexiune la distanță ===
+=== Telnet ===
+Telnet (TELetype NETwork) este un serviciu de tip client-server. In mod implicit nu există nicio diferență între
+resursele disponibile unui utilizator ce rulează un interpretor local și unul ce rulează prin telnet. Pentru a iniția
+o conexiune folosim comanda telnet trebuie să specificăm adresa stației unde dorim să ne conectăm și pe această stație
+trebuie să ruleze un server de telnet.
+=== SSH ===
+SSH (Secure Shell) este un serviciu de acces la distanță securizat. Funcționează similar cu telnet dar, spre deosebire
+de acesta, toată comunicația este criptată. Din această cauză este serviciul pe care îl veți folosi cel mai des atunci
+când va trebui să lucrați pe o stație la distanță. Comanda pentru a iniția o conexiune este ''ssh''. Ea primeste un
+argument de forma ''user@host'', unde ''user'' este numele utilizatorului drept care dorim să ne autentificăm și
+''host'' este adresa stației pe care dorim să ne autentificăm.
+=== Transferul de fișiere securizat ===
+Un serviciu de rețea util pentru orice utilizator este transferul de fișiere. În cadrul unei rețele, există posibilitatea
+transmiterii de fișiere între stații folosind utilitarul ''scp''.
+SCP (Secure CoPy) este un utilitar ce permite transferul de fișiere între stațiile din rețea. El folosește ssh pentru
+a transfera datele deoarece acesta oferă deja suport pentru autentificare și criptare. Pentru a putea fi folosit pe
+stația remote trebuie să ruleze un server ssh.
+=== Email - Poșta electronică ===
+Email-ul este o metodă de compunere, transmitere și recepție de mesaje online. Pentru livrarea mesajelor se folosește
+un mecanism de adresare care are nevoie de 2 informații:
+- numele din Internet (rezolvat de DNS)
+- numele utilizatorului
+Cel mai important protocol folosit în transmiterea mesajelor electronice este ''SMTP (Simple Mail Transfer Protocol)''.
+Acest protocol permite preluarea mesajelor de la clienți și transmiterea lor către server. Pentru a realiza operațiunea
+inversă, cele mai utilizate protocoale sunt ''IMAP (Internet Message Acces Protocol)'' și ''POP3 (Post Office Protocol
+version 3)''.
+=== Serviciul web ===
+World Wide Web (WWW) este probabil cel mai utilizat și cel mai cunoscut serviciu din Internet și este format din
+totalitatea documentelor și informaților de tip ''hipertext'' legate între ele, care pot fi accesate prin
+Internet.
+
+== Protocolul HTTP ==
+Hypertext Transfer Protocol (HTTP) este cel mai utilizat protocol pentru accesarea informațiilor și date
+pe Internet. La fel ca toate celelalte servicii de rețea, el se bazează pe modelul client-server, în care clientul
+este navigatorul care face o cerere către un server și așteaptă în schimb pagina (resursa) cerută.
+
+== Protocolul HTTPS ==
+Secure Hyper Text Transfer Protocol (HTTPS) nu este decât o îmbunătățire a protocolului HTTP, prin care datele
+transmise sunt criptate, astfel conexiunea la server este sigură. Să ne gândim la plățile online pe care le efectuăm
+cu toții tot mai des. Întotdeauna vrem ca datele noastre să nu fie expuse altor persoane în afara companiei către care
+efectuăm plata, deci cu siguranță vrem ca acele website-uri să folosească protocolul HTTPS în defavoarea HTTP.
+
+== Browser web ==
+Un navigator web (sau browser) este un program care ne permite să accesăm pagini din WWW. Majoritatea browserelor
+existente în ziua de azi vin cu funcții utile pentru utilizator cum ar fi posibilitatea instalării unui ad-blocker,
+păstrarea istoricului de navigări sau gestionare de bookmark-uri. De asemenea, majoritatea browserelor au adus îmbunătățiri
+în ceea ce privește performanța, și când vorbim de performanță ne referim în special la cantitatea de trafic de date
+utilizat. Majoritatea browserelor folosind un sistem de ''cache'' care devine util atunci când încărcam foarte des
+o pagină web. La prima încărcare se va face o cerere
+către server, iar după pagina respectivă va fi cache-uită. La o doua încărcare vom observa că pagina se va incărca mult
+mai rapid datorită "scutirii" pasului de cerere la server.
+
+Cele mai utilizate navigatoare din lume sunt ''Google Chrome'', ''Mozilla Firefox'', ''Safari'', ''Microsoft Internet
+Explorer'' și ''Microsoft Edge''.
+
+=== Accesul web în linia de comandă ===
+== Utilitarul wget ==
+Acest utilitar ofera suport pentru a descărca pagini și fișiere folosind două protocoale foarte comune, HTTP
+(HyperText Transfer Protocol) și FTP (File Transfer Protocol). Comanda pentru a-l folosi este wget, căreia îi
+vom transmite ca argument URL-ul (Universal Resource Locator) resursei pe care dorim să o descărcăm.
+== Utilitarul curl ==
+Asemănător cu ''wget'', utilitarul ''curl'' permite descărcarea de fișiere și pagini. Un avantaj major al
+utilitarului ''curl'' este faptul că acesta suportă mult mai multe protocoale decât ''wget''. Prezintă totuși și
+un dezavantaj față de ''wget'', și anume faptul că nu permite descărcarea recursivă.
+
+===== Demo =====
+
+Pentru început, vrem să ne acomodăm cu cele mai importante comenzi din linia de comandă pentru rețelistică și Internet. Vom folosi, pentru această secțiune **stația fizică**. Dacă lucrați acasă, veți folosi mașina virtuală ''uso''.
+
+==== 0. Vizualizarea adresei IP ====
+
+Pentru a afișa detalii despre ele putem folosi comanda ''ip address show''.
+
+<code bash>
+student@uso:~$ ip a s
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:49:1d:cd brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global dynamic noprefixroute enp0s3
+       valid_lft 83833sec preferred_lft 83833sec
+    inet6 fe80::c91e:5bc3:9aa3:5c1e/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:b1:36:c8 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.102/24 brd 192.168.56.255 scope global dynamic noprefixroute enp0s8
+       valid_lft 1039sec preferred_lft 1039sec
+    inet6 fe80::9927:3d0d:77b5:8ca9/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+</code>
+
+<note important>
+Output-ul de mai sus va diferi probabil pe sistemele din laborator. Pot să fie alte nume de interfețe, alt număr de interfețe sau alte adrese IP. Pentru noi contează aici folosirea comenzii ''ip address show'' pentru aflarea adresei și înțelegerea rezultatului rulării comenzii.
+</note>
+
+Observăm că mai sus 2 interfețe "fizice" de rețea ''enp0s3'' și ''enp0s8'', precum și interfața ''lo'' sau //loopback// (despre care vom vorbi în câteva momente). Fiecărei interfețe îi este asignată o adresă IP: ''10.0.2.15/24'' și ''192.168.56.102/24'', respetiv ''127.0.0.1/8'' pentru cea de loopback.
+
+//localhost// este un nume de host care înseamnă **acest calculator** și poate fi utilizat pentru accesarea propriilor servicii de rețea prin interfața să de ''loopback''. Practic, este un mod de a ne identifica pe noi înșine. Utilizarea interfeței de loopback evită placa de rețea. Mecanismul de loopback local poate fi util pentru testarea software-ului în timpul dezvoltării, independent de alte configurări de rețea. Spre exemplu, dacă avem un server web care rulează local, îl putem accesa la ''http://localhost/'' într-un browser.
+
+După cum am văzut și mai sus, localhost se rezolvă în adresa IP ''127.0.0.1''.
+
+<note important>
+In loc să scriem ''ip address show'', putem folosi prescurtarea ''ip a s''.
+</note>
+
+
+==== 1. Comanda ping ====
+
+Pentru a verifica dacă un anumit calculator poate fi accesat prin intermediul unei rețele de tip IP, putem folosi comanda ''ping''.
+
+Ne putem da ping nouă înșine folosind interfața de loopback, adică adresa IP ''127.0.0.1'', la fel ca în comanda de mai jos.
+
+<note important>
+În comanda de mai jos, și în alte comenzi, întrerupem rularea folosind combinația de taster ''Ctrl+c'' după 2-3 pachete trimise.
+</note>
+
+<code bash>
+student@uso:~$ ping 127.0.0.1
+PING 127.0.0.1 (127.0.0.1) 56(84) bytes of data.
+64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=0.021 ms
+64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=0.029 ms
+64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=0.031 ms
+^C
+--- 127.0.0.1 ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2051ms
+rtt min/avg/max/mdev = 0.021/0.027/0.031/0.004 ms
+</code>
+
+Deoarece stațiile din laborator sunt în aceeași rețea, putem da ping unui coleg. El va trebui să ruleze ''ip a s'' pe stația lui și să ne zică adresa sa IP. Să presupunem de exemplu că adresa IP a colegului este ''192.168.232.206''; vom rula comanda:
+<code bash>
+student@uso:~$ ping 192.168.232.206
+PING 192.168.232.206 (192.168.232.206) 56(84) bytes of data.
+64 bytes from 192.168.232.206: icmp_seq=1 ttl=64 time=0.022 ms
+64 bytes from 192.168.232.206: icmp_seq=2 ttl=64 time=0.029 ms
+^C
+--- 192.168.232.206 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1029ms
+rtt min/avg/max/mdev = 0.022/0.025/0.029/0.006 ms
+</code>
+
+Putem da ping la un nume din Internet, de exemplu ''google.ro''. Este de asemenea o metodă usoară de a determina adresa IP la care ''google.ro'' este rezolvat de către serverul de DNS.
+
+<code bash>
+student@uso:~$ ping google.ro
+PING google.ro (216.58.214.67) 56(84) bytes of data.
+64 bytes from fra15s10-in-f3.1e100.net (216.58.214.67): icmp_seq=1 ttl=128 time=31.6 ms
+64 bytes from fra15s10-in-f3.1e100.net (216.58.214.67): icmp_seq=2 ttl=128 time=31.3 ms
+[...]
+</code>
+
+
+==== 2. DNS ====
+
+Putem folosi comanda ''host'' pentru translatarea unui nume de domeniu în adresă IP și invers. Dacă dorim să facem translatarea în adresă IP a numelui ''google.ro'' vom folosi comanda:
+
+<code bash>
+student@uso:~$ host google.ro
+google.ro has address 216.58.207.35
+google.ro has IPv6 address 2a00:1450:4001:814::2003
+google.ro mail is handled by 50 alt4.aspmx.l.google.com.
+google.ro mail is handled by 30 alt2.aspmx.l.google.com.
+google.ro mail is handled by 20 alt1.aspmx.l.google.com.
+google.ro mail is handled by 10 aspmx.l.google.com.
+google.ro mail is handled by 40 alt3.aspmx.l.google.com.
+</code>
+
+Dacă vrem să știm cărui nume îi este asociat o adresă IP, folosim tot ''host'' astfel:
+
+<code bash>
+student@uso:~$ host 141.85.227.151
+151.227.85.141.in-addr.arpa domain name pointer acs.pub.ro.
+</code>
+În rezultatul rulării comenzii de mai sus, observă că adresa IP ''141.85.227.151'' corespunde numelui ''acs.pub.ro''.
+
+Apare întrebarea "de unde știe calculatorul nostru să afle adresa IP a lui ''acs.pub.ro''?". Răspunsul este fișierul de configurare ''/etc/resolv.conf''. Aici sunt configurate serverele DNS pe care calculatorul nostru le va folosi. Astfel, dacă dorim să aflăm care este serverul DNS al stație noastre folosim comanda
+<code bash>
+student@uso:~$ cat /etc/resolv.conf
+[...]
+nameserver 127.0.0.53
+[...]
+</code>
+Liniile care conțin șirul ''nameserver'' din fișierul ''/etc/resolv.conf'' conțin serverele de nume. În cazul de fața este vorba de ''127.0.0.53''.
+
+<note important>
+În anumite configurații de sistem, editarea fișierului ''/etc/resolv.conf'' poate fi problematică. Anumite servicii pot modifica fișierul. Aveți grijă dacă este cea mai bună cale pentru configurarea serviciului DNS.
+</note>
+
+
+==== 3. Gateway și rutare în Internet ====
+
+În momentul de față, stația noastră se află într-o rețea aflată în spatele unui gateway (numit și ruter). La rândul său, acest ruter se poate afla într-o altă rețea și tot așa. Când trimitem un pachet în Internet (de exemplu folosind ''ping''), acesta va fi rutat de mai multe ori prin diferite rețele până va ajunge la destinație. Aceste rutări să numesc //hopuri//, iar pentru a vedea prin câte hopuri trece un pachet putem folosi utilitarul ''traceroute''.
+
+<note>
+Dacă nu merge comanda ''traceroute'' atunci probabil utilitarul nu există. Pentru a-l instala folosim, în linia de comandă, comanda ''sudo apt-get install traceroute''
+</note>
+
+Exemplu de output pentru comanda ''traceroute'' este mai jos:
+<code bash>
+student@uso:~$ traceroute google.ro
+
+Tracing route to google.ro [172.217.21.195]
+over a maximum of 30 hops:
+
+  1    <1 ms    <1 ms     2 ms  192.168.0.1
+  2    <1 ms    <1 ms     1 ms  10-22-4-1.eregie.pub.ro [10.22.4.1]
+  3     1 ms     1 ms     1 ms  r-c3550-l3-vlan11.bucharest.roedu.net [141.85.0.65]
+  4     1 ms     1 ms     1 ms  141.85.133.65
+  5     1 ms     1 ms     1 ms  po-23.acc1.buc.roedu.net [37.128.225.225]
+  6     5 ms     2 ms     3 ms  bu-13.core2.buc.roedu.net [37.128.232.177]
+  7     3 ms     3 ms     3 ms  hu-0-0-0-0.core3.nat.roedu.net [37.128.239.101]
+  8     1 ms     2 ms     1 ms  te-0-6-0-1.peers1.nat.roedu.net [37.128.239.42]
+  9    29 ms    29 ms    29 ms  Fra.RoNIX.Ro [217.156.113.94]
+ 10    30 ms    30 ms    30 ms  ^C
+</code>
+
+Pentru a "ieși în Internet", stația noastră are nevoie de un nod în această rețea care să aibă rolul de **gateway**. În cazul nostru este un ruter ce trimite mai departe în afara rețelei pachetele trimise din interiorul ei, dar și ruteaza pachetele venite din exterior către stația destinație din rețeaua noastră.
+
+Pentru a vedea adresa IP a gateway-ului folosim comanda ''ip route show'' sau ''ip r s'' (prescurtat), ca mai jos
+
+<code bash>
+student@uso:~$ ip r s
+default via 10.0.2.2 dev enp0s3 proto dhcp metric 100
+[...]
+</code>
+În rezultatul rulării comenzii, linia care conține șirul //default// (de la //default gateway//) conține adresa IP a gateway-ului. În cazul de față adresa IP a gateway-ului este ''10.0.2.2''.
+
+
+==== 4. dhclient și ssh pe mașina virtuală ====
+
+Presupunem că am conectat laptopul personal la o rețea de Internet, dar observăm că nu avem și o adresa IP atribuită interfeței de rețea. O modalitate ușoară de a realiza automat configurarile de rețea este să folosim protocolul DHCP (//Dynamic Host Configuration Protocol//) care configurează automat cei patru parametri de de rețea (adresă IP, mască, gateway, server DNS). Pentru aceasta folosim comanda ''dhclient'', primind, eventual, ca parametru interfața de rețea.
+
+De exemplu, dacă accesăm mașina virtuală ''tom'' și vedem interfețele de rețea, obținem rezultatul de mai jos:
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 08:00:27:c9:b1:53 brd ff:ff:ff:ff:ff:ff
+</code>
+
+Vedem în rezultatul comenzii de mai sus că interfața ''enp0s8'' a stației ''tom'' este ''DOWN'' (nu este activă) și nu are adresă IP configurată. Pentru a configura adresă IP pe interfață rulăm comanda:
+
+<code bash>
+student@tom:~$ sudo dhclient enp0s8
+</code>
+
+Iar acum urmărim din nou configurația interfeței ''enp0s8'':
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:c9:b1:53 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.103/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fec9:b153/64 scope link
+       valid_lft forever preferred_lft forever
+</code>
+În această situație avem configurată adresa IP ''192.168.56.103'', configurată prin DHCP.
+
+De multe ori ne este incomod să lucrăm în interfața din linia de comandă a unei mașini virtuale (precum cea de teme); de exemplu nu puteam da COPY/PASTE de acolo. O modalitate bună de a scapa de acest neajuns este să ne conectăm de pe stația locală pe mașină virtuală prin ''ssh''.
+
+De exemplu, pentru a ne conecta de pe sistemul fizic (sau de pe mașina virtuală ''uso'') pe mașina virtuală ''tom'', care știm că are adresa IP ''192.168.56.103'', vom folosi comanda:
+<code bash>
+student@uso:~$ ssh student@192.168.56.103
+The authenticity of host '192.168.56.103 (192.168.56.103)' can't be established.
+ECDSA key fingerprint is SHA256:ykH7HM4AmSgzkrUuQYp5l8uq/8I8COPFv7JLjYvyuIk.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.56.103' (ECDSA) to the list of known hosts.
+student@192.168.56.103's password:
+Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-33-generic x86_64)
+[...]
+student@tom:~$
+</code>
+Observăm prin schimbarea prompt-ului că după rularea comenzii și introducerea parolei ''student'' suntem acum pe stația ''tom''.
+
+
+===== Recapitulare =====
+
+**1.** Afişaţi pentru partiţţile din sistem, următoarele informaţii: numele, dimensiunea, unde este montat şi deţinătorul acesteia. (**hint**: ''lsblk -o'')
+
+**2.a** În directoul ''home'' al utilizatorului ''student'', creaţi un fişier cu dimensiunea de 10MB, plin cu zerouri (**hint**: ''dd''). Apoi, formataţi-l astfel încât peste acesta să avem o partiţie de tip **ext4** (**hint**: ''mkfs'').
+
+**2.b** Creaţi directoul **/mnt/my-mount** şi montaţi sistemul de fişiere ext4 creat anterior în acest director.
+
+
+===== Basics =====
+
+Dacă nu se precizează altfel, în această secțiune veți rula comenzile pe **stația fizică** (sau pe mașina virtuală ''uso'' dacă lucrați acasă).
+
+==== 1. Interfețe de rețea ====
+
+''ip'' este o comandă de Linux folosită pentru a afișa interfețele de rețea disponibile pe sistemul curent de operare. De aici putem afla informații esențiale legate de conectivitatea la internet.
+
+Pentru a afla adresa IP și masca de rețea a interfețelor sistemului folosim comanda
+<code bash>
+student@uso:~$ ip a s
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+2: enp0s3: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc fq_codel state DOWN group default qlen 1000
+    link/ether 08:00:27:49:1d:cd brd ff:ff:ff:ff:ff:ff
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:b1:36:c8 brd ff:ff:ff:ff:ff:ff
+    inet 10.0.2.4/24 brd 10.0.2.255 scope global dynamic noprefixroute enp0s8
+       valid_lft 666sec preferred_lft 666sec
+    inet6 fe80::9927:3d0d:77b5:8ca9/64 scope link noprefixroute
+       valid_lft forever preferred_lft forever
+</code>
+
+Parametrii ''a'' și ''s'' sunt prescurtările de la ''address'' și ''show''. Astfel, semnificația comenzii ''ip a s'' se traduce în ''ip address show''.
+
+Interfața **loopback** (cu numele ''lo'') este o interfață virtuală (**nu** una fizică). Scopul acestei interfețe este de a întoarce pachetele trimise către sistemul local, de obicei cu rol în testare.
+
+Putem trimite comenzii ''ip a s'' ca parametru numele unei interfețe de rețea pentru a afișa informații doar despre acea interfață de rețea. Comanda de mai jos afișează informații despre interfața de loopback (''lo''):
+
+<code bash>
+student@uso:~$ ip a s lo
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+</code>
+
+La câmpul ''inet'' din rezultatul rulării comenzii, putem observa adresa IP ''127.0.0.1''. De obicei, aceasta este adresa interfaței de loopback.
+
+<note>
+De aici și glumele de pe internet cu ''There's no place like 127.0.0.1''. Pentru că fiecare sistem are propria interfață virtuală loopback, pe care o numim "acasă"
+</note>
+
+=== Conectivitatea la Internet ===
+
+Putem verifica conectivitatea la internet folosind utilitarul ''ping''. Acesta transmite pachete către o anumită adresa (dată ca parametru). Acest utilitar ne arată dacă pachetele trimise ajung la destinație și în cât timp. O adresă pe care o putem folosi întotdeauna este ''8.8.8.8'' (o adresă de la Google).
+
+<code bash>
+student@uso:~$ ping 8.8.8.8
+PING 8.8.8.8 (8.8.8.8): 56 data bytes
+64 bytes from 8.8.8.8: icmp_seq=0 ttl=121 time=17.324 ms
+64 bytes from 8.8.8.8: icmp_seq=1 ttl=121 time=18.513 ms
+^C
+--- 8.8.8.8 ping statistics ---
+2 packets transmitted, 2 packets received, 0.0% packet loss
+round-trip min/avg/max/stddev = 17.324/17.919/18.513/0.594 ms
+</code>
+
+Putem observa ca pachetele noastre au ajuns la destinație în 17ms. De aici putem trage concluzia că avem o conexiune la internet funcțională.
+
+**[1a]** Aflați adresa IP a sistemului fizic (**nu** ''lo'') și dați un ping către adresa IP.
+
+**[1b]** Aflați adresele IP ale colegilor (minim 2) și dați ping către acele adrese IP.
+
+
+==== 2. Urmărirea pachetelor ====
+
+Atunci când apelăm utilitarul ''ping'' cu o anumită adresă din internet, se trimit pachete până la aceasta. Dacă acestea nu ajung la destinație, ce concluzie putem trage? Că nu avem interfața configurată corespunzător? Dar dacă furnizorul de Internet (să spunem RDS) are o problemă sau nu ne-am plătit factura la internet? Trebuie să putem afla unde este problema. Care este punctul în care pachetele noastre se pierd. Putem afla această informație folosind utilitarul ''traceroute'', la fel ca mai jos:
+
+<code bash>
+student@uso:~$ traceroute 8.8.8.8
+traceroute to 8.8.8.8 (8.8.8.8), 64 hops max, 52 byte packets
+ 1  danubiu12.lan (192.168.255.1)  3.677 ms  0.870 ms  0.808 ms
+ 2  10.0.0.1 (10.0.0.1)  1.991 ms  2.075 ms  1.908 ms
+ 3  10.30.1.209 (10.30.1.209)  3.720 ms  2.215 ms  1.959 ms
+ 4  10.220.137.28 (10.220.137.28)  21.973 ms
+    10.220.137.30 (10.220.137.30)  15.755 ms
+    10.220.128.72 (10.220.128.72)  15.574 ms
+ 5  213-154-130-234.rdsnet.ro (213.154.130.234)  17.572 ms  16.963 ms  18.208 ms
+ 6  74.125.242.241 (74.125.242.241)  17.910 ms  18.196 ms  16.700 ms
+ 7  108.170.238.135 (108.170.238.135)  15.377 ms
+    108.170.225.23 (108.170.225.23)  18.141 ms
+    209.85.142.19 (209.85.142.19)  19.790 ms
+ 8  google-public-dns-a.google.com (8.8.8.8)  16.774 ms  16.613 ms  15.950 ms
+</code>
+
+Putem observa calea pachetelor de la gateway-ul local (''192.168.255.1'', va fi altul în cazul vostru) până la serverele Google.
+
+Putem apela același utilitar și cu un nume de domeniu:
+<code bash>
+student@uso:~$ traceroute google.com
+traceroute to google.com (216.58.209.174), 64 hops max, 52 byte packets
+ 1  danubiu12.lan (192.168.255.1)  1.115 ms  0.817 ms  0.835 ms
+ 2  10.0.0.1 (10.0.0.1)  2.068 ms  2.027 ms  1.991 ms
+ 3  10.30.1.209 (10.30.1.209)  2.134 ms  3.027 ms  2.515 ms
+ 4  10.220.132.8 (10.220.132.8)  16.611 ms
+    10.220.128.66 (10.220.128.66)  14.901 ms
+    10.220.128.62 (10.220.128.62)  16.787 ms
+ 5  213-154-130-234.rdsnet.ro (213.154.130.234)  17.705 ms  16.165 ms  17.994 ms
+ 6  74.125.242.241 (74.125.242.241)  16.531 ms  18.200 ms  17.689 ms
+ 7  66.249.94.123 (66.249.94.123)  18.622 ms
+    66.249.94.163 (66.249.94.163)  17.212 ms  16.840 ms
+ 8  bud02s21-in-f14.1e100.net (216.58.209.174)  15.921 ms  16.906 ms  16.412 ms
+</code>
+
+Ieșirea comenzii afișează și adresa publică a site-ului ''google.com''.
+
+**[2a]** Afișați calea urmată de mașina virtuală către numele de domeniu ''realitatea.net'', către ''gandul.info'' și către ''bbc.com''. Observați care este mai apropiată (către care sunt mai puține //hop//-uri).
+
+
+==== 3. Default gateway ====
+
+Atunci când pachetele pleacă către Internet, sistemul trebuie să știe cui îi va trimite pachetele în mod implicit, adică să știe ''gateway-ul''. Această configurare se poate vedea folosind utilitarul ''ip'' cu opțiunea ''route show'', ca mai jos:
+<code bash>
+student@uso:~$ ip r s
+default via 10.0.2.1 dev enp0s8 proto dhcp metric 100
+[...]
+</code>
+Mai sus am folosit forma prescurtată a comenzii ''ip route show'', adică ''ip r s''.
+
+Putem observa că implicit pachetele se duc către adresa IP ''10.0.2.1''.
+
+**[3a]** Afișați gateway-ul de pe mașina virtuală ''tom'' și de pe mașina virtuală ''jerry''.
+
+
+==== 4. DNS ====
+
+Destinațiile din Internet sunt întotdeauna adrese IP. Pentru ca ne este greu sa reținem aceste adrese, se face o mapare între un nume și o adresă IP folosind seviciul DNS (//Domain Name System//). Dacă destinația este un nume, se face o cerere DNS pentru a afla adresa IP.
+
+Putem vedea adresa serverului DNS in ''/etc/resolv.conf'', folosind comanda:
+<code bash>
+student@uso:~$ cat /etc/resolv.conf
+[...]
+nameserver 127.0.0.53
+</code>
+
+Putem face interogări la serverul DNS folosind utilitarul ''host''. Interogare directă este atunci când folosind numele de domeniu și obținem adresa IP; interogare inversă este atunci când folosim adresa IP ca să aflăm numele de domeniu. Mai jos sunt două exemple de interogare directă urmate de două exemple de interogare inversă:
+<code bash>
+student@uso:~$ host fsf.org
+fsf.org has address 208.118.235.174
+fsf.org has IPv6 address 2001:4830:134:4::a
+fsf.org mail is handled by 10 mail.fsf.org.
+student@uso:~$ host kernel.org
+kernel.org has address 198.145.29.83
+kernel.org mail is handled by 10 mail.kernel.org.
+
+student@uso:~$ host swarm.cs.pub.ro
+swarm.cs.pub.ro has address 141.85.227.118
+swarm.cs.pub.ro mail is handled by 10 swarm.cs.pub.ro.
+student@uso:~$ host 209.132.180.180
+180.180.132.209.in-addr.arpa domain name pointer proxy01.gnome.org.
+</code>
+
+
+**[4a]** Afișați serverul DNS de pe mașina virtuală ''tom''.
+
+**[4b]** Dați ping în ''facebook.com'' folosind numele și apoi folosind adresa IP.
+
+**[4c]** Aflați adresa IP pentru numele de domeniu ''ocw.cs.pub.ro'', ''studenti.pub.ro'', ''insecure.org'', ''eu.org''.
+
+
+==== 5. Conexiune SSH ====
+
+Un mod semnificativ mai ușor de a folosi o mașina virtuală este următorul: având un terminal pe mașina fizică ne conectăm prin SSH la mașina virtuală. Astfel, trecerea de la mașina fizică la cea virtuală se reduce la schimbarea de tab-uri in terminal. Un alt avantaj este că putem folosi copy-paste fără probleme din terminal.
+
+Pentru a ne conecta la mașina virtuală avem nevoie de 2 informații:
+  * numele utilizatorului (//username//) cu care vrem să fim autentificați pe mașina virtuală
+  * adresa mașinii virtuale (putem folosi ''ip a s'' pentru a afla adresa IP)
+Sintaxa este de forma ''%%ssh <user>@<IP>%%'', unde ''%%<user>%%'' este numele de utilizator iar ''%%<IP>%%'' este numele de domeniu sau adresa IP corespunzătoare.
+
+Vom face o conexiune SSH între stația fizică și mașina virtuală ''tom''.
+
+<note important>
+Pentru a face o conexiune SSH între stația fizică și mașina virtuală ''tom'' va trebui să avem interfața activată, pe mașina virtuală ''tom''. Pentru aceasta rulați comanda
+<code bash>
+student@tom:~$ sudo dhclient enp0s8
+</code>
+care va asigura obținerea, prin DHCP, a parametrilor de rețea pentru interfața ''enp0s8''.
+
+Folosind comanda
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe71:db21/64 scope link
+       valid_lft forever preferred_lft forever
+</code>
+aflăm adresa IP a mașinii virtuale ''tom''. În cazul de față este vorba de ''192.168.56.101''.
+
+Este posibil ca adresa IP pentru mașina virtuală ''tom'' să fie alta în rularea voastră. Folosiți în continuare adresa IP obținută din rularea voastră.
+</note>
+
+Pentru a ne conecta de pe stația fizică la mașina virtuală ''tom'' folosim comanda:
+<code bash>
+student@uso:~$ ssh student@192.168.56.101
+The authenticity of host '192.168.56.101 (192.168.56.101)' can't be established.
+ECDSA key fingerprint is SHA256:sqi88F/jVZ+RiHMMkLGXidACSAHlfXHos2d+gwWcqoY.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '192.168.56.101' (ECDSA) to the list of known hosts.
+student@192.168.56.101's password:
+[...]
+student@tom:~$
+</code bash>
+Ne-am conectat prin SSH la mașina virtuală ''tom'', lucru pe care îl vedem în prompt.
+
+Pentru a ne deconecta de la mașina virtuală folosim comanda ''exit'' sau comanda ''logout'' sau folosim combinația de taste ''Ctrl+d'':
+<code bash>
+student@tom:~$ logout
+Connection to 192.168.56.101 closed.
+student@uso:~$
+</code>
+
+**[5a]** Conectația la stația locală (conexiune pe interfața de loopback). Apoi deconectați-vă,
+
+**[5b]** Adăugați un utilizator nou pe mașina ''tom''. Conectați-vă de pe mașina locală pe mașina ''tom'' cu noul utilizator creat.
+
+**[5c]** Conectați-vă la mașina virtuală ''jerry'' de pe sistemul fizic.
+
+**[5d]** Conectați-vă de pe mașina virtuală ''tom'' la mașina virtuală ''jerry''.
+
+
+==== 6. wget ====
+
+Utilitarul ''wget'' descarcă conținutul unei pagini web. Un exemplu de folosire este:
+
+<code bash>
+student@uso:~$ wget http://ipecho.net/plain
+--2018-09-02 16:08:55--  http://ipecho.net/plain
+Resolving ipecho.net (ipecho.net)... 146.255.36.1
+Connecting to ipecho.net (ipecho.net)|146.255.36.1|:80... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘plain.1’
+
+plain.1                                    [ <=>                                                                        ]      13  --.-KB/s    in 0s
+
+2018-09-02 16:08:55 (1,48 MB/s) - ‘plain.1’ saved [13]
+
+student@uso:~$ ls plain
+plain
+student@uso:~$ cat plain
+188.26.36.205
+</code>
+
+
+Dacă vrem să descărcăm direct
+
+<code bash>
+student@uso:~$ wget -qO- http://ipecho.net/plain ; echo
+188.26.36.205
+</code>
+
+**[6a]** Descărcați arhiva folosind ''wget'' de la link-ul [[http://www.openss7.org/repos/tarballs/strx25-0.9.2.1.tar.bz2]].
+
+**[6b]** Descărcați capitolul 11 din cartea de USO de la link-ul [[http://elf.cs.pub.ro/uso/res/carte/]].
+
+
+===== Need to Know =====
+
+Pe parcursul acestei secțiuni și a următoarelor vom folosi următoarele termene pentru a identifica sistemul pe care rulăm comenzi:
+  * **sistemul fizic** sau **mașina fizică** sau **stația locală** se referă la sistemul din laborator
+  * **sistemul ''tom''** sau **mașina virtuală ''tom''** se referă la mașina virtuală ''tom''
+  * **sistemul ''tom''** sau **mașina virtuală ''jerry''** se referă la mașina virtuală ''jerry''
+
+==== 1. Dezactivare interfețe. DHCP ====
+
+Sunt situații în care am realizat o configurare greșită și vrem să dezactivăm acea configurare de pe o interfață. În mod normal, resetarea completă a configurației unei interfețe presupune doi pași:
+  * eliberarea (//flush//) configurației acelei interfețe
+  * dezactivarea acelei interfețe
+
+<note important>
+**Nu** rulați comenzile de mai jos pe o conexiune SSH pe mașina virtuală ''tom''. Vă veți dezactiva legătura fizică și veți pierde și conexiune SSH. Rulați comenzile direct în interfața CLI (alb pe negru) a aplicației VirtualBox.
+</note>
+
+<note tip>
+Dacă vă rămâne o conexiune SSH "agățată" (nu mai primește comenzi) înseamnă că s-a pierdut conexiunea și terminalul rămâne blocat. Pentru a debloca terminalul folosiți secvența ''%%<Enter> ~ .%%'', adică apăsați pe rând tasta //Enter>// apoi tasta //tildă// (''%%~%%'') apoi tasta //punct// (''%%.%%'')
+
+Vedeți și răspunsul de [[https://askubuntu.com/a/29952|aici]].
+</note>
+
+Mai jos eliberăm și dezactivăm interfața ''enp0s8'' de pe mașina virtuală ''tom'':
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe71:db21/64 scope link
+       valid_lft forever preferred_lft forever
+student@tom:~$ sudo ip address flush enp0s8
+[sudo] password for student:
+student@tom:~$ sudo ip link set dev enp0s8 down
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST> mtu 1500 qdisc fq_codel state DOWN group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+</code>
+
+Mai sus am folosit:
+  * comanda ''ip a s enp0s8'' ca să vedem starea interfeței. La început are adresă IP și este activată (''state UP''). La sfârșit nu are adresă IP și este dezactivată (''state DOWN'').
+  * comanda ''ip address flush enp0s8'' ca să eliberăm (//flush//) configurația interfeței
+  * comanda ''ip link set dev enp0s8 down'' ca să dezactivăm interfața
+
+**[1a]** Folosiți comanda ''dhclient'' pentru a reface configurația de rețea pe interfața ''enp0s8'' pe mașina virtuală ''tom''. Verificați folosind ''ping'' de pe sistemul fizic.
+
+**[1b]** Dezactivați configurația interfeței ''enp0s8'' de pe mașina virtuală ''jerry''.
+
+**[1c]** Folosiți comanda ''dhclient'' pentru a reface configurația de rețea pe interfața ''enp0s8'' pe mașina virtuală ''jerry''. Verificați folosind ''ping'' de pe sistemul fizic și de pe mașina virtuală ''tom'',
+
+
+==== 2. SSH ====
+
+<note>
+Această secțiune recapitulează noțiuni și comenzi din secțiunea Basics pe care vrem să le exersăm.
+</note>
+
+Folosim protocolul SSH și comanda ''ssh'' pentru a ne conecta la distanță, folosind o comandă de forma:
+<code>
+ssh <username>@<hostname>
+</code>
+unde ''%%<username>%%'' este numele de utilizator iar ''%%<hostname>%%'' este numele de stație (sau adresa IP) a stației la care vrem să ne conectăm.
+
+**[2a]** Realizați, prin SSH, folosind comanda ''ssh'' toate formele de conexiune (6 în total) între sistemul fizic, mașina virtuală ''tom'' și mașina virtuală ''jerry''.
+
+**[2b]** Conectați-vă la sistemul unui coleg din stânga sau dreapta voastră, după ce îl întrebați de adresa sa IP.
+
+**[2c]** Conectați-va la sistemul ''fep.grid.pub.ro'' folosind numele de utilizator de pe [[http://acs.curs.pub.ro|acs.curs.pub.ro]] și parola de acolo.
+
+
+==== 3. scp ====
+
+Utilitarul ''scp'' (secure copy) este folosit pentru a copia fișiere de pe o stație pe alta în mod sigur folosind protocolul SSH. Există și alte utilitare cu care putem face acest lucru, însă aceasta are avantajul că datele sunt transmise sigur, folosind ''ssh''.
+
+''scp'' are o sintaxă asemănătoare cu ''cp'', și anume ''scp sursă destinație''. Folosind ''scp'' putem copia fișiere de pe mașina noastră pe o altă mașină, fie de pe o altă mașină direct în mașina noastră. Urmăriți pașii de mai jos pentru a copia un fișier de pe mașina fizică pe mașina virtuală ''tom''.
+
+Pe mașina virtuală ''tom'' aflăm adresa IP a interfeței ''enp0s8'' adresa de legătură între sistemul fizic și mașina virtuală ''tom'':
+<code bash>
+student@tom:~$ ip a s enp0s8
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:71:db:21 brd ff:ff:ff:ff:ff:ff
+    inet 192.168.56.101/24 brd 192.168.56.255 scope global enp0s8
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fe71:db21/64 scope link
+       valid_lft forever preferred_lft forever
+</code>
+
+Folosim apoi adresa IP găsită mai sus a mașinii ''tom'' (în cazul de față ''192.168.56.101'') pe mașina fizică:
+<code bash>
+student@uso:~$ echo "my first scp" > file.txt
+student@uso:~$ cat file.txt
+my first scp
+student@uso:~$ scp file.txt student@192.168.56.101:
+student@192.168.56.101's password:
+file.txt                                      100%   13     9.1KB/s   00:00
+</code>
+
+<note important>
+După construcția ''student@192.168.56.101'' urmează '':''. Așa specificăm unde pe mașina ''tom'' să fie copiat fișierul ''file.txt''. Dupa '':'' treceți calea din sistemul de fișiere al mașinii ''tom'' la care vreți ca fișierul să fie copiat. În cazul exemplului de mai sus, nu avem nimic, ceea ce înseamnă că se copiază fișierul în **directorul curent** care va fi ''/home/student''.
+</note>
+
+Apoi pe stația tom verificăm existența fișierului:
+<code bash>
+student@tom:~$ ls file.txt
+file.txt
+student@tom:~$ cat file.txt
+my first scp
+</code>
+
+**[3a]** Pe mașina virtuală ''jerry'' creați un fișier la calea ''/home/student''. Copiați acest fișier pe mașina virtuală ''tom'' și verificați că a avut loc copierea.
+
+**[3b]** Fiind pe sistemul fizic, copiați fișierul de mai sus **de pe** mașina virtuală ''jerry'' în directorul ''~/uso.git/labs/08-net/''.
+
+**[3c]** Fiind pe sistemul fizic, copiați același fișier de mai devreme de pe mașina fizică pe ''fep.grid.pub.ro'', folosind contul vostru de pe [[http://acs.curs.pub.ro|acs.curs.pub.ro]].
+
+
+==== 4. Comenzi prin SSH ====
+
+În mod obișnuit, folosirea comenzii ''ssh'' duce la deschiderea unui shell la distanță (//remote shell//) unde putem rula comenzi. Dacă ne interesează, putem însă rula direct comenzi fără a mai deschide un shell, dând un parametru comenzii ''ssh'', ca în exemplele de mai jos:
+<code bash>
+razvan@jotunn:~$ ssh -l student 192.168.56.101 hostname
+student@192.168.56.101's password:
+tom
+razvan@jotunn:~$ ssh -l student 192.168.56.101 df -h
+student@192.168.56.101's password:
+Filesystem      Size  Used Avail Use% Mounted on
+udev            211M     0  211M   0% /dev
+tmpfs            49M  956K   48M   2% /run
+/dev/sda2       9.8G  5.0G  4.4G  54% /
+tmpfs           241M     0  241M   0% /dev/shm
+tmpfs           5.0M     0  5.0M   0% /run/lock
+tmpfs           241M     0  241M   0% /sys/fs/cgroup
+/dev/loop0       88M   88M     0 100% /snap/core/5328
+/dev/loop1       87M   87M     0 100% /snap/core/4917
+/dev/loop2       89M   89M     0 100% /snap/core/5897
+tmpfs            49M     0   49M   0% /run/user/1000
+</code>
+În cele două exemple de mai sus am rulat pe mașina virtuală **tom**, fără a deschide un shell la distanță, comanda ''hostname'' (care afișează numele sistemului) și comanda ''df -h'' (care afișează) un sumar al sistemelor de fișiere montate.
+
+**[4a]** Afișați informații despre utilizatorul ''student'' pe mașinile virtuale ''tom'' și ''jerry'' folosind comanda ''finger'' fără a deschide un shell la distanță.
+
+**[4b]** Creați pe mașina virtuală ''jerry'' un fișier numit ''subzero.txt'' având conținutul ''saibot''. Folosiți conexiune la distanță fără a deschide un shell, comanda ''echo'' și redirectare. Plasați comanda între ghilimele ca să fie transmisă complet la distanță; altfel, redirectarea va fi făcută pe sistemul local. Verificați conținutul fișierului ''subzero.txt'' creat la distanță folosind comanda ''cat'' fără a deschide un shell la distanță.
+
+**[4c]** Porniți câte o sesiune shell la distanță către mașina virtuală ''tom'' și către mașina virtuală ''jerry''. Apoi folosiți în acel shell comanda ''reboot'' pentru a reporni sistemul; este modul de repornire de la distanță.
+
+
+==== 5. Refacere configurație ====
+
+După repornirea celor două sisteme s-a pierdut configurația interfețelor ''enp0s8'' pe mașinile virtuale **tom** și **jerry**. Folosiți ''dhclient'' pentru a reface configurația pentru cele două interfețe. Apoi creați câte o conexiune SSH de pe sistemul fizic către fiecare dintre cele două mașini virtuale.
+
+
+===== Nice to Know =====
+
+==== 1. Configurare statică adrese IP ====
+
+Mașinile virtuale ''tom'' și ''jerry'' dispun de o interfață numită ''enp0s9'' care este o legătură doar între cele două sisteme. Vom configura această interfață cu adresele ''1.1.1.1/24'' (''tom'') și ''1.1.1.2/24'' (''jerry'') ca mai jos:
+
+<code bash>
+student@tom:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 08:00:27:f6:24:73 brd ff:ff:ff:ff:ff:ff
+student@tom:~$ sudo ip a a 1.1.1.1/24 dev enp0s9
+[sudo] password for student:
+student@tom:~$ sudo ip link set dev enp0s9 up
+student@tom:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:f6:24:73 brd ff:ff:ff:ff:ff:ff
+    inet 1.1.1.1/24 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fef6:2473/64 scope link
+       valid_lft forever preferred_lft forever
+
+student@jerry:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN group default qlen 1000
+    link/ether 08:00:27:e7:a2:26 brd ff:ff:ff:ff:ff:ff
+student@jerry:~$ sudo ip a a 1.1.1.2/24 dev enp0s9
+[sudo] password for student:
+student@jerry:~$ sudo ip l s dev enp0s9 up
+student@jerry:~$ ip a s enp0s9
+4: enp0s9: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+    link/ether 08:00:27:e7:a2:26 brd ff:ff:ff:ff:ff:ff
+    inet 1.1.1.2/24 scope global enp0s9
+       valid_lft forever preferred_lft forever
+    inet6 fe80::a00:27ff:fee7:a226/64 scope link
+       valid_lft forever preferred_lft forever
+</code>
+
+Mai sus, pentru fiecare stație am văzut că interfața nu are adresă IP și este dezactivată (''state DOWN'') (folosind comanda ''ip a s'' de la ''ip address show''). Apoi am adăugat adresă IP (folosind comanda ''ip a a'' de la ''ip address add'') și apoi am activat interfața (folosind comanda ''ip l s'' de la ''ip link set''). Apoi am afișat din nou parametrii interfeței (folosind tot ''ip a s'') și am văzut că interfața are acum adresă IP și că este activată (''state UP'').
+
+După aceasta verificăm de pe fiecare stație conectivitatea la celelaltă stație folosind comanda ''ping'':
+<code>
+student@tom:~$ ping 1.1.1.2
+PING 1.1.1.2 (1.1.1.2) 56(84) bytes of data.
+64 bytes from 1.1.1.2: icmp_seq=1 ttl=64 time=0.530 ms
+64 bytes from 1.1.1.2: icmp_seq=2 ttl=64 time=0.945 ms
+^C
+--- 1.1.1.2 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1016ms
+rtt min/avg/max/mdev = 0.530/0.737/0.945/0.209 ms
+
+student@jerry:~$ ping 1.1.1.1
+PING 1.1.1.1 (1.1.1.1) 56(84) bytes of data.
+64 bytes from 1.1.1.1: icmp_seq=1 ttl=64 time=0.737 ms
+64 bytes from 1.1.1.1: icmp_seq=2 ttl=64 time=0.395 ms
+^C
+--- 1.1.1.1 ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.395/0.566/0.737/0.171 ms
+</code>
+
+Pe o interfață pot fi adăugate mai multe adrese IP.
+
+**[1a]** Adăugați pe interfața ''enp0s9'' de pe sistemele ''tom'' și ''jerry'', respectiv adresele IP ''10.11.12.13/16'' și ''10.11.14.15/16''. Folosiți comanda ''ip a s enp0s9'' pentru verificare. Verificați conectivitatea între cele două sisteme folosind cele două adrese IP nou introduse.
+
+**[1b]** Faceți //flush// și dezactivați interfața ''enp0s9'' pe sistemele ''tom'' și ''jerry''. Folosiți comanda ''ip a s enp0s9'' pentru verificare.
+
+**[1c]** Adăugați pe interfața ''enp0s9'' de pe sistemele ''tom'' și ''jerry'', respectiv adresele IP ''192.168.69.42/28'' și ''192.168.69.43/28''. Folosiți comanda ''ip a s enp0s9'' pentru verificare. Verificați conectivitatea între cele două sisteme folosind cele două adrese IP nou introduse.
+
+
+==== 2. Scripturi pentru statistici rețea ====
+
+Vrem să creăm niște scripturi pentru lucrul cu rețeaua.
+
+Pe stația fizică, creați scriptul ''get_ifs_mac'' care să aibă conținutul de mai jos:
+
+<file bash get_ifs_mac>
+#!/bin/bash
+
+interfaces=$(ls /sys/class/net)
+
+echo "interface,mac_address"
+for i in $interfaces; do
+    mac_address=$(cat /sys/class/net/"$i"/address)
+    echo "$i,$mac_address"
+done
+</file>
+Scriptul afișează, pentru toate interfețele sistemului, adresa MAC (numită și adresă hardware sau adresă fizică) în format CSV (numele interfeței și adresa MAC separate prin virgulă).
+
+Urmăriți scriptul de mai sus și înțelegeți ce face.
+
+Creați scriptul ''get_ifs_mac'' folosind conținutul de mai sus (fie îl descărcați, fie dați copy-paste) și acordați-i permisiuni de execuție:
+<code bash>
+student@uso:~$ chmod +x get_ifs_mac
+</code>
+
+Apoi rulați scriptul și veți obține un rezultat de forma:
+<code bash>
+student@tom:~$ ./get_if_mac
+interface,mac_address
+enp0s3,08:00:27:4a:7d:2c
+enp0s8,08:00:27:71:db:21
+enp0s9,08:00:27:f6:24:73
+lo,00:00:00:00:00:00
+</code>
+
+**[2a]** Pornind de la scriptul ''get_ifs_mac'' creați scriptul ''get_ifs_packets'' care afișează în format CSV, pentru fiecare interfață, numărul de pachete primite (''rx'') și numărul de pachete transmise (''tx'')
+
+<note tip>
+Găsiți, de exemplu, numărul de pachete primite, respectiv transmise pe/de pe interfața ''enp0s3'' în fișierele ''/sys/class/net/enp0s3/statistics/rx_packets'' și ''/sys/class/net/enp0s3/statistics/tx_packets''.
+</note>
+
+**[2b]** Actualizați scriptul ''get_ifs_mac'' pentru a afișa informațiile de mai sus sortate **numeric** după numărul de pachete primite.
+
+
+==== 3. whois ====
+
+''whois'' este o comandă de Linux folosită pentru a afla informați despre orice domeniu sau adresă IP din Internet.
+
+De exemplu dacă vrem să aflăm cine deține adresa IP ''141.85.241.51'', folosim comanda ''whois'' urmată de adresa IP:
+
+<code bash>
+student@uso:~$ whois 141.85.241.51
+...
+inetnum:        141.85.0.0 - 141.85.255.255
+netname:        PUB-NET
+org:            ORG-PUB1-RIPE
+country:        RO
+...
+org-name:       Politehnica University of Bucharest
+...
+</code>
+
+Din outputul obținut aflăm că adresa IP aparține Universității POLITEHNICA din București, iar dacă derulați mai jos vedeți și detaliile persoanelor de contact.
+
+Putem să obține informații și despre domenii, cum ar fi: organizația, datele de contact ale administratorilor, domain server, data la care a fost creat, ultima dată când a fost actualizat, etc.:
+
+<code bash>
+student@uso:~$ whois cs.curs.pub.ro
+...
+contact:      administrative
+name:         Ionut Eugen SANDU
+organisation: National Institute for R&D in Informatics
+...
+created:      1993-02-26
+changed:      2018-05-11
+source:       IANA
+...
+</code>
+
+
+==== 4. Autentificare SSH fără parolă ====
+
+Până în acest moment ați folosit protocolul ''SSH'' pentru a vă conecta remote de nenumărate ori.
+
+''SSH'' funcționează în modul ''client-server'', unde mașinile voastre sunt clienții iar pe mașina pe care doriți să vă autentificați există un server SSH (''daemonul sshd'') care acceptă conexiuni pe portul 22.
+
+Modul implicit de autentificare, pe care l-ați folosit până în acest moment, este cu parola utilizatorului cu care vreți să vă conectați la server.
+
+Dezavantajele acestei metode sunt:
+  * securitatea scazută (parolele trebuie să fie puternice, dar în acest caz sunt greu de reținut)
+  * imposibilitatea automatizării anumitor taskuri (dacă este cazul)
+
+Metoda recomandată pentru autentificarea clientului la serverul SSH este folosirea unei perechi de chei publice și private.
+
+Pentru a realiza o conexiune SSH fără parolă de pe sistemul fizic pe o mașină remote (în cazul nostru mașina ''tom''), trebuie să urmați pașii de mai jos:
+
+1. Generați o pereche de chei publice și private pe sistemul fizic:
+
+<code bash>
+student@uso:~$ ssh-keygen -t rsa
+</code>
+
+Apăsați ''enter'' pentru fiecare input cerut.
+Pentru a verifica că cheia SSH a fost creată inspectați conținutul directorului ''~/.ssh/''. Acesta ar trebui să conțină următoarele fișiere:
+  * ''id_rsa'' -- cheia privată
+  * ''id_rsa.pub'' -- cheia publică
+
+<code bash>
+student@uso:~$ ls ~/.ssh/
+id_rsa  id_rsa.pub  known_hosts
+</code>
+
+2. Copiați cheia publică pe sistemul ''tom'':
+
+<code bash>
+student@uso:~$ ssh-copy-id -i ~/.ssh/id_rsa.pub student@<IP-tom>
+</code>
+
+<note>
+Citiți întotdeauna rezultatul comenzilor pe care le rulați. În acest exemplu ar trebui să vedeți mesajul: ''Number of key(s) added: 1''.
+</note>
+
+3. Vă conectați la mașina remote. Dacă totul a funcționat corect, ar trebui să nu aveți nevoie de parolă:
+
+<code bash>
+student@uso:~$ ssh student@<IP-tom>
+</code>
+
+**[4a]** Acum că ați reușit să vă autentificați fără parolă pe mașina ''tom'', faceți același lucru și pe mașina vituală ''jerry''.
+
+**[4b]** Conectați-vă prin SSH pe mașina ''tom'' de pe mașina ''jerry''. După cum vedeți, se cere parola utilizatorului. Realizați autentificarea fără parolă în ambele direcții pentru cele două mașini virtuale: ''tom'' și ''jerry''.
+
+**[4c]** Conectați-vă fără parolă de pe sistemul fizic pe contul vostru de pe ''fep.grid.pub.ro''.
+
+
+==== 5. Hostname ====
+
+După cum știți, hostname-ul unei mașini se poate observa din prompt-ul terminalui. Acesta se mai poate obține folosind comanda ''hostnamectl''. După ce modificăm hostname-ului este nevoie de redeschiderea unei noi sesiuni de shell care se încarce noua configurație.
+
+În exemplul de mai jos schimbăm numele stației ''tom'' în ''spike'':
+<code bash>
+student@tom:~$ sudo hostnamectl set-hostname spike
+[sudo] password for student:
+student@tom:~$ logout
+
+[...]
+student@spike:~$
+</code>
+După ce ne-am deconectat, ne-am reconectat și acum noul hostname, vizibil în prompt, este ''spike''.
+
+**[5a]** Schimbați hostname-ul celor două mașini virtuale ''tom'' și ''jerry'' în ''rick'' și ''morty''.
+
+**[5b]** Dorim să rulăm comanda ''ping'' între mașinile virtuale ''tom'' și ''jerry'' folosind hostname-ul în loc de adresa IP.
+Pentru aceasta trebuie să instalați pachetul ''avahi-daemon''. Dacă ați instalat pachetul și e configurat corespunzător va merge ''ping tom.local'' și ''ping jerry.local'' (sau ''rick.local'' și ''morty.local'' pentru noile nume de stații).
+
+
+==== 6. SSH X11 forwarding ====
+
+X11 forwarding este folosit pentru a accesa interfața grafică a unei mașini de la distanță, prin intermediul protocolului SSH.
+Pentru a funcționa, X11 forwarding trebuie să fie activat atât pe client cât și pe server.
+
+Pentru acest exercițiu trebuie să vă grupați în echipe de câte doi. Vă veți conecta la calculatorul colegului și veți rula programe cu interfață grafică (firefox, xeyes, etc.).
+
+Pentru a vă conecta la calculatorul unui coleg a cărui adresă o știți cu activarea X11 forwarding, rulați comanda de forma:
+<code bash>
+student@uso:~$ ssh -X <user>@<IP>
+</code>
+
+Apoi rulați comenzi cu interfață grafică ce vor rula pe sistemul colegului dar vor fi afișate pe sistemul vostru.
+
+
+==== 7. Captură de trafic de rețea. Wireshark ====
+
+Utilitarul Wireshark este un utilitar grafic pentru captură și inspecție de trafic de rețea. Îl porniți folosind ''sudo wireshark'' fie din linia de comandă fie folosind ''Alt+F2''.
+
+<note>
+Dacă nu există comanda ''wireshark'' va trebui să instalați utilitarul folosind comanda
+<code bash>
+student@uso:~$ sudo apt install wireshark
+</code>
+</note>
+
+După ce porniți Wireshark activați, în interfața grafică, captura pe interfața de rețea principală (cea care asigură legătura la Internet). Apoi faceți conexiuni la diferite site-uri folosind un browser, sau folosiți ''ping'' sau folosiți comanda ''host'' pentru a genera trafic. Observați traficul capturat și prezentat grafic de Wireshark la nivel de pachet de date de rețea.
+
+Urmăriți informațiile de [[https://www.wireshark.org/docs/wsug_html_chunked/ChWorkDisplayFilterSection.html|aici]] și filtrați pachetele afișate după diferite metrici:
+  * Filtrați doar pachetele care au ca adresă IP sursă adresa IP a ''ocw.cs.pub.ro''.
+  * Filtrați doar pachetele HTTPS.
+  * Filtrați doar pachetele de tip ICMP (cele folosite de ping).
+
+
+===== Get a Life =====
+
+
+==== 1. Descărcare web de fișiere multiple ====
+
+**[1a]** Folosiți comanda ''wget'' pentru a descărca dintr-o dată toate capitolele de carte (PDF) de USO de la [[http://elf.cs.pub.ro/uso/res/carte/]] (fără alte fișiere).
+
+**[1b]** Folosiți comanda ''wget'' pentru a descărca dintr-o dată toate orarele (.xls) de la [[http://acs.pub.ro/~cpop/orare_sem1/]].
+
+**[1c]** Puneți cele două comenzi într-un script și faceți ca scriptul să primească ca argument un director unde să descarce capitolele din carte (PDF) și orarele (.xls).
+
+
+==== 2. Accesul web în linia de comandă cu autentificare ====
+
+<note>
+Pentru acest exercițiu este nevoie să aveți un cont pe site-ul ''www.github.com''.
+</note>
+
+**[2a]** Utilizând una din comenzile ''curl'' sau ''wget'' realizați un
+request simplu (GET), ''fără autentificare'' folosind următorul URL: ''https://api.github.com/users/<username_github>''.
+
+''username_github'' reprezintă username-ul contului vostru de GitHub.
+
+Salvați rezultatul comenzii într-un fișier (ex. ''curl_without_auth'').
+
+**[2b]** Utilizând una din comenzile ''curl'' sau ''wget'' realizați un
+request simplu (GET), ''cu autentificare'' folosind următorul URL: ''https://api.github.com/users/<username_github>''.
+
+''username_github'' reprezintă username-ul contului vostru de GitHub.
+
+Salvați rezultatul comenzii într-un fișier (ex. ''curl_with_auth'').
+
+**[2c]** Comparați conținutul celor două fișiere utilizând comanda ''diff'', urmărind diferențele.
+
+
+==== 3. Folosirea unui API pentru obținerea de informații ====
+
+**[3a]** Aflați valoarea curentă în ''RON'' a monedei virtuale Bitcoin, utilizând API-ul documentat
+la această adresă: https://www.coindesk.com/api/.
+
+<note tip>
+''RON'' reprezintă codul valid conform ISO 4217 al monedei naționale.
+</note>
+
+
+==== 4. Montarea/Demontarea unui sistem de fișiere la distanță ====
+
+**[4a]** Instalați pe sistemul fizici utilitarul ''sshfs''.
+
+**[4b]** Creați un director nou pe sistemul fizic cu denumirea ''tom_fs''.
+
+**[4c]** Montați directorul ''/home/student'' de pe mașina virtuală ''tom'' pe mașina virtuală ''USO'' folosind directorul creat la **[4b]**.
+
+**[4d]** Pe sistemul fizic adăugați un fișier nou în directorul ''tom_fs''. Observați apariția fișierului creat pe mașina virtuală ''tom''.
+
+**[4e]** Demontați sistemul de fișiere folosind comanda ''umount''.
+
+
+==== 5. Utilizarea VNC între stații ====
+
+La acest exercițiu veți lucra împreună cu un coleg. Veți juca, pe rând, unul dintre rolurile server/client. Vă veți conecta prin VNC (//Virtual Network Computing//), serviciu de conexiune grafică la distanță.
+
+Pentru aceasta aveți nevoie de un server vnc (''x11vnc'') și de un client VNC (''remmina''). Instalați-le pe sistemul fizic folosind comanda:
+<code bash>
+student@uso:~$ sudo apt -y install x11vnc remmina
+</code>
+
+**[5a]** Aflați ambele adrese ale stațiilor pe care lucrați și stabiliți rolurile inițiale.
+
+**[5b]** Folosind utilitarul GUI ''Remmina'' din Ubuntu, clientul se va conecta la server.
+
+**[5c]** Inversați rolurile și repetați partea de la **[5b]**.
+
+
+==== 6. ping sweep folosind nmap ====
+
+Utilitarul [[https://nmap.org|nmap]] este folosit pentru inspectarea informațiilor din rețea. Un rol al său este acela de ''ping scan'': listarea stațiilor prezente în rețeaua locală.
+
+Folosiți ''nmap'' și scanați stațiile din rețeaua locală a sistemului local. Să folosiți o adresă de rețea cu masca cel puțin egală cu ''/24''. O mască mai mică înseamnă prea multe stații și durează mult scanarea.
+
+
+==== 7. Captură de trafic de rețea. tcpdump ====
+
+Am folosit în secțiunea anterioară utilitarul grafic Wireshark pentru captură și inspecție de trafic de rețea. Dacă dorim să folosim linia de comandă atunci vom folosi utilitarul [[http://www.tcpdump.org|tcpdump]].
+
+Folosiți utilitarul ''tcpdump'' pentru a captura traficul ''HTTPS'' **către** stația ''ocw.cs.pub.ro'' (și doar acela). Generați din browser trafic către ''ocw.cs.pub.ro'' pentru a vedea captură în ''tcpdump''.
+
+
+==== 8. Instalarea unui server web Apache2 ====
+
+**[8a]** Asigurați-vă că aveți instalat un server web Apache2.
+
+**[8b]** Porniți serverul web.
+
+**[8c]** Verificați funcționalitatea serverului web utilizând browserul web preferat.
+
+
+==== 9. Instalarea unei aplicații web ====
+
+**[9a]** Instalați aplicația web ''DokuWiki''. (''Hint:'' https://www.dokuwiki.org/install)
+
+**[9b]** Testați funcționalitatea.
+
+
+===== Sumar. Cuvinte cheie =====
+
+  * Interfață de rețea, conexiune, adresă IP, ''localhost'' (''127.0.0.1'')
+  * Default gateway, DNS, client/server, serviciu
+  * SSH (conexiune la distanță), web (acces resurse)
+  * Vizualizare adresă IP: ''ip a s''
+  * Verificare conectivitate: ''ping''
+  * Configuare adresă IP: ''dhclient''
+  * Identificare default gateway: ''ip r s''
+  * Interogare DNS: ''host''
+  * Configurare DNS: ''/etc/resolv.conf''
+  * Calea în Internet până la o stație: ''treceroute''
+  * Conectare și transfer la distanță: ''ssh'', ''scp''
+  * Autentificare cu cheie publică la distanță: ''ssh-keygen'', ''ssh-copy-id'', ''~/.ssh/id_rsa.pub'', ''~/.ssh/authorized_keys''
+  * Descărcare web în linia de comandă: ''wget'', ''curl''
+  * Vizualizarea serviciilor de rețea locale: ''netstat''
+  * Configurare client de SSH: alias-uri, X Forwarding: ''~/.ssh/config''
+  * Acces grafic la distanță: VNC, RDP
+  * Server web: ''apache2''
+
+
