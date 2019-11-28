@@ -5,6 +5,16 @@ Pe parcursul acestei secțiuni și a următoarelor vom folosi următoarele terme
   * **sistemul ''tom''** sau **mașina virtuală ''tom''** se referă la mașina virtuală ''tom''
   * **sistemul ''tom''** sau **mașina virtuală ''jerry''** se referă la mașina virtuală ''jerry''
 
+<note warning>
+În cazul în care vă apare eroarea ''Could not start the machine ... because the following physical network interfaces were not found:
+vboxnet0 (adapter 1)
+You can either change the machine's network settings or stop the machine.'', urmați pașii de mai jos:
+  - Accesați ''VirtualBox File'' -> ''Host Network Manager''.
+  - Apăsați butonul ''Create''.
+  - Va apărea opțiunea ''vboxnet0'', alegeți-o.
+  - Reporniți mașina virtuală.
+</note>
+
 ==== 1. Dezactivare interfețe. DHCP ====
 
 Sunt situații în care am realizat o configurare greșită și vrem să dezactivăm acea configurare de pe o interfață. În mod normal, resetarea completă a configurației unei interfețe presupune doi pași:
@@ -92,8 +102,8 @@ student@uso:~$ echo "my first scp" > file.txt
 student@uso:~$ cat file.txt
 my first scp
 student@uso:~$ scp file.txt student@192.168.56.101:
-student@192.168.56.101's password: 
-file.txt                                      100%   13     9.1KB/s   00:00 
+student@192.168.56.101's password:
+file.txt                                      100%   13     9.1KB/s   00:00
 </code>
 
 <note important>

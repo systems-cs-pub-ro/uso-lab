@@ -45,16 +45,6 @@ sudo su
 iar la prompul de parolă scrieți parola utilizatorului ''student'', adică ''student''.
 </note>
 
-<note warning>
-În cazul în care vă apare eroarea ''Could not start the machine ... because the following physical network interfaces were not found:
-vboxnet0 (adapter 1)
-You can either change the machine's network settings or stop the machine.'', urmați pașii de mai jos:
-  - Accesați ''VirtualBox File'' -> ''Host Network Manager''.
-  - Apăsați butonul ''Create''.
-  - Va apărea opțiunea ''vboxnet0'', alegeți-o.
-  - Reporniți mașina virtuală.
-</note>
-
 === Interfețe de rețea în mașinile virtuale ===
 
 Mașinile virtuale ''tom'' și ''jerry'' au interfața de //loopback// ''lo'' și trei interfețe de rețea, cu roluri dedicate:
