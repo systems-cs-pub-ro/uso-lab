@@ -1,6 +1,6 @@
  ===== Nice to Know ===== 
   
- Pentru exercițiile urmatoare, mergeți în directorul ''/home/student/uso.git/labs/10-sec/support/nice-to-know''. 
+ Pentru exercițiile urmatoare, mergeți în directorul ''/home/student/uso-lab/labs/10-sec/support/nice-to-know''.
   
  ==== 1. Spargerea parolei prin brute-force ==== 
   
@@ -103,4 +103,4 @@
   
  Motivul este că **acs.curs.pub.ro** folosește **HTTPS**, deci întreg traficul este criptat. **aavtrain.com** folosește HTTP, fapt ce îl face vulnerabil la atacuri de tip **Man-in-the-middle**, adică exact ce a făcut Trudy. 
   
-  
+
