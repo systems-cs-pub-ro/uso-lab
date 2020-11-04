@@ -1,12 +1,8 @@
 all: hangman
 
-hangman: hangman.o
-	gcc -o hangman hangman.o
-
-
-hangman.o: hangman.c
-	gcc -c hangman.c
+hangman: hangman.c
+	gcc -o hangman hangman.c
 
 clean:
-	rm -rf *.o hangman
+	rm -rf hangman
 
