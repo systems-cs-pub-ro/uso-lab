@@ -1,7 +1,0 @@
-1, Justin Timberlake, Title 545, Price $6.30
-2, Taylor Swift, Title 723, Price $7.90
-3, Mick Jagger, Title 610, Price $7.90
-4, Lady Gaga, Title 118, Price $6.30
-5, Johnny Cash, Title 482, Price $6.50
-6, Elvis Presley, Title 335, Price $6.30
-7, John Lennon, Title 271, Price $7.90
