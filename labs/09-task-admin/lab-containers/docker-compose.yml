@@ -1,0 +1,91 @@
+version: '2'
+services:
+  ssh-server:
+    user: "${UID}:${GID}"
+    privileged: true
+    tty: true
+    hostname: "ssh-server"
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    networks:
+      1-network:
+        ipv4_address: 10.10.10.2
+      2-network:
+        ipv4_address: 10.11.11.2
+    build:
+      context: ./ssh-server/
+      dockerfile: ./Dockerfile
+    cap_add:
+      - ALL
+  remote:
+    user: "${UID}:${GID}"
+    privileged: true
+    tty: true
+    hostname: "remote"
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    networks:
+      1-network:
+        ipv4_address: 10.10.10.3
+    build:
+      context: ./remote/
+      dockerfile: ./Dockerfile
+    cap_add:
+      - ALL
+  local:
+    user: "${UID}:${GID}"
+    privileged: true
+    tty: true
+    hostname: "local"
+    devices:
+      - "/dev/net/tun:/dev/net/tun"
+    networks:
+      2-network:
+        ipv4_address: 10.11.11.3
+    build:
+      context: ./local/
+      dockerfile: ./Dockerfile
+    cap_add:
+      - ALL
+  dropbox:
+    user: "${UID}:${GID}"
+    privileged: true
+    tty: true
+    hostname: "dropbox"
+    networks:
+      1-network:
+        ipv4_address: 10.10.10.4
+    build:
+      context: ./dropbox/
+      dockerfile: ./Dockerfile
+    cap_add:
+      - ALL
+  dhcp:
+    privileged: true
+    image: networkboot/dhcpd
+    networks:
+      1-network:
+        ipv4_address: 10.10.10.100
+      2-network:
+        ipv4_address: 10.11.11.100
+    volumes:
+      - ./dhcp/data:/data
+networks:
+  1-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.10.10.0/24
+          gateway: 10.10.10.253
+    driver_opts:
+      com.docker.network.bridge.name: br1
+  2-network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.11.11.0/24
+          gateway: 10.11.11.253
+    driver_opts:
+      com.docker.network.bridge.name: br2
