@@ -16,6 +16,10 @@ RUN apt-get install -y net-tools
 RUN apt-get install -y openssh-server
 RUN apt-get install -y sshfs
 
+RUN echo "root\nroot" | passwd root
+
+RUN echo "PermitRootLogin yes" >> /etc/ssh/sshd_config
+
 RUN apt-get -y clean
 
 RUN rm -rf /var/lib/apt/lists/*
