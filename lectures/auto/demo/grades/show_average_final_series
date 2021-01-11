@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if test $# -ne 1; then
+    echo "Usage: $0 <csv_file>" 1>&2
+    exit 1
+fi
+
+csv_file="$1"
+if test ! -f "$csv_file"; then
+    echo "Error: Argument $csv_file is not a file." 1>&2
+    exit 1
+fi
+
+sum=$(tail -n +2 "$csv_file" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | paste -s -d'+' | bc)
+count=$(tail -n +2 "$csv_file" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | wc -l)
+
+echo "scale=2; $sum/$count" | bc
+
+for series in CA CB CC CD; do
+    sum=$(tail -n +2 "$csv_file" | grep "$series" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | paste -s -d'+' | bc)
+    count=$(tail -n +2 "$csv_file" | grep "$series" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | wc -l)
+
+    echo -n "$series: "
+    echo "scale=2; $sum/$count" | bc
+done

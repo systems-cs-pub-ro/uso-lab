@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if test $# -ne 1; then
+    echo "Usage: $0 <csv_file>" 1>&2
+    exit 1
+fi
+
+csv_file="$1"
+if test ! -f "$csv_file"; then
+    echo "Error: Argument $csv_file is not a file." 1>&2
+    exit 1
+fi
+
+for series in CA CB CC CD; do
+    echo -n "$series: "
+    tail -n +2 "$csv_file" | grep "$series" | wc -l
+    for group in 311 312 313 314 315; do
+        echo -n "$group$series: "
+        tail -n +2 "$csv_file" | grep "$group$series" | wc -l
+    done
+done

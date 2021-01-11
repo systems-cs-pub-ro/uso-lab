@@ -1,0 +1,253 @@
+==== Prelucrare note ====
+
+Pentru acest scenariu, actualizați [[https://github.com/systems-cs-pub-ro/uso-lab|repository-ul public de USO]] și navigați în subdirectorul ''lectures/auto/grades/'':
+
+<code bash>
+student@uso:~$ cd uso-lab
+student@uso:~/uso-lab$ git pull
+student@uso:~/uso-lab$ cd lectures/auto/grades
+student@uso:~/uso-lab/lectures/auto/grades$ ls
+2016-2017.csv  2017-2018.csv  2018-2019.csv  2019-2020.csv  script.wiki  show_average_final  show_average_final_series  show_nums  stats.py
+</code>
+
+Directorul conține fișiere CSV (//Comma Separated Values//) reprezentând cataloagele anonimizate de la cursul de USO din ultimii ani: 2016-2017, 2017-2018, 2018-2019, 2019-2020.
+Ne propunem să facem prelucrarea acestora.
+
+Pentru început, să aflăm câți studenți au participat la curs în fiecare an. Folosim utilitarul ''wc'':
+
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ wc -l 2016-2017.csv
+494 2016-2017.csv
+student@uso:~/uso-lab/lectures/auto/grades$ wc -l 2017-2018.csv
+538 2017-2018.csv
+student@uso:~/uso-lab/lectures/auto/grades$ wc -l 2018-2019.csv
+542 2018-2019.csv
+student@uso:~/uso-lab/lectures/auto/grades$ wc -l 2019-2020.csv
+532 2019-2020.csv
+</code>
+
+Ne dorim o afișare mai aspectuoasă și care să elimine și linia de tip header a fișierului CSV.
+Pentru aceasta construim un one-liner:
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ tail -n +2 2019-2020.csv | wc -l
+531
+student@uso:~/uso-lab/lectures/auto/grades$ echo -n "2019-2020: " ; tail -n +2 2019-2020.csv | wc -l
+2019-2020: 531
+</code>
+Am folosit utilitarul ''tail'' ca să eliminăm din afișare headerul fișierului.
+Am folosit operatorul pipe (''|'') ca să filtrăm apoi rezultatul prin utilitarul ''wc''.
+
+Am putea rula o comandă precum cea de mai sus pentru toate cele patru fișiere.
+Dar ar trebui să modificăm pe rând fiecare an universitar.
+Vrem o variantă mai eficientă, care să permită inclusiv "scalarea" la apariția unor fișiere pentru alți ani.
+Pentru aceasta construim un nou one-liner care să folosească ''for'' pentru a parcurge fișierele CSV:
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ for i in *.csv; do echo -n "$(basename "$i" .csv): " ; tail -n +2 "$i" | wc -l; done
+2016-2017: 493
+2017-2018: 537
+2018-2019: 541
+2019-2020: 531
+</code>
+Acum, oricând avem nevoie de aceste informații, folosim one linerul.
+
+Desigur, nu ne oprim aici, ci vrem informații la nivelul fiecărei serii.
+Am putea realiza acest lucru tot cu un one-liner, ca mai jos, adăugând încă o secvență ''for'' care parcurge cele patru serii (''CA'', ''CB'', ''CC'', ''CD''):
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ for year in *.csv; do for series in CA CB CC CD; do echo -n "$(basename "$year" .csv) - $series: " ; tail -n +2 "$year" | grep "$series" | wc -l; done; done
+2016-2017 - CA: 109
+2016-2017 - CB: 137
+2016-2017 - CC: 111
+2016-2017 - CD: 170
+2017-2018 - CA: 155
+2017-2018 - CB: 147
+2017-2018 - CC: 151
+2017-2018 - CD: 143
+2018-2019 - CA: 161
+2018-2019 - CB: 137
+2018-2019 - CC: 156
+2018-2019 - CD: 136
+2019-2020 - CA: 130
+2019-2020 - CB: 136
+2019-2020 - CC: 145
+2019-2020 - CD: 131
+</code>
+
+Deja one-linerul este complicat.
+Este momentul să tranzităm la folosirea unui script, care e mai ușor de citit, de modificat, de utilizat și de menținut.
+Folosim scriptul ''show_nums'':
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ cat ./show_nums
+#!/bin/bash
+
+if test $# -ne 1; then
+    echo "Usage: $0 <csv_file>" 1>&2
+    exit 1
+fi
+
+csv_file="$1"
+if test ! -f "$csv_file"; then
+    echo "Error: Argument $csv_file is not a file." 1>&2
+    exit 1
+fi
+
+for series in CA CB CC CD; do
+    echo -n "$series: "
+    tail -n +2 "$csv_file" | grep "$series" | wc -l
+    for group in 311 312 313 314 315; do
+        echo -n "$group$series: "
+        tail -n +2 "$csv_file" | grep "$group$series" | wc -l
+    done
+done
+
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_nums
+Usage: ./show_nums <csv_file>
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_nums 2016-2017.csv
+CA: 109
+311CA: 28
+312CA: 27
+313CA: 27
+314CA: 27
+315CA: 0
+CB: 137
+311CB: 27
+312CB: 28
+313CB: 28
+314CB: 27
+315CB: 27
+CC: 111
+310CC: 27
+312CC: 28
+313CC: 28
+314CC: 28
+315CC: 0
+CD: 170
+311CD: 26
+312CD: 27
+313CD: 26
+314CD: 27
+315CD: 27
+
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_nums 2017-2018.csv
+[...]
+
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_nums 2018-2019.csv
+[...]
+
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_nums 2019-2020.csv
+[...]
+
+</code>
+Scriptul ''show_nums'' primește ca argument chiar numele fișierului CSV.
+Parcurge fișierul și afișează informații la nivel de serie.
+
+Numărul de studenți este o informație relativ simplă.
+O informație mai valoroasă, pentru evaluarea disciplinei, a subiectelor și a pregătirii studenților, o reprezintă notele.
+Vrem să extragem media studenților.
+Pentru aceasta putem folosi one-linere și construcții shell:
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ tail -n +2 2016-2017.csv | cut -d',' -f3 | grep -v '^$' | paste -s -d'+' | bc
+3657.0
+student@uso:~/uso-lab/lectures/auto/grades$ sum=$(tail -n +2 2016-2017.csv | cut -d',' -f3 | grep -v '^$' | paste -s -d'+' | bc)
+student@uso:~/uso-lab/lectures/auto/grades$ count=$(tail -n +2 2016-2017.csv | wc -l)
+student@uso:~/uso-lab/lectures/auto/grades$ echo "scale=2; $sum/$count"
+scale=2; 3657.0/493
+student@uso:~/uso-lab/lectures/auto/grades$ echo "scale=2; $sum/$count" | bc
+7.41
+</code>
+Obținem că media notelor finale în anul universitar 2016-2017 este ''7.41''.
+Media este eronată: este media pentru toți studenții inclusiv cei absenți; variabila ''count'' nu a eliminat studenții absenți.
+O medie calculată corect este:
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ count=$(tail -n +2 2016-2017.csv | cut -d ',' -f3 | grep -v '^$' | wc -l)
+student@uso:~/uso-lab/lectures/auto/grades$ echo "scale=2; $sum/$count" | bc
+7.96
+</code>
+În secvența de mai sus, am eliminat intrările care nu conțin valoare (notele absente), la fel cum am procedat și în calculul sumei ''sum''.
+
+În plus, one-linerul nu este robust.
+Este posibil ca unele intrări să conțină șirul ''ABS'' sau ''absent'', așa cum vedem că este cazul fișierului ''2017-2018.csv'':
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ tail -n +2 2017-2018.csv | cut -d',' -f3 | grep -v '^$' | paste -s -d'+'
+9.0+9.0+9.0+8.0+8.0+8.0+10.0+9.0+6.0+7.0+9.0+4.0+10.0+10.0+9.0+8.0+9.0+9.0+6.0+6.0+10.0+9.0+9.0+10.0+9.0+10.0+5.0+10.0+8.0+10.0+10.0+10.0+7.0+10.0+10.0+8.0+9.0+8.0+9.0+10.0+9.0+6.0+10.0+10.0+8.0+10.0+7.0+7.0+8.0+10.0+8.0+7.0+9.0+8.0+9.0+10.0+10.0+10.0+9.0+7.0+6.0+10.0+10.0+6.0+9.0+8.0+8.0+10.0+10.0+7.0+10.0+9.0+8.0+10.0+10.0+8.0+10.0+10.0+9.0+8.0+9.0+7.0+6.0+8.0+9.0+10.0+6.0+6.0+8.0+7.0+7.0+8.0+9.0+9.0+6.0+9.0+8.0+9.0+10.0+6.0+10.0+10.0+8.0+10.0+8.0+10.0+9.0+10.0+10.0+10.0+8.0+10.0+10.0+10.0+8.0+9.0+6.0+10.0+5.0+10.0+10.0+10.0+10.0+5.0+9.0+8.0+8.0+7.0+9.0+7.0+8.0+9.0+7.0+7.0+9.0+6.0+7.0+6.0+7.0+7.0+9.0+8.0+10.0+7.0+8.0+10.0+10.0+10.0+9.0+5.0+10.0+10.0+9.0+10.0+10.0+8.0+10.0+6.0+7.0+10.0+10.0+6.0+8.0+10.0+10.0+absent+9.0+7.0+9.0+8.0+9.0+8.0+6.0+4.0+10.0+9.0+10.0+8.0+8.0+7.0+9.0+8.0+10.0+10.0+7.0+9.0+9.0+8.0+7.0+7.0+8.0+7.0+8.0+7.0+10.0+6.0+7.0+8.0+9.0+10.0+5.0+7.0+6.0+9.0+6.0+7.0+6.0+8.0+8.0+9.0+8.0+absent+9.0+6.0+10.0+10.0+10.0+6.0+9.0+6.0+7.0+8.0+6.0+10.0+6.0+9.0+absent+absent+10.0+7.0+8.0+absent+7.0+8.0+9.0+8.0+9.0+9.0+6.0+absent+9.0+10.0+absent+10.0+10.0+9.0+10.0+8.0+8.0+7.0+8.0+8.0+10.0+absent+8.0+10.0+6.0+7.0+8.0+10.0+10.0+10.0+8.0+9.0+9.0+absent+7.0+10.0+8.0+9.0+7.0+10.0+9.0+6.0+8.0+10.0+7.0+7.0+10.0+10.0+10.0+10.0+10.0+8.0+7.0+8.0+8.0+10.0+10.0+8.0+10.0+9.0+8.0+9.0+10.0+9.0+7.0+8.0+9.0+9.0+10.0+6.0+9.0+10.0+8.0+10.0+10.0+6.0+10.0+9.0+9.0+7.0+8.0+7.0+7.0+10.0+ABS+4.0+9.0+10.0+10.0+7.0+ABS+10.0+7.0+9.0+10.0+10.0+10.0+10.0+10.0+10.0+10.0+9.0+8.0+8.0+10.0+10.0+10.0+9.0+9.0+9.0+5.0+10.0+8.0+10.0+8.0+8.0+10.0+8.0+ABS+ABS+10.0+8.0+7.0+10.0+10.0+9.0+10.0+9.0+8.0+7.0+10.0+10.0+7.0+10.0+10.0+10.0+8.0+7.0+9.0+10.0+9.0+10.0+10.0+10.0+10.0+10.0+7.0+9.0+ABS+10.0+ABS+4.0+8.0+6.0+8.0+10.0+10.0+6.0+7.0+8.0+9.0+9.0+10.0+9.0+8.0+9.0+8.0+9.0+8.0+8.0+9.0+5.0+10.0+7.0+5.0+10.0+8.0+9.0+10.0+8.0+6.0+10.0+8.0+10.0+8.0+8.0+8.0+7.0+9.0+10.0+7.0+8.0+9.0+9.0+7.0+absent+5.0+7.0+7.0+7.0+10.0+8.0+9.0+6.0+10.0+10.0+10.0+8.0+4.0+7.0+10.0+7.0+7.0+8.0+7.0+5.0+6.0+5.0+6.0+10.0+absent+9.0+7.0+9.0+10.0+9.0+7.0+10.0+7.0+6.0+10.0+7.0+6.0+9.0+9.0+absent+7.0+10.0+7.0+10.0+7.0+7.0+8.0+7.0+8.0+6.0+absent+7.0+9.0+7.0+6.0+7.0+absent+6.0+4.0+8.0+absent+8.0+8.0+7.0+9.0+7.0+10.0+8.0+6.0+8.0+9.0+10.0+6.0+10.0+4.0+7.0+absent+10.0+10.0+9.0+4.0+8.0+9.0+absent+7.0+8.0+6.0+8.0+5.0+9.0+8.0+6.0+7.0+8.0+7.0+10.0+9.0+7.0+7.0+6.0+9.0+10.0+9.0+8.0+7.0+10.0+10.0+7.0+10.0
+</code>
+
+Ținând cont de aceasta, creăm scriptul ''show_average_final'' care rezolvă problemele de mai sus, și care împrumută bunele practici ale scriptului ''show_num'' ca să afișeze media fiecărui an universitar:
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final 2016-2017.csv
+7.96
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final 2017-2018.csv
+8.33
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final 2018-2019.csv
+8.77
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final 2019-2020.csv
+7.85
+</code>
+
+Dacă ne dorim statistici și la nivelul seriei, actualizăm scriptul în scriptul ''show_average_final_series'':
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final_series 2019-2020.csv
+7.85
+CA: 8.17
+CB: 8.50
+CC: 7.74
+CD: 7.10
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final_series 2018-2019.csv
+8.77
+CA: 8.76
+CB: 8.39
+CC: 8.94
+CD: 8.84
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final_series 2017-2018.csv
+8.33
+CA: 8.68
+CB: 8.18
+CC: 8.57
+CD: 7.88
+student@uso:~/uso-lab/lectures/auto/grades$ ./show_average_final_series 2016-2017.csv
+7.96
+CA: 8.42
+CB: 7.94
+CC: 7.81
+CD: 7.86
+</code>
+
+În momentul în care efectuăm prelucrări numerice și pe date din ce în ce mai multe și cu potențiale noi cerințe de prelucrarea, ne gândim să trecem la un limbaj de scripting / programare cu mai multe funcționalități de prelucrare numerică și de șiruri, care să permită o mai bună mentenanță.
+Un astfel de exemplu este scriptul ''stats.py'' în Python:
+<code bash>
+student@uso:~/uso-lab/lectures/auto/grades$ python stats.py
+Grup           Număr    Notă    Quiz    Teme Midterm Practic
+2016-2017        455    7.96    6.40    7.71    6.52    7.00
+CA               105    8.42    6.94    7.65    6.75    8.01
+CB               123    7.94    6.14    7.88    5.92    7.17
+CC               105    7.82    6.01    7.42    7.01    6.83
+CD               122    7.72    6.52    7.84    6.51    6.11
+
+2017-2018        503    8.36    6.01    9.25    7.42    7.19
+CA               117    8.64    6.71    9.27    7.09    7.13
+CB               134    8.26    5.46    9.17    7.10    7.67
+CC               118    8.74    6.86    9.33    7.87    7.57
+CD               134    7.89    5.22    9.25    7.62    6.42
+
+2018-2019        498    8.78    6.86    8.98    7.52    8.23
+CA               131    8.82    6.97    8.93    7.52    8.76
+CB               122    8.39    6.42    8.97    7.12    6.74
+CC               124    9.02    7.05    9.15    7.43    8.67
+CD               121    8.86    6.99    8.87    8.03    8.71
+
+2019-2020        488    8.14    5.93    8.69    6.67    6.97
+CA               121    8.31    6.12    8.62    6.69    7.80
+CB               125    8.50    6.69    8.63    6.92    7.80
+CC               126    8.07    6.26    8.61    6.80    6.06
+CD               116    7.65    4.54    8.90    6.25    6.19
+
+</code>
+
+În acest script facem o prelucrare a tuturor notelor: final, examen grilă, teme, examen practic final și de midterm.
+Scriptul folosește funcționalități ale limbajului Python: clase, dicționare, funcții, parcurgerea fișierelor (CSV).
+Aceste lucruri îl fac ușor de actualizat și de meținut.
+
+Concluzionând, atunci când facem automatizare:
+* folosim funcționalități existente ale shellului
+* pornim cu înlănțuiri de comenzi și one linere
+* pe măsură ce avansăm, trecem la scripturi shell
+* când prelucrăm șiruri sau numere și avem multe date și cerințe în creștere, tranzităm la un limbaj de scripting / programare (precum Python)
