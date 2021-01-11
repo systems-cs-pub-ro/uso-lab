@@ -82,6 +82,7 @@ if test $operation == "install"; then
     if test $section == "all"; then
         sudo docker-compose up
     else
+        sudo docker-compose build --no-cache $section
         sudo docker-compose up -d $section
         sudo docker-compose up -d dhcp
     fi
