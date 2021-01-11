@@ -60,6 +60,14 @@ section=$2
 
 check_operation $operation
 
+if test $operation == "cleanup"; then
+    sudo docker stop $(sudo docker ps -a -q) 2> /dev/null
+    sudo docker rm $(sudo docker ps -a -q) 2> /dev/null
+    sudo docker network ls 2> /dev/null | grep lab-container | cut -d" " -f1 | xargs sudo docker network rm 2> /dev/null
+    sudo docker image ls 2> /dev/null | grep lab-container | cut -d" " -f1 | xargs sudo docker image rm 2> /dev/null
+    exit 0
+fi
+
 if test $operation == "delete"; then
     sudo docker-compose down
     sudo docker image rm lab-container_${section}
@@ -82,7 +90,6 @@ if test $operation == "install"; then
     if test $section == "all"; then
         sudo docker-compose up
     else
-        sudo docker-compose build --no-cache $section
         sudo docker-compose up -d $section
         sudo docker-compose up -d dhcp
     fi
