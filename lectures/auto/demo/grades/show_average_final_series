@@ -17,8 +17,8 @@ count=$(tail -n +2 "$csv_file" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' |
 echo "scale=2; $sum/$count" | bc
 
 for series in CA CB CC CD; do
-    sum=$(tail -n +2 "$csv_file" | grep "$series" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | paste -s -d'+' | bc)
-    count=$(tail -n +2 "$csv_file" | grep "$series" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | wc -l)
+    sum=$(tail -n +2 "$csv_file" | grep "^[1-5]\+$series," | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | paste -s -d'+' | bc)
+    count=$(tail -n +2 "$csv_file" | grep "^[1-5]\+$series" | cut -d',' -f3 | grep -v '^$' | grep -iv 'abs' | wc -l)
 
     echo -n "$series: "
     echo "scale=2; $sum/$count" | bc

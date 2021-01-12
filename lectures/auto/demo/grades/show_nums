@@ -13,9 +13,9 @@ fi
 
 for series in CA CB CC CD; do
     echo -n "$series: "
-    tail -n +2 "$csv_file" | grep "$series" | wc -l
+    tail -n +2 "$csv_file" | grep "^[1-5]\+$series," | wc -l
     for group in 311 312 313 314 315; do
         echo -n "$group$series: "
-        tail -n +2 "$csv_file" | grep "$group$series" | wc -l
+        tail -n +2 "$csv_file" | grep "^$group$series," | wc -l
     done
 done
