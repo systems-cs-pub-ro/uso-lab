@@ -1,6 +1,6 @@
 all: hangman
 
-hangman: hangman.c
+hangman: hangman.o
 	gcc -o hangman hangman.c
 
 hangman.o: hangman.c
