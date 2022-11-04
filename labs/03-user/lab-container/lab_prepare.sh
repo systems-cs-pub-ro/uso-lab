@@ -2,7 +2,7 @@
 
 install_docker () {
     sudo apt-get update
-    sudo apt-get upgrade
+    sudo apt-get upgrade -y 
     curl -fsSL test.docker.com -o get-docker.sh && sh get-docker.sh
     sudo usermod -aG docker $USER
     sudo service docker start
