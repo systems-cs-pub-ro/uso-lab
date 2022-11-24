@@ -1,6 +1,6 @@
 ===== Concepte =====
 
-==== Prezentare generală ====
+==== Prezentare nu tocmai generală ====
 
 Orice calculator are nevoie să stocheze date de diferite tipuri undeva, de exemplu pe un hard drive (HDD), un stick de memorie USB, etc.
 Aceste date sunt organizate sub formă de fișiere, directoare și legături (link-uri). 
