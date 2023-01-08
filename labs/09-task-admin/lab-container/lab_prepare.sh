@@ -69,6 +69,7 @@ if test $operation == "cleanup"; then
     sudo docker rm $(sudo docker ps -a -q) 2> /dev/null
     sudo docker network ls 2> /dev/null | grep labcontainer | cut -d" " -f1 | xargs -I{} sudo docker network rm {} 2> /dev/null
     sudo docker image ls 2> /dev/null | grep labcontainer | cut -d" " -f1 | xargs -I{} sudo docker image rm {} 2> /dev/null
+    sudo docker image ls 2> /dev/null | grep lab09 | cut -d" " -f1 | xargs -I{} sudo docker image rm {} 2> /dev/null
     exit 0
 fi
 

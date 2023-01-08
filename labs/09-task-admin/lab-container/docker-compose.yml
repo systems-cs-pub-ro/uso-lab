@@ -12,9 +12,7 @@ services:
         ipv4_address: 10.10.10.2
       2-network:
         ipv4_address: 10.11.11.2
-    build:
-      context: ./ssh-server/
-      dockerfile: ./Dockerfile
+    image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-ssh-server
     cap_add:
       - ALL
   remote:
@@ -27,9 +25,7 @@ services:
     networks:
       1-network:
         ipv4_address: 10.10.10.3
-    build:
-      context: ./remote/
-      dockerfile: ./Dockerfile
+    image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-remote
     cap_add:
       - ALL
   local:
@@ -42,9 +38,7 @@ services:
     networks:
       2-network:
         ipv4_address: 10.11.11.3
-    build:
-      context: ./local/
-      dockerfile: ./Dockerfile
+    image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-local
     cap_add:
       - ALL
   dropbox:
@@ -55,9 +49,7 @@ services:
     networks:
       1-network:
         ipv4_address: 10.10.10.4
-    build:
-      context: ./dropbox/
-      dockerfile: ./Dockerfile
+    image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-dropbox
     cap_add:
       - ALL
   dhcp:
