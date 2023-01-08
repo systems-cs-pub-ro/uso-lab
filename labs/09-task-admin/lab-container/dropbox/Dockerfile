@@ -50,7 +50,7 @@ WORKDIR /opt/dropbox/Dropbox
 EXPOSE 17500
 
 # https://help.dropbox.com/installs-integrations/desktop/linux-repository
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys FC918B335044912E \
+RUN apt-key adv --keyserver pgp.mit.edu --recv-keys 1C61A2656FB57B7E4DE0F4C1FC918B335044912E \
  && add-apt-repository 'deb http://linux.dropbox.com/debian buster main' \
  && apt-get update \
  && apt-get -qqy install python3-gpg dropbox \
