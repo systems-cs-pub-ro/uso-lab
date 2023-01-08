@@ -31,6 +31,8 @@ check_operation () {
 
 check_section () {
     case $1 in
+    all)
+        ;;
     remote)
         ;;
     local)
