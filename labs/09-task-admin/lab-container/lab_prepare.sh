@@ -103,9 +103,9 @@ fi
 
 if test $operation == "connect"; then
     if test $section == "dropbox"; then
-        sudo docker exec --user dropbox -it labcontainer_${section}_1 bash
+        sudo docker exec --user dropbox -it lab-container_${section}_1 bash
     else
-        sudo docker exec -it labcontainer_${section}_1 bash
+        sudo docker exec -it lab-container_${section}_1 bash
     fi
 fi
 
