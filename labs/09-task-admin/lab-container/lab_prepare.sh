@@ -67,15 +67,14 @@ check_operation $operation
 if test $operation == "cleanup"; then
     sudo docker stop $(sudo docker ps -a -q) 2> /dev/null
     sudo docker rm $(sudo docker ps -a -q) 2> /dev/null
-    sudo docker network ls 2> /dev/null | grep labcontainer | cut -d" " -f1 | xargs -I{} sudo docker network rm {} 2> /dev/null
-    sudo docker image ls 2> /dev/null | grep labcontainer | cut -d" " -f1 | xargs -I{} sudo docker image rm {} 2> /dev/null
+    sudo docker network ls 2> /dev/null | grep lab09 | cut -d" " -f1 | xargs -I{} sudo docker network rm {} 2> /dev/null
     sudo docker image ls 2> /dev/null | grep lab09 | cut -d" " -f1 | xargs -I{} sudo docker image rm {} 2> /dev/null
     exit 0
 fi
 
 if test $operation == "delete"; then
     sudo docker-compose down
-    sudo docker image rm labcontainer_${section}
+    sudo docker image rm gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-${section}
     exit 0
 fi
 
@@ -93,7 +92,7 @@ check_section $section
 
 if test $operation == "install"; then
     if test $section == "all"; then
-        sudo docker-compose up
+        sudo docker-compose up -d
     else
         sudo docker-compose up -d $section
         sudo docker-compose up -d dhcp
@@ -103,9 +102,9 @@ fi
 
 if test $operation == "connect"; then
     if test $section == "dropbox"; then
-        sudo docker exec --user dropbox -it lab-container_${section}_1 bash
+        sudo docker exec --user dropbox -it lab09-${section} bash
     else
-        sudo docker exec -it lab-container_${section}_1 bash
+        sudo docker exec -it lab09-${section} bash
     fi
 fi
 

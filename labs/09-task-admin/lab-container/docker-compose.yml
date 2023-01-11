@@ -5,12 +5,13 @@ services:
     privileged: true
     tty: true
     hostname: "ssh-server"
+    container_name: "lab09-ssh-server"
     devices:
       - "/dev/net/tun:/dev/net/tun"
     networks:
-      1-network:
+      1-lab09-network:
         ipv4_address: 10.10.10.2
-      2-network:
+      2-lab09-network:
         ipv4_address: 10.11.11.2
     image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-ssh-server
     cap_add:
@@ -20,10 +21,11 @@ services:
     privileged: true
     tty: true
     hostname: "remote"
+    container_name: "lab09-remote"
     devices:
       - "/dev/net/tun:/dev/net/tun"
     networks:
-      1-network:
+      1-lab09-network:
         ipv4_address: 10.10.10.3
     image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-remote
     cap_add:
@@ -33,10 +35,11 @@ services:
     privileged: true
     tty: true
     hostname: "local"
+    container_name: "lab09-local"
     devices:
       - "/dev/net/tun:/dev/net/tun"
     networks:
-      2-network:
+      2-lab09-network:
         ipv4_address: 10.11.11.3
     image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-local
     cap_add:
@@ -46,8 +49,9 @@ services:
     privileged: true
     tty: true
     hostname: "dropbox"
+    container_name: "lab09-dropbox"
     networks:
-      1-network:
+      1-lab09-network:
         ipv4_address: 10.10.10.4
     image: gitlab.cs.pub.ro:5050/uso/uso-lab/lab09-dropbox
     cap_add:
@@ -55,15 +59,16 @@ services:
   dhcp:
     privileged: true
     image: networkboot/dhcpd
+    container_name: "lab09-dhcpd"
     networks:
-      1-network:
+      1-lab09-network:
         ipv4_address: 10.10.10.100
-      2-network:
+      2-lab09-network:
         ipv4_address: 10.11.11.100
     volumes:
       - ./dhcp/data:/data
 networks:
-  1-network:
+  1-lab09-network:
     driver: bridge
     ipam:
       driver: default
@@ -72,7 +77,7 @@ networks:
           gateway: 10.10.10.253
     driver_opts:
       com.docker.network.bridge.name: br1
-  2-network:
+  2-lab09-network:
     driver: bridge
     ipam:
       driver: default
