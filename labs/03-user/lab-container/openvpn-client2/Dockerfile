@@ -15,7 +15,6 @@ RUN apt-get install -y net-tools
 RUN apt-get install -y openvpn
 
 RUN apt-get -y clean
-RUN echo -e '11.11.11.50\topenvpn' > /etc/hosts
 
 RUN rm -rf /var/lib/apt/lists/*
 
