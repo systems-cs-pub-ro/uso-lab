@@ -17,6 +17,8 @@ check_operation () {
         ;;
     delete)
         ;;
+    cleanup)
+        ;;
     *)
         echo "Wrong operation"
         exit 1
@@ -62,6 +64,15 @@ operation=$1
 section=$2
 
 check_operation $operation
+
+if test $operation == "cleanup"; then
+    sudo docker stop $(sudo docker ps -a -q) 2> /dev/null
+    sudo docker rm $(sudo docker ps -a -q) 2> /dev/null
+    sudo docker network ls 2> /dev/null | grep lab-container | cut -d" " -f1 | xargs -I{} sudo docker network rm {} 2> /dev/null
+    sudo docker network ls 2> /dev/null | grep labcontainer | cut -d" " -f1 | xargs -I{} sudo docker network rm {} 2> /dev/null
+    sudo docker image ls 2> /dev/null | grep lab09 | cut -d" " -f1 | xargs -I{} sudo docker image rm {} 2> /dev/null
+    exit 0
+fi
 
 if test $operation == "delete"; then
     sudo docker compose down
