@@ -64,7 +64,7 @@ section=$2
 check_operation $operation
 
 if test $operation == "delete"; then
-    sudo docker-compose down
+    sudo docker compose down
     exit 0
 fi
 
@@ -77,10 +77,10 @@ check_section $section
 
 if test $operation == "install"; then
     if test $section == "all"; then
-        sudo docker-compose up
+        sudo docker compose up
     else
-        sudo docker-compose up -d $section
-        sudo docker-compose up -d dhcp
+        sudo docker compose up -d $section
+        sudo docker compose up -d dhcp
     fi
 
 fi
